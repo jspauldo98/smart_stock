@@ -1,0 +1,11 @@
+Start by researching indicator based decision making, use several algorithms and chose one based on user preference. May evolve into ML, may not.
+Make angular boiler-plate and send to Jared, make sure to use ASP.Net Core, something simple, like hello world with a simple error injection service.
+Start four unique buy/sell algorithms with very broad sectors, and buy sell indicators and see how they perform. Use what member functions alpaca has in store. 
+Income, risk meter, stop losses, add limit, occupation, what sectors are you interested in, volatility, exchange? 
+Make an account, home view similar to webull, keep record of buys and sells, timestamps, charts, performance etc.
+Make an admin view with error log priveledges, and API specific issue tracking, keep this simple, see what status codes are being sent back and forth etc.
+Alpaca has great "Start here" documentation, with Github examples.
+Look up best MVC controller return practices (HTTP status codes? Views? What?) 
+Use Angular router to switch between views once logged in. 
+Use Okta to move away from us storing sensitive client data.
+Use changelog to track changes between our local databases. 
