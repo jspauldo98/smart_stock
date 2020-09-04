@@ -1,0 +1,25 @@
+<table class="table mt-5">
+  <thead>
+    <tr>
+      <th scope="col">Temperature in C</th>
+      <th scope="col">Temperature in F</th>
+      <th scope="col">Date</th>
+      <th scope="col">Summary</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngIf="forecasts?.length == 0"><td>No data</td></tr>
+    <tr *ngFor="let forecast of forecasts">
+      <td>{{ forecast.temperatureC }}</td>
+      <td>{{ forecast.temperatureF }}</td>
+      <td>{{ forecast.dateOfForecast }}</td>
+      <td>{{ forecast.summary }}</td>
+      <td>
+        <a href="#" class="m-1" (click)="edit(forecast)">Edit</a>
+        <a href="#" class="m-2" (click)="delete(forecast)">Delete</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn btn-primary mb-2" (click)="new()">New</button>

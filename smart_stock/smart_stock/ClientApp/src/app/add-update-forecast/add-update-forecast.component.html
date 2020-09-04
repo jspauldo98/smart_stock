@@ -1,0 +1,15 @@
+<div>
+    <h2 *ngIf="!forecast || forecast.id === undefined">Add Forecast</h2>
+    <h2 *ngIf="forecast && forecast.id !== undefined">Update Forecast</h2>
+    <form>
+      <div class="form-group">
+        <label for="temperaturec-input">Temperature In Celsius:</label>
+        <input name="temperaturec" type="number" id="temperaturec" [(ngModel)]="forecast.temperatureC" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="summary-input">Summary:</label>
+        <textarea name="summary" type="text" id="summary-input" [(ngModel)]="forecast.summary" class="form-control" ></textarea>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="addUpdateForecast($event);">Save</button>
+    </form>
+  </div>

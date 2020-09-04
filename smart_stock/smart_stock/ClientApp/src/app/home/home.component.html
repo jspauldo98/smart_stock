@@ -1,0 +1,14 @@
+<section class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <app-add-update-forecast (forecastCreated)="createUpdateForecast($event)" [forecast]="currentForecast"></app-add-update-forecast>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <app-forecast-listing [forecasts]="forecasts" (editClicked)="editForecast($event)" (newClicked)="newForecast()" (recordDeleted)="deleteForecast($event)"></app-forecast-listing>
+      </div>
+    </div>
+  </div>
+</section>
