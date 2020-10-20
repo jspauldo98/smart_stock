@@ -1,7 +1,7 @@
 # 1. Introduction
 
 ## 1.1 Purpose
-This document lays out a project plan for the development of "Smart Stock" by Bryce Michaud, Stefan Emmons, Spencer Romberg, Jared Spaulding, and Zack Strong. Mentored by...?
+This document lays out a project plan for the development of "Smart Stock" by Bryce Michaud, Stefan Emmons, Spencer Romberg, Jared Spaulding, and Zack Strong. Mentored by Ruben Gamboa.
 
 ## 1.2 Intentions
 The indented readers of this document are current and future developers working on "Smart Stock" and the mentor(s) of the project.
