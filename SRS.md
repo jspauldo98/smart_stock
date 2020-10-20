@@ -43,6 +43,10 @@ Anyone who is interested in trading the stock market and of State or regional ag
 ## 2.3 Platform
 "Smart Stock" will be launched as a Web-based application.
 
+## 2.4 Dependencies
+
+ - [Alpaca Trading API](https://alpaca.markets)
+
 # 3. Goals and Scopes
 
 - Proper authentication when the user registers and signs in.
@@ -51,14 +55,10 @@ Anyone who is interested in trading the stock market and of State or regional ag
 - Aesthetically pleasing and sophisticated visuals to represent trading accuracies and progress.
 - Ideally design algorithms that preform well.
 
-## 2.4 Dependencies
-
- - [Alpaca Trading API](https://alpaca.markets)
-
 # 4. Deliverables Scheduling and Estimates
 
 | Deadline | Modal | Description | Date Completed |
-| :------- | :---: | :---------- | -------------: |
+| :---------- | :---: | :---------- | -------------: |
 | 10-04-2020 | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc | 10-04-2020 |
 | ??? | Peer Feedback on Project Description | N/A | ... |
 | ??? | Midterm Status Update Document & Presentation | N/A | ... |
