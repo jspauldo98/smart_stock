@@ -41,7 +41,7 @@ Anyone who is interested in trading the stock market and of State or regional ag
 # 3. Goals and Scopes
 
 - Users should be able to register an account with "Smart Stock". (See Registration Documentation)
-- Users should be able to create and manage their Trade Accounts. (See Trade-Account Documentation)
+- Users should be able to create and manage their Trade Accounts. (See Trade-Accounts Documentation)
 - "Smart Stock" should use an intuitive and effective navigation system. (See Navigation Documentation)
 - Each web-page should display pertinent information related to that specific page. (See Pages Documentation)
 - The system should automatically make and log trades provided a Trading Account's trading parameters. (See Trading Documentation)
