@@ -36,16 +36,19 @@ Anyone who is interested in trading the stock market and of State or regional ag
 
 ## 2.3 Dependencies
 
- - [Alpaca Trading API](https://alpaca.markets)
+ - [Alpaca Trading API](https://alpaca.markets)  
+ - [Angular 8](https://www.javatpoint.com/angular-8)  
+ - [ASP.NET Core 3.1](https://docs.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-3.1?view=aspnetcore-3.1)  
+ - A LOT of JS packages, links to come  
 
 # 3. Goals and Scopes
 
-- Users should be able to register an account with "Smart Stock". (See Registration Documentation)
-- Users should be able to create and manage their Trade Accounts. (See Trade-Accounts Documentation)
-- "Smart Stock" should use an intuitive and effective navigation system. (See Navigation Documentation)
-- Each web-page should display pertinent information related to that specific page. (See Pages Documentation)
-- The system should automatically make and log trades provided a Trading Account's trading parameters. (See Trading Documentation)
-- The system should display graphical representations of trades and Trading Account developments. (See Graphics Documentation)
+- Users should be able to register an account with "Smart Stock". [See Registration Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Registration/Registration.md)
+- Users should be able to create and manage their Trade Accounts. [See Trade-Account Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trade-Account/Trade-Account.md)
+- "Smart Stock" should use an intuitive and effective navigation system. [See Navigation Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Navigation/Navigation.md)
+- Each web-page should display pertinent information related to that specific page. [See Pages Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Pages/Pages.md)
+- The system should automatically make and log trades provided a Trading Account's trading parameters. [See Trading Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/Trading.md)
+- The system should display graphical representations of trades and Trading Account developments. [See Graphics Documentation](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Graphics/Graphics.md)
 
 # 4. Deliverables Scheduling and Estimates
 
@@ -59,7 +62,7 @@ Anyone who is interested in trading the stock market and of State or regional ag
 | ??? | Poster Presentation | N/A | ... |
 | ??? | Peer Evaluation on Poster Design Draft & Practice | N/A | ... |
 | ??? | Self and Team Evaluation | N/A | ... |
-| 05-??-2020 | Launch "Smart Stock" | Finalize project and launch | ... |
+| 05-??-2021 | Launch "Smart Stock" | Finalize project and launch | ... |
 
 # 5. Development Responsibility
 This section will contain different aspects of the "Smart Stock" and who will be responsible for development of said aspects.
