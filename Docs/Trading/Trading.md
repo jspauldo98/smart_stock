@@ -1,17 +1,29 @@
 # Trading Documentation
 
 ## Summary
-The purpose of this document is to lay out a development plan detailing the specifics of "Smart Stock" trading.
+The purpose of this document is to lay out a development plan detailing the specifics of "Smart Stock" trading. Each Trading Account will be assigned a "strategy" in which to base trades off of. Strategies be be built from a multitude of variables including but not limited to time, fundamental analysis, and technical analysis.
 
 ## Definitions and Acronyms
 
+- Fundamental Analysis: Measuring a companies "worthiness" by the overall state of the company.
+- Technical Analysis: Speculation based off of trends and patterns.
 - EMA: Exponential Moving Average
 - MACD: Moving Average Convergence/Divergence
 - RSI: Relative Strength Index
 - OBV: On Balance Volume
 - Volatility: The standard deviation or variance between returns from that same security or market index
 
-## Indicators Used
+## Fundamental Analysis
+Will take place for strategies with a longer time frame where the value of the underlying company to be traded matters more. Some areas "Smart Stock" should take a look at include but is not limited to:
+
+- Revenues
+- Earnings
+- Future Growth Estimation
+- Return on Equity
+- Profit Margins
+- P/E Ratio
+
+## Technical Analysis (Indicators)
 ## [Volume](https://www.investopedia.com/articles/technical/02/010702.asp)
 Can be useful for determining:
 
