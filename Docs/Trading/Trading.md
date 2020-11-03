@@ -97,7 +97,10 @@ We will undoubtedly come across many situations where multiple tickers in the NY
 3. Where does the current volume lay in the range of volume averages of the stock to date?  
 4. What does this stock usually open at?  
 5. What does this stock usually close at?  
-Depending on the results to the above calculations/questions, a selection will be made that will profit the user the most. For example, if the current price of the stock is much higher,than what the user (machine) bought it at, the volume is trailing down from it's usual average, and it meets all the criteria laid out by the trading algorithm(s), that particular ticker will be chosen. This process will be repeated for all tickers in the selection pool, and once five or less have been selected/executed, the rest will be released from the pool. 
+  
+Depending on the results to the above calculations/questions, a selection will be made that will profit the user the most. For example, if the current price of the stock is much higher,than what the user (machine) bought it at, the volume is trailing down from it's usual average, and it meets all the criteria laid out by the trading algorithm(s), that particular ticker will be chosen. This process will be repeated for all tickers in the selection pool, and once five or less have been selected/executed, the rest will be released from the pool.
+  
+The amount, or quantity of shares that will be bought or sold will depend on how aggressive or passive the users preferences are. More will be bought or sold at once if the user wants to pursue an aggressive/risky account strategy, and less will be bought or sold at once if the user wishes to pursue a passive/safe account strategy.  
 
 
 ## Author(s)
