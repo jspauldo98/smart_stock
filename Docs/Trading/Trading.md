@@ -1,7 +1,7 @@
 # Trading Documentation
 
 ## Summary
-The purpose of this document is to lay out a development plan detailing the specifics of "Smart Stock" trading. Each Trading Account will be assigned a "strategy" in which to base trades off of. Strategies be be built from a multitude of variables including but not limited to time, fundamental analysis, and technical analysis.
+The purpose of this document is to lay out a development plan detailing the specifics of "Smart Stock" trading. Each Trading Account will be assigned a "strategy" in which to base trades off of. Strategies be be built from a multitude of variables including but not limited to time, fundamental analysis, and technical analysis. Final underlying stocks will be separated and chosen given a quantifiable ranking system.
 
 ## Definitions and Acronyms
 
@@ -91,12 +91,16 @@ Strategies will consist of zero or more combinations of the indicators listed ab
 - Sector-Specific Trading, i.e. only buy/sell in tech  
 
 ## Final Execution
-We will undoubtedly come across many situations where multiple tickers in the NYSE and NASDAQ BX exchanges that are within a user's selection have triggered buy/sell actions based on real-time data in their desired trading algorithm(s). For this reason, we have devised a plan to make a selection of a few tickers among that pool of options. This selection process will take a final look at the following historical attributes, before making a decision on five, or less tickers, depending on the circumstances.  
-1. Where does the current price lay in the range of highest price of the stock traded to date?  
-2. Where does the current price lay in the range of the lowest price of the stock traded to date?  
-3. Where does the current volume lay in the range of volume averages of the stock to date?  
-4. What does this stock usually open at?  
-5. What does this stock usually close at?  
+
+We will undoubtedly come across many situations where multiple tickers in the NYSE and NASDAQ BX exchanges that are within a user's selection have triggered buy/sell actions based on real-time data in their desired trading algorithm(s). For this reason, we have devised a plan to make a selection of a few tickers among that pool of options. This selection process will take a final look at the following historical attributes, before making a decision on five, or less tickers, depending on the circumstances. Quantifiable scoring will be associated with each ticker corresponding to weighted criteria. This scoring will be the deciding factor.
+
+| Criteria | Weight | 
+| :--- | ---: |
+| Where does the current price lay in the range of highest price of the stock traded to date? | 0.2 |
+| Where does the current price lay in the range of the lowest price of the stock traded to date? | 0.2 |
+| Where does the current volume lay in the range of volume averages of the stock to date? | 0.2 |
+| What does this stock usually open at? | 0.2 |
+| What does this stock usually close at? | 0.2 |
   
 Depending on the results to the above calculations/questions, a selection will be made that will profit the user the most. For example, if the current price of the stock is much higher,than what the user (machine) bought it at, the volume is trailing down from it's usual average, and it meets all the criteria laid out by the trading algorithm(s), that particular ticker will be chosen. This process will be repeated for all tickers in the selection pool, and once five or less have been selected/executed, the rest will be released from the pool.
   
@@ -105,4 +109,5 @@ The amount, or quantity of shares that will be bought or sold will depend on how
 
 ## Author(s)
 Jared Spaulding,  
+
 Stefan Emmons  
