@@ -83,12 +83,12 @@ How to calculate volatility:
 ## Strategies
 Strategies will consist of zero or more combinations of the indicators listed above to justify buying and selling conditions. Each indicator will be adjusted to account for the desired time span and risk level. Some of these strategies will include, but are not limited to:  
 
-- Swing Trading
-- Day Trading  
-- Long Term Investing, or Blue Chip Trading  
-- Trend Trading  
-- Scalp Trading  
-- Sector-Specific Trading, i.e. only buy/sell in tech  
+- [Swing Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/SwingTrading.md)
+- [Day Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/DayTrading.md)  
+- [Long Term Investing / Blue Chip Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/LongTermTrading.md)
+- [Trend Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/TrendTrading.md)
+- [Scalp Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/ScalpTrading.md)
+- [Sector-Specific Trading](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Trading/SectorTrading.md)
 
 ## Final Execution
 
