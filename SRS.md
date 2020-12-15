@@ -52,20 +52,29 @@ Anyone who is interested in trading the stock market and of State or regional ag
 
 # 4. Deliverables Scheduling and Estimates
 
-| Deadline | Modal | Description | Date Completed |
-| :---------- | :---: | :---------- | -------------: |
-| 10-04-2020 | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc | 10-04-2020 |
-| ??? | Peer Feedback on Project Description | N/A | ... |
-| ??? | Midterm Status Update Document & Presentation | N/A | ... |
-| ??? | Peer Feedback on Status Update Presentation | N/A | ... |
-| ??? | Poster Product - Actual Poster | N/A | ... |
-| ??? | Poster Presentation | N/A | ... |
-| ??? | Peer Evaluation on Poster Design Draft & Practice | N/A | ... |
-| ??? | Self and Team Evaluation | N/A | ... |
-| 05-??-2021 | Launch "Smart Stock" | Finalize project and launch | ... |
+| Deadline Date | Modal          | Description        | Date Completed |
+| :--           | :-:            | :--                | --:            |
+| 10-04-2020    | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc | 10-04-2020 |
+| 12-06-2020    | Project Presentation | Recorded presentation of research and planning from Fall 2020 | 12-06-2020 |
+| 12-06-2020    | Teaser | Video to tease target audiance | 12-06-2020 |
+| 05-??-2021    | Launch "Smart Stock" | Finalize project and launch | ... |
 
 # 5. Development Responsibility
-This section will contain different aspects of the "Smart Stock" and who will be responsible for development of said aspects.
+This section will contain different aspects of the "Smart Stock" and who will be responsible for development of said aspects. This is subject to change.
+
+| Development Aspect       | Team Member(s)           | Progress           |
+| :--                      | :--                      | --:                |
+| Co-Project Manager       | Stefan Emmons <br/> Jared Spaulding | In Progress |
+| C# API Controllers       | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#_API_Controllers.md) |
+| C# Middleware            | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#_Middleware.md) |
+| Database Management      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Data_Push_Services.md) |
+| Data Push Services       | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Database_Management.md) |
+| End-to-End Unit Testing  | Spencer Romberg | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/End-to-End_Testing.md) |
+| Front End Components     | Stefan Emmons <br/> Spencer Romberg | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Components.md) |
+| Front End Services       | Stefan Emmons <br/> Spencer Romberg | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Services.md) |
+| Python Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Python_Script_Dev.md) |
+| Respository Classes      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#Respository_Classes.md) |
+| Shell Script Dev.        | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Shell_Script_Dev.md) |
 
 # 6. Risk Management
 ## 6.1 Risk Identification
