@@ -65,9 +65,10 @@ This section will contain different aspects of the "Smart Stock" and who will be
 | Development Aspect       | Team Member(s)           | Progress           |
 | :--                      | :--                      | --:                |
 | Co-Project Manager       | Stefan Emmons <br/> Jared Spaulding | In Progress |
+| Documentation            | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/tree/master/Docs) |
 | C# API Controllers       | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C%23_API_Controllers.md) |
 | C# Middleware            | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C%23_Middleware.md) |
-| Database Management      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Data_Push_Services.md) |
+| Database Management      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Data_Push_Services.md) |
 | Data Push Services       | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Database_Management.md) |
 | End-to-End Unit Testing  | Spencer Romberg | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/End-to-End_Testing.md) |
 | Front End Components     | Stefan Emmons <br/> Spencer Romberg | [Incomplete](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Components.md) |
