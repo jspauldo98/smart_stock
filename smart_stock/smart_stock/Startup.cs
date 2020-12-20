@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using MySqlConnector;
 
 namespace smart_stock
 {
@@ -32,6 +32,7 @@ namespace smart_stock
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddSwaggerGen();
+            services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
