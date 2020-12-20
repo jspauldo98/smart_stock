@@ -34,8 +34,6 @@ namespace smart_stock
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddSwaggerGen();
-            //services.AddTransient<MySqlConnection>(_ => new MySqlConnection(Configuration["ConnectionStrings:DefaultConnection"]));
-            Console.WriteLine("Here!");
             services.AddSingleton<IDbExecutor, MySqlExecutor>(x => new MySqlExecutor(Configuration.GetConnectionString("DefaultConnection")));
         }
 
