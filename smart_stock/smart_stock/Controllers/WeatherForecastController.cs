@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using smart_stock.Models;
+using smart_stock.Services;
+using MySqlConnector;
+using Dapper;
+
 
 namespace smart_stock.Controllers
 {
@@ -21,6 +25,7 @@ namespace smart_stock.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IDbExecutor dbExecutor;
         private static List<WeatherForecast> forecasts = new List<WeatherForecast>();
         private static int idCounter = 0;
         private static System.Random rng = new Random();
@@ -42,10 +47,12 @@ namespace smart_stock.Controllers
             Summary = Summaries[rng.Next(Summaries.Length)]
         };
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IDbExecutor dbExecutor)
         {
             //This will become useful as we need to track more server side issues
             _logger = logger;
+            this.dbExecutor = dbExecutor;
         }
 
         [HttpGet("forecasts")]
@@ -56,6 +63,8 @@ namespace smart_stock.Controllers
                 forecasts.Add(forecastOne);
                 forecasts.Add(forecastTwo);
             }
+            
+            //dbExecutor.Execute((dbConn, transaction) => dbConn.Execute("CREATE TABLE `TEST TABLE` (`id` INT(64) NOT NULL AUTO_INCREMENT)", transaction));
             return forecasts.ToArray();
         }
 
