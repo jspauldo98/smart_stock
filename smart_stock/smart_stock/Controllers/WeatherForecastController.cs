@@ -64,7 +64,7 @@ namespace smart_stock.Controllers
                 forecasts.Add(forecastTwo);
             }
             
-            //dbExecutor.Execute((dbConn, transaction) => dbConn.Execute("CREATE TABLE `TEST TABLE` (`id` INT(64) NOT NULL AUTO_INCREMENT)", transaction));
+            dbExecutor.Execute((dbConn, transaction) => dbConn.Execute("CREATE TABLE `TEST TABLE` (`id` INT(64) NOT NULL AUTO_INCREMENT)", transaction: transaction));
             return forecasts.ToArray();
         }
 
