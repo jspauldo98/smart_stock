@@ -16,6 +16,7 @@
     <PackageReference Include="dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.4" />
+    <PackageReference Include="Mysql.Data" Version="8.0.23" />
     <PackageReference Include="MySqlConnector" Version="1.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
