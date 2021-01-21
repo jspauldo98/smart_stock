@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace smart_stock.Models
 {
-    public class Credentials
+    public class Credential
     {
         [Key]
         [Column(TypeName = "int(64)")]
@@ -15,6 +15,6 @@ namespace smart_stock.Models
 
         [Required]
         [Column(TypeName = "varchar(100)")]
-        public string password { get; set; }
+        public string Password { get; set; }
     }
 }

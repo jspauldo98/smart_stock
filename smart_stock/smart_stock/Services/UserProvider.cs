@@ -25,15 +25,15 @@ namespace smart_stock.Services
                 return new MySqlConnection(_config.GetConnectionString("DevConnection"));
             }
         }
-        public async Task<IEnumerable<UserBase>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
             try
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT * FROM UserBase";
+                    string sQuery = "SELECT * FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii";
                     connection.Open();
-                    var result = await connection.QueryAsync<UserBase>(sQuery);
+                    var result = await connection.QueryAsync<User>(sQuery);
                     return result.ToList();
                 }
             }
@@ -44,16 +44,16 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<UserBase> GetUser(int id)
+        public async Task<User> GetUser(int id)
         {
             try
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT id, user, date_added, date_confirmed FROM UserBase WHERE id = @id";
+                    string sQuery = "SELECT * FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii WHERE u.id = @id";
                     var @param = new {id = id };
                     connection.Open();
-                    var result = await connection.QueryAsync<UserBase>(sQuery, @param);
+                    var result = await connection.QueryAsync<User>(sQuery, @param);
                     return result.FirstOrDefault();
                 }
             }
@@ -64,14 +64,14 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<bool> UpdateUser(int id, UserBase user)
+        public async Task<bool> UpdateUser(int id, User user)
         {
             try
             {
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var sQuery = @"UPDATE UserBase SET date_confirmed = @date_confirmed WHERE id = @id";        
+                    var sQuery = @"UPDATE User SET date_confirmed = @date_confirmed WHERE id = @id";        
                     var @params = new {
                         join_date = user.DateConfirmed,
                         id = id
@@ -88,21 +88,45 @@ namespace smart_stock.Services
             }            
         }
 
-        public async Task<bool> InsertUser(UserBase user)
+        public async Task<bool> InsertUser(User user)
         {   
             try
             {
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var sQuery = @"INSERT INTO UserBase (user, date_added, date_confirmed) VALUES (@user, @date_added, @date_confirmed)";        
+                    var sQuery = @"INSERT INTO Credentials (username, password) VALUES (@username, @password";        
                     var @params = new {
-                        user = user.user.Id,
-                        date_added = user.DateAdded,
-                        date_confirmed = user.DateConfirmed,
+                        username = user.Credential.Username,
+                        password = user.Credential.Password
+                        
                     };      
                     connection.Open();
                     result = await connection.ExecuteAsync(sQuery, @params);
+                    if (result > 0)
+                    {
+                        sQuery = @"INSERT INTO PII (f_name, l_name, dob, email, phone) VALUES (@f_name, @l_name, @dob, @email, @phone";        
+                        var @params2 = new {                            
+                            f_name = user.Pii.FirstName,
+                            l_name = user.Pii.LastName,
+                            dob = user.Pii.Dob,
+                            email = user.Pii.Email,
+                            phone = user.Pii.Phone
+                        };      
+                        result = await connection.ExecuteAsync(sQuery, @params2);
+                    }
+                    if (result > 0)
+                    {                        
+                        sQuery = @"INSERT INTO User (pii, credentials, join_date, date_added, date_confirmed) VALUES (@pii, @credentials, @join_date, @date_added, @date_confirmed)";        
+                        var @params3 = new {
+                            pii = user.Pii.id,
+                            credentials = user.Credential.id,
+                            join_date = user.JoinDate,
+                            date_added = user.DateAdded,
+                            date_confirmed = user.DateConfirmed
+                        };      
+                        result = await connection.ExecuteAsync(sQuery, @params3);
+                    }
                 }
                 return result > 0;
             }
@@ -120,7 +144,7 @@ namespace smart_stock.Services
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var sQuery = @"DELETE userBase, user FROM UserBase INNERJOIN User WHERE userBase.id = @id and user.id = @id";     
+                    var sQuery = @"DELETE u.*, c.*, p.* FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii WHERE user.id = @id";     
                     var @params = new { id = id };         
                     connection.Open();
                     result = await connection.ExecuteAsync(sQuery, @params);
@@ -141,7 +165,7 @@ namespace smart_stock.Services
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var sQuery = @"SELECT EXISTS (SELECT * FROM UserBase WHERE id = @id)";     
+                    var sQuery = @"SELECT EXISTS (SELECT * FROM User WHERE id = @id)";     
                     var @params = new { id = id };         
                     connection.Open();
                     result = connection.Query<int>(sQuery, @params).FirstOrDefault();

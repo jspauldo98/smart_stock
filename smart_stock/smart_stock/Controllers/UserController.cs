@@ -9,81 +9,78 @@ using System;
 
 namespace smart_stock.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
+    [EnableCors("User")]
     public class UserController : ControllerBase
     {
-        [Route("api/[controller]")]
-        [ApiController]
-        [EnableCors("User")]
-        public class PaymentDetailController : ControllerBase
+        private readonly IUserProvider _userProvider;
+        public UserController (IUserProvider userProvider)
         {
-            private readonly IUserProvider _userProvider;
-            public PaymentDetailController (IUserProvider userProvider)
+            _userProvider = userProvider;
+        }
+
+        // GET: api/User
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {            
+            var test = await _userProvider.GetAllUsers();
+            return test.ToList();
+        }
+
+        // GET: api/User/id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
+        {
+            var user = await _userProvider.GetUser(id);
+
+            if (user == null)
             {
-                _userProvider = userProvider;
+                return NotFound();
             }
 
-            // GET: api/User
-            [HttpGet]
-            public async Task<ActionResult<IEnumerable<UserBase>>> GetUsers()
-            {            
-                var test = await _userProvider.GetAllUsers();
-                return test.ToList();
-            }
+            return user;
+        }
 
-            // GET: api/User/id
-            [HttpGet("{id}")]
-            public async Task<ActionResult<UserBase>> GetUser(int id)
+        // PUT: api/User/id
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, User user)
+        {
+            if (id != user.Id)
             {
-                var paymentDetail = await _userProvider.GetUser(id);
-
-                if (paymentDetail == null)
-                {
-                    return NotFound();
-                }
-
-                return paymentDetail;
+                return BadRequest();
             }
 
-            // PUT: api/User/id
-            [HttpPut("{id}")]
-            public async Task<IActionResult> PutUser(int id, UserBase user)
+            if (_userProvider.UserExists(id))
             {
-                if (id != user.id)
-                {
-                    return BadRequest();
-                }
-
-                if (_userProvider.UserExists(id))
-                {
-                    await _userProvider.UpdateUser(id, user);
-                }  
-                else 
-                {
-                    return NotFound();
-                }          
-
-                return NoContent();
-            }
-
-            // POST: api/User
-            [HttpPost]
-            public async Task<ActionResult<bool>> PostUser(UserBase user)
+                await _userProvider.UpdateUser(id, user);
+            }  
+            else 
             {
-                return await _userProvider.InsertUser(user);
-            }
+                return NotFound();
+            }          
 
-            // DELETE: api/User/id
-            [HttpDelete("{id}")]
-            public async Task<ActionResult<bool>> DeleteUser(int id)
+            return NoContent();
+        }
+
+        // POST: api/User
+        [HttpPost]
+        public async Task<ActionResult<bool>> PostUser(User user)
+        {
+            return await _userProvider.InsertUser(user);
+        }
+
+        // DELETE: api/User/id
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> DeleteUser(int id)
+        {
+            var user = await _userProvider.DeleteUser(id);
+            if (!user)
             {
-                var user = await _userProvider.DeleteUser(id);
-                if (!user)
-                {
-                    return NotFound();
-                }
-
-                return user;
+                return NotFound();
             }
+
+            return user;
         }
     }
 }
