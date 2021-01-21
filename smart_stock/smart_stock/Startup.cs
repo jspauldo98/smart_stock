@@ -40,10 +40,11 @@ namespace smart_stock
             {
                 app.UseDeveloperExceptionPage();
                 //Incredibly helpful for tracking exactly what JSON goes to which endpoint (controller functions)
-                app.UseSwagger();
-                app.UseSwaggerUI(config => {
-                    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
-                });
+                // TODO Swagger throwing errors so commenting it out 
+                // app.UseSwagger();
+                // app.UseSwaggerUI(config => {
+                //     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
+                // });
             }
             else
             {
