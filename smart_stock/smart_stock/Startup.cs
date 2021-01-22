@@ -1,16 +1,9 @@
-using System;
-using Dapper;
-using Swashbuckle.AspNetCore.Swagger;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MySqlConnector;
 using smart_stock.Services;
 
 namespace smart_stock
@@ -33,8 +26,11 @@ namespace smart_stock
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSwaggerGen();
-            services.AddSingleton<IDbExecutor, MySqlExecutor>(x => new MySqlExecutor(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IUserProvider, UserProvider>();
+            services.AddCors(options => options.AddPolicy("PaymentDetail", builder =>
+            {
+                builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +60,9 @@ namespace smart_stock
             }
 
             app.UseRouting();
+
+            app.UseCors(options => options.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value)
+                .AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {
