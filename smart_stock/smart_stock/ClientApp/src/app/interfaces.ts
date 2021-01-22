@@ -5,3 +5,27 @@ export interface IWeatherForecast {
     temperatureC: number;
     summary: string;
   }
+
+  export interface ICredential {
+    id: number;
+    username: string;
+    password: string;
+  }
+
+  export interface IPii {
+    id: number;
+    firstName: string;
+    lastName: string;
+    dob: Date;
+    email: string;
+    phone: string;
+  }
+
+  export interface IUser {
+    id: number;
+    joinDate: Date;
+    dateAdded: Date;
+    dateConfirmed: Date;
+    pii: IPii;
+    credential: ICredential;
+  }
