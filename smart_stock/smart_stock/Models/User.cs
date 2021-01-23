@@ -15,9 +15,16 @@ namespace smart_stock.Models
         public DateTime JoinDate { get; set; }
 
         [Required]
-        public Credentials Credentials { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime DateAdded { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime DateConfirmed { get; set; }
 
         [Required]
         public Pii Pii { get; set; }
+
+        [Required]
+        public Credential Credential { get; set; }
     }
 }

@@ -6,26 +6,28 @@ namespace smart_stock.Services
 {
     public interface IUserProvider
     {
-        /* Get all users from table UserBase */
-        Task<IEnumerable<UserBase>> GetAllUsers();
+        /* Get all users from table 'User' */
+        Task<IEnumerable<User>> GetAllUsers();
 
-        /* Get a single user from table UserBase given a user id.
-            Returns a list of UserBase objects on success */
-        Task<UserBase> GetUser(int id);
+        /* Get a single user from table 'User' given a user id.
+            Returns a list of User objects on success */
+        Task<User> GetUser(int id);
 
-        /* Update a single user in table UserBase given a user id.
-            Returns UserBase object on success given parameter 'id' */
-        Task<bool> UpdateUser(int id, UserBase user);
+        /* Update a single user in table 'User' given a user id.
+            Returns User object on success given parameter 'id' and 'user' */
+        Task<bool> UpdateUser(int id, User user);
 
-        /* Insert a single user into table UserBase.
+        /* Insert a single user into table 'User'.
+            Insert a single user's credentials into table 'Credential'.
+            Insert a single user's pii into the table 'PII'
             returns true on success given the parameter 'user' */
-        Task<bool> InsertUser(UserBase user);
+        Task<bool> InsertUser(User user);
 
-        /* Delete a user from table tables UserBase and User
+        /* Delete a user from table tables 'User', 'Credentials', and 'PII'.
             Returns true on success given the parameter 'user' */
         Task<bool> DeleteUser(int id);
 
-        /* Check if a user exists. Checks from table UserBase.
+        /* Check if a user exists. Checks from table 'User'.
             Returns true on success given the parameter 'id' */
         bool UserExists(int id);
     }
