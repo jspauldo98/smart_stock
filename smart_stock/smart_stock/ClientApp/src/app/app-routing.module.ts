@@ -2,13 +2,14 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
-import { AuthComponent } from './auth/auth.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './auth.guard';
 
 //Do not allow for routes to be modified after compile time, keep routing variables set as const's
 const routes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'login' },
-    { path: 'auth', component: AuthComponent },
-    { path: 'home', component: HomeComponent }
+    { path: 'login', component: LoginComponent },
+    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

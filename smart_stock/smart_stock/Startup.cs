@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using smart_stock.Services;
 
 namespace smart_stock
@@ -31,6 +32,7 @@ namespace smart_stock
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();
             }));
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v0.1", new OpenApiInfo {Title = "Smart Stock API", Version= "v0.1"}); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,10 +43,10 @@ namespace smart_stock
                 app.UseDeveloperExceptionPage();
                 //Incredibly helpful for tracking exactly what JSON goes to which endpoint (controller functions)
                 // TODO Swagger throwing errors so commenting it out 
-                // app.UseSwagger();
-                // app.UseSwaggerUI(config => {
-                //     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
-                // });
+                 app.UseSwagger();
+                 app.UseSwaggerUI(config => {
+                     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
+                });
             }
             else
             {

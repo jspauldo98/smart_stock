@@ -6,17 +6,19 @@ namespace smart_stock.Models
 {
     public class Pii
     {
+        //Need to fix database schema, snake case mapping isn't ideal but variables must match
+        //column names.
         [Key]
         [Column(TypeName = "int(64)")]
         public int id { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(100)")]
-        public string FirstName { get; set; }
+        public string F_Name { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(100)")]
-        public string LastName { get; set; }
+        public string L_Name { get; set; }
 
         [Required]
         [Column(TypeName = "date")]

@@ -15,6 +15,8 @@ namespace smart_stock.Services
 
         /* Update a single user in table 'User' given a user id.
             Returns User object on success given parameter 'id' and 'user' */
+
+        Task<User> GetUserLogin(string username);    
         Task<bool> UpdateUser(int id, User user);
 
         /* Insert a single user into table 'User'.
