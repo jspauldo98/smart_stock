@@ -1,0 +1,10 @@
+1/25/2021 CHANGES:
+use SmartStock;
+alter table PII change f_name fname varchar(100);
+alter table PII change l_name lname varchar(100);
+alter table User change join_date joindate date;
+alter table User change date_added dateadded date;
+alter table User change date_confirmed dateconfirmed date;
+insert into PII (fname,lname,dob,email,phone) values ('Admin', 'User', '1970-01-01', 'test@test.com', null);
+insert into Credential (username, password) values ('Admin', '$2a$11$XyyO0iwLFwpOedBwSF/mfukAezGFmEUlei7D6BUzRaoUylMUCGPG2');
+insert into User (pii, credentials, joindate, dateadded, dateconfirmed) values (1, 1, '1970-01-01', '1970-01-01', '1970-01-01');
