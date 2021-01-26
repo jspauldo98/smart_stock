@@ -16,6 +16,7 @@ body {
   display:table;
   height:100%;
   margin: 0 auto;
+  padding-top: 11%;
 }
 
 .app-header {
@@ -80,9 +81,13 @@ body {
 	width: 100%;
 }
 
-.main-wrapper .example-full-width,
-.main-wrapper .btn-block {
+.main-wrapper .main-wrapper .btn-block {
 	width: 100%;
+}
+
+.full-width-form {
+  width: 100%;
+  color: cornsilk !important;
 }
 
 .main-wrapper mat-card-header {
@@ -109,4 +114,11 @@ body {
 
 .main-wrapper .mat-form-field-appearance-legacy .mat-form-field-infix {
 	padding: 0.8375em 0;
+}
+
+.header-format {
+  background-color: #673AB7 !important; 
+  color: cornsilk; 
+  border-radius: 5px;
+  margin-bottom: 30px;
 }

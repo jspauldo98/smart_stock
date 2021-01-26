@@ -1,9 +1,9 @@
 <body>
   <div class="master-container">
     <div class="main-wrapper">
-      <mat-card >
-        <mat-card-header>
-          <mat-card-title>Log In To Smart Stock</mat-card-title>
+      <mat-card style="background-color: #121212;" >
+        <mat-card-header class="header-format">
+          <mat-card-title>Smart Stock Login</mat-card-title>
         </mat-card-header>
     
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
@@ -11,15 +11,17 @@
             <mat-error *ngIf="isLoginInvalid">
               Sorry, that username or password was not recognized. Please try again.
           </mat-error>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Username" formControlName="username">
+            <mat-form-field class="full-width-form">
+              <mat-label for="username" style="color: cornsilk;">Username</mat-label>
+              <input matInput formControlName="username">
             </mat-form-field>
     
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Password" formControlName="password">
+            <mat-form-field class="full-width-form">
+              <mat-label for="password" style="color: cornsilk;">Password</mat-label>
+              <input matInput formControlName="password" type="password">
             </mat-form-field>
           </mat-card-content>
-          <button mat-stroked-button color="primary">Log in</button>
+          <button mat-raised-button color="primary" style="margin-left: 38%;">Log in</button>
         </form>
       </mat-card>
     </div>
