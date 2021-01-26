@@ -10,15 +10,15 @@ namespace smart_stock.Models
         //column names.
         [Key]
         [Column(TypeName = "int(64)")]
-        public int id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(100)")]
-        public string F_Name { get; set; }
+        public string FName { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(100)")]
-        public string L_Name { get; set; }
+        public string LName { get; set; }
 
         [Required]
         [Column(TypeName = "date")]

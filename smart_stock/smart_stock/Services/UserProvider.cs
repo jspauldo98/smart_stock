@@ -1,3 +1,4 @@
+using BC = BCrypt.Net.BCrypt;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using MySql.Data.MySqlClient;
 using Dapper;
 using System.Linq;
 using smart_stock.Models;
+
 
 namespace smart_stock.Services
 {
@@ -64,7 +66,7 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<User> GetUserLogin(string username)
+        public async Task<User> GetUserLogin(string username, string password)
         {
             try
             {
@@ -72,7 +74,7 @@ namespace smart_stock.Services
                 {
                     string credIdQuery = "SELECT * FROM Credential WHERE username = @username";
                     var @idParam = new {
-                        username = username,
+                        username = username
                     };
                     connection.Open();
                     Credential credential = await connection.QueryFirstOrDefaultAsync<Credential>(credIdQuery, idParam);
@@ -80,24 +82,28 @@ namespace smart_stock.Services
                     {
                         return null;
                     }
-
+                    bool isVerified = BC.Verify(password, credential.Password);
+                    if (!isVerified)
+                    {
+                        return null;
+                    }
                     string piiIdQuery = "SELECT pii FROM User WHERE credentials = @credentialId";
-                    var @piiIdParam = new {credentialId = credential.id};
+                    var @piiIdParam = new {credentialId = credential.Id};
                     int? piiId = await connection.QueryFirstOrDefaultAsync<int?>(piiIdQuery, @piiIdParam);
 
                     string piiQuery = "SELECT * FROM PII WHERE id = @id";
                     var @piiParam = new {id = piiId};
                     Pii pii = await connection.QueryFirstOrDefaultAsync<Pii>(piiQuery, @piiParam);
 
-                    string userQuery = "SELECT id, join_date, date_added, date_confirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
+                    string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
                     var @userParams = new {
-                        piiId = pii.id,
-                        credentialId = credential.id
+                        piiId = pii.Id,
+                        credentialId = credential.Id
                     };
                     User user = await connection.QueryFirstOrDefaultAsync<User>(userQuery, @userParams);
                     user.Pii = pii;
                     user.Credential = credential;
-
+                    password = null;
                     return user;
                 }
             }
@@ -117,7 +123,7 @@ namespace smart_stock.Services
                 {                
                     var sQuery = @"UPDATE User SET date_confirmed = @date_confirmed WHERE id = @id";        
                     var @params = new {
-                        join_date = user.Date_Confirmed,
+                        join_date = user.DateConfirmed,
                         id = id
                     };      
                     connection.Open();
@@ -151,8 +157,8 @@ namespace smart_stock.Services
                     {
                         sQuery = @"INSERT INTO PII (f_name, l_name, dob, email, phone) VALUES (@f_name, @l_name, @dob, @email, @phone";        
                         var @params2 = new {                            
-                            f_name = user.Pii.F_Name,
-                            l_name = user.Pii.L_Name,
+                            f_name = user.Pii.FName,
+                            l_name = user.Pii.LName,
                             dob = user.Pii.Dob,
                             email = user.Pii.Email,
                             phone = user.Pii.Phone
@@ -163,11 +169,11 @@ namespace smart_stock.Services
                     {                        
                         sQuery = @"INSERT INTO User (pii, credentials, join_date, date_added, date_confirmed) VALUES (@pii, @credentials, @join_date, @date_added, @date_confirmed)";        
                         var @params3 = new {
-                            pii = user.Pii.id,
-                            credentials = user.Credential.id,
-                            join_date = user.Join_Date,
-                            date_added = user.Date_Added,
-                            date_confirmed = user.Date_Confirmed
+                            pii = user.Pii.Id,
+                            credentials = user.Credential.Id,
+                            join_date = user.JoinDate,
+                            date_added = user.DateAdded,
+                            date_confirmed = user.DateConfirmed
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params3);
                     }

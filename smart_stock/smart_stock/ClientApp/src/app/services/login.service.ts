@@ -13,28 +13,25 @@ export class LoginService {
   private readonly apiPath: string;
 
   private user : IUser;
-  private userObservable : Observable<IUser>;
 
-  isLoggedIn(): Observable<boolean> {
-    if (this.user != null) {
-      return of (true);
+  get currentUser(): Observable<IUser> {
+    if (this.isLoggedIn()) {
+      return of (this.user);
     }
-    else {
-      return of (false);
-    }
+    return of (null);
   }
 
   constructor(private readonly httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.apiPath = baseUrl + 'api/login';
   }
   
-  public getUserLogin(username: string): Observable<IUser> {
-    console.log(username);
-      return this.httpClient.get<IUser>(`${this.apiPath}/${username}`)
+  //I am using a POST method instead of a GET method such that I can send the entire credential 
+  //body back to the controller for further processing. 
+  public getUserLogin(credential: ICredential): Observable<IUser> {
+      return this.httpClient.post<IUser>(`${this.apiPath}`, credential)
       .pipe(
         map(x =>  {
           this.user = (x as IUser);
-          console.log(this.user);
           //shorthand for return observable of IUser
           return of (x);
         }),
@@ -43,5 +40,14 @@ export class LoginService {
           return of (null);
         })
       );
+  }
+
+  public isLoggedIn(): Observable<boolean> {
+    if (this.user != null) {
+      return of (true);
+    }
+    else {
+      return of (false);
+    }
   }
 }

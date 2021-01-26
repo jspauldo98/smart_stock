@@ -7,7 +7,7 @@ namespace smart_stock.Models
     {
         [Key]
         [Column(TypeName = "int(64)")]
-        public int id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(100)")]

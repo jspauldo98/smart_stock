@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import {FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { IUser } from '../interfaces';
+import { ICredential } from '../interfaces';
 import { LoginService } from '../services/login.service';
 
 @Component({
@@ -17,11 +17,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder) { }
 
 
-    public getUserSub: Subscription;
+    public getUserLoginSub: Subscription;
     userForm: FormGroup;
     isSubmitted: boolean = false;
     isLoginInvalid: boolean = false;
-    user: IUser;
     
     get formControls() { return this.userForm.controls; }
 
@@ -33,7 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.getUserSub) this.getUserSub.unsubscribe();
+    if (this.getUserLoginSub) this.getUserLoginSub.unsubscribe();
   }
 
   onSubmit(): void {
@@ -41,7 +40,12 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
     this.isSubmitted = true;
-    this.loginService.getUserLogin(this.userForm.value.username).subscribe(user => {
+    let credentialBody: ICredential = {
+      id: null,
+      username: this.userForm.value.username,
+      password: this.userForm.value.password
+    };
+    this.loginService.getUserLogin(credentialBody).subscribe(user => {
       if (user === null) {
         this.isLoginInvalid = true;
         return;

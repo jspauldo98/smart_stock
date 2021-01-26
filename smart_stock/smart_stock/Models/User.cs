@@ -10,18 +10,18 @@ namespace smart_stock.Models
         //column names.
         [Key]
         [Column(TypeName = "int(64)")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [Column(TypeName = "date")]
-        public DateTime Join_Date { get; set; }
+        public DateTime JoinDate { get; set; }
 
         [Required]
         [Column(TypeName = "date")]
-        public DateTime Date_Added { get; set; }
+        public DateTime DateAdded { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime Date_Confirmed { get; set; }
+        public DateTime DateConfirmed { get; set; }
 
         [Required]
         public Pii Pii { get; set; }

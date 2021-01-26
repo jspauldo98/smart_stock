@@ -1,11 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
+using BC = BCrypt.Net.BCrypt;
+using System;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using smart_stock.Models;
 using smart_stock.Services;
-using System;
+
+
 
 namespace smart_stock.Controllers
 {
@@ -21,14 +24,17 @@ namespace smart_stock.Controllers
         }
 
         // GET: api/User/id
-        [HttpGet("{username}")]
-        public async Task<ActionResult<User>> GetUserLogin(string username)
+        [HttpPost]
+        public async Task<ActionResult<User>> GetUserLogin([FromBody] Credential credential)
         {
-            if (username != null)
+            if (ModelState.IsValid)
             {
-                User user = await _userProvider.GetUserLogin(username);
+                User user = await _userProvider.GetUserLogin(credential.Username, credential.Password);
+                
                 if (user != null)
                 {
+                    credential.Password = null;
+                    user.Credential.Password = null;
                     return Ok(user);
                 }
                 else {
