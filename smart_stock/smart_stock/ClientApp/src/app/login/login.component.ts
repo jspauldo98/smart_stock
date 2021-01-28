@@ -31,6 +31,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  toRegisterView() : void {
+    this.router.navigateByUrl("/register");
+  }
+
   ngOnDestroy(): void {
     if (this.getUserLoginSub) this.getUserLoginSub.unsubscribe();
   }

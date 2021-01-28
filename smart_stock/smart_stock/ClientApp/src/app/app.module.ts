@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -23,6 +24,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from '../app/home/home.component';
 import { LoginComponent } from '../app/login/login.component';
+import { RegisterComponent } from '../app/register/register.component';
+import { PersonalInformationComponent } from '../app/register/personal-information.component';
 
 import { LoginService } from './services/login.service';
 //Root module, everything needs to be imported here first
@@ -30,7 +33,9 @@ import { LoginService } from './services/login.service';
   declarations: [
     AppComponent,
     HomeComponent,
-    LoginComponent
+    LoginComponent,
+    RegisterComponent,
+    PersonalInformationComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -51,7 +56,8 @@ import { LoginService } from './services/login.service';
     MatInputModule,
     MatCardModule,
     MatSlideToggleModule,
-    MatSelectModule
+    MatSelectModule, 
+    MatTabsModule
   ],
   providers: [DatePipe,
   LoginService],

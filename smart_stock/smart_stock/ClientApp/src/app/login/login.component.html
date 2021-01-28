@@ -21,7 +21,14 @@
               <input matInput formControlName="password" type="password">
             </mat-form-field>
           </mat-card-content>
-          <button mat-raised-button color="primary" style="margin-left: 38%;">Log in</button>
+          <div class="row">
+            <div class="col-5">
+              <button mat-raised-button color="primary" style="margin-left: 80%;">Log in</button>
+            </div>
+            <div class="col-5">
+              <button mat-raised-button color="primary" (click)="toRegisterView()" style="margin-left: 19%;">Register</button>
+            </div>
+          </div>
         </form>
       </mat-card>
     </div>

@@ -38,7 +38,7 @@ namespace smart_stock.Controllers
                     return Ok(user);
                 }
                 else {
-                    return NotFound();
+                    return NoContent();
                 }
             }
             return BadRequest();
