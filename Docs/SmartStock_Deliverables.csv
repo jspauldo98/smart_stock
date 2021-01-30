@@ -1,0 +1,43 @@
+Deadline Date,Module,Description,Assigned Dev,Hours,Status
+,,,,,
+02-01-2021,Milestone 1 ,Login and Registration,,,
+,Front-end Component(s),Angular component(s) to handle logging a user in.,Stefan,,Complete
+,Front-end Components(s),Angular components(s) to handle user registration.,Stefan,,In Progress
+,Front-end Service(s),Angular service to handle logging a user in.,Stefan,,Complete
+,Front-end Service(s),Angular service to handle user registration.,Stefan,,In Progress
+,Back-end Middleware,C# Controller to handle user login.,Stefan,,Complete
+,Back-end Middleware,C# Controller to handle user registration.,Stefan,,In Progress
+,Back-end Provider Class(es),C# Interface(s) and class(es) to provide database communication for user login.,Jared,1,Complete
+,Back-end Provider Class(es),C# Interface(s) and class(es) to provide database communication for user registration.,Jared,3,In Progress
+,Back-end Model(s),C# Model(s) needed for logging a user in.,"Jared, Stefan","0.25, 0.5",Complete
+,Back-end Model(s),C# Model(s) needed for registering a user.,Jared,0.25,Complete
+,,,,,
+02-15-2021,Milestone 2,"Home, Dashboard and Portfolio",,,
+,Front-end Component(s),Angular component(s) to handle home screen content.,,,Incomplete
+,Front-end Component(s),Angular component(s) to handle basic dashboard content.,,,Incomplete
+,Front-end Component(s),Angular component(s) to handle basic portfolio content.,,,Incomplete
+,Front-end Service(s),Angular service to handle retrieval of portfolio content.,,,Incomplete
+,Back-end Provider Class(es),C# Interface(s) and class(es) to provide database communication for retrieval of portfolio content.,,,Incomplete
+,Back-end Middleware,C# Controller to handle portfolio content.,,,Incomplete
+,Back-end Model(s),C# Model(s) needed for portfolio content.,,,Incomplete
+,Unit Testing,Unit test and document the bounds of user login system.,,,Incomplete
+,Unit Testing,Unit test and document the bounds of user registration system.,,,Incomplete
+,,,,,
+02-22-2021,Milestone 3,Trading Account,,,
+,Front-end Component(s),Angular component(s) to handle Trading Account content.,,,Incomplete
+,Front-end Component(s),Angular component(s) to handle Trading Account creation.,,,Incomplete
+,Front-end Service(s),Angular service to handle retrieval of Trade Account content.,,,Incomplete
+,Front-end Service(s),Angular service to handle the creation of Trade Accounts.,,,Incomplete
+,Back-end Middleware,C# Controller to handle retrieval of Trade Account content and creation of Trade Accounts.,,,Incomplete
+,Back-end Provider Class(es),"C# Interface(s) and class(es) to provide database communication for user retrieval of Trade Account content, and creation of Trade Account content.",,,Incomplete
+,Back-end Model(s),C# Model(s) needed for creation and retrieval of Trade Accounts.,,,Incomplete
+,Unit Testing,"Unit test and document the bounds of the Home screen, and Portfolio screen.",,,Incomplete
+,,,,,
+0?-??-2021,Milestone 4,Alpaca API,,,
+,Unit Testing,Unit test and document the bounds of the Trade Account system.,,,Incomplete
+,,,,,
+0?-??-2021,Milestone 5 ,Analytics,,,
+,,,,,
+05-??-2021,Milestone 6,Cleanup and Additional Features,,,
+,,,,,
+05-??-2021,Milestone 7,Final Launch,,,

@@ -52,18 +52,13 @@ Anyone who is interested in trading the stock market and of State or regional ag
 
 # 4. Deliverables Scheduling and Estimates
 
-| Deadline Date | Modal          | Description        | Date Completed |
+This section will contain specific deliverable estimates of Smart Stock that are tracked using [this spreadsheet](https://github.com/jspauldo98/smart_stock/blob/master/Docs/SmartStock_Deliverables.csv).
+
+| Deadline Date | Module          | Description        | Date Completed |
 | :--           | :-:            | :--                | --:            |
 | 10-04-2020    | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc | 10-04-2020 |
 | 12-06-2020    | Project Presentation | Recorded presentation of research and planning from Fall 2020 | 12-06-2020 |
 | 12-06-2020    | Teaser | Video to tease target audiance | 12-06-2020 |
-| 02-01-2021    | Login/Register | Login and Registration frontend and backend should be completed | ... |
-| 02-15-2021    | Dashboard/Portfolio | Dashboard frontend should be completed. Portfolio frontend and backend should be completed | ... |
-| 02-22-2021    | Trading Account | Trading account structure should be implemented | ... |
-| ??-??-2021    | Stocks | Implement trading with API | ... |
-| ??-??-2021    | Analytics | Add visual way to view data | ... |
-| 05-??-2021    | Refine | Test and refine processes, bugs, data...etc | ... |
-| 05-??-2021    | Launch "Smart Stock" | Finalize project and launch | ... |
 
 # 5. Development Responsibility
 This section will contain different aspects of the "Smart Stock" and who will be responsible for development of said aspects. This is subject to change.
@@ -80,7 +75,7 @@ This section will contain different aspects of the "Smart Stock" and who will be
 | Front End Components     | Stefan Emmons <br/> Spencer Romberg | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Components.md) |
 | Front End Services       | Stefan Emmons <br/> Spencer Romberg | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Services.md) |
 | Python Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Python_Script_Dev.md) |
-| Respository Classes      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#Respository_Classes.md) |
+| Provider Classes      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#Respository_Classes.md) |
 | Shell Script Dev.        | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Shell_Script_Dev.md) |
 
 # 6. Risk Management
