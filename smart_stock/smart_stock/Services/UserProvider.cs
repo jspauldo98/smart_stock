@@ -145,7 +145,7 @@ namespace smart_stock.Services
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var sQuery = @"INSERT INTO Credentials (username, password) VALUES (@username, @password";        
+                    var sQuery = @"INSERT INTO Credential (username, password) VALUES (@username, @password)";        
                     var @params = new {
                         username = user.Credential.Username,
                         password = user.Credential.Password
@@ -155,7 +155,7 @@ namespace smart_stock.Services
                     result = await connection.ExecuteAsync(sQuery, @params);
                     if (result > 0)
                     {
-                        sQuery = @"INSERT INTO PII (f_name, l_name, dob, email, phone) VALUES (@f_name, @l_name, @dob, @email, @phone";        
+                        sQuery = @"INSERT INTO PII (f_name, l_name, dob, email, phone) VALUES (@f_name, @l_name, @dob, @email, @phone)";        
                         var @params2 = new {                            
                             f_name = user.Pii.FName,
                             l_name = user.Pii.LName,
