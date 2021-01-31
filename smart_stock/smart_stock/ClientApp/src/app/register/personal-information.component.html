@@ -1,1 +1,53 @@
-<p>personal-information works!</p>
+<div class="container">
+    <h3 style="align-content: center;">Investor Information</h3>
+    <form [formGroup]="piiForm">
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field style="width: 100%">
+                <mat-label for="fName">First Name</mat-label>
+                <mat-error *ngIf="isSubmitAttempt && f.fName.hasError('required')">A first name is <strong>required</strong></mat-error>
+                <input matInput type="string" formControlName="fName">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field style="width: 100%">
+                <mat-label for="lName">Last Name</mat-label>
+                <mat-error *ngIf="isSubmitAttempt && f.lName.hasError('required')">A last name is <strong>required</strong></mat-error>
+                <input matInput type="string" formControlName="lName">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field style="width: 100%;">
+                <mat-label for="dob">Date Of Birth</mat-label>
+                <mat-error *ngIf="isSubmitAttempt && f.dob.hasError('required')">A date of birth is <strong>required</strong></mat-error>
+                <input matInput [matDatepicker]="picker" formControlName="dob">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field style="width: 100%;">
+                <mat-label for="email">Email</mat-label>
+                <mat-error *ngIf="isSubmitAttempt && f.email.hasError('required')">An email address is <strong>required</strong> </mat-error>
+                <input matInput type="email" formControlName="email">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <mat-form-field style="width: 100%; margin-right: 30px;">
+                <mat-label for="phone">Phone Number</mat-label>
+                <input matInput type="string" formControlName="phone">
+            </mat-form-field>
+        </div>
+    </div>
+    </form>
+    <mat-error *ngIf="isAgeLimit">You must be 18 years old to register with Smart Stock</mat-error>
+    <button mat-raised-button color="primary" (click)="onSubmit()">Continue</button> 
+</div>
