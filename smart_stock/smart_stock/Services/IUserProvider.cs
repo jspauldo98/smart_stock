@@ -13,10 +13,12 @@ namespace smart_stock.Services
             Returns a list of User objects on success */
         Task<User> GetUser(int id);
 
-        /* Update a single user in table 'User' given a user id.
-            Returns User object on success given parameter 'id' and 'user' */
+        /* Retrieves a single user in table 'User' given a user id.
+            Returns User object on success given parameter 'username' and 'password' */
+        Task<User> GetUserLogin(string username, string password);  
 
-        Task<User> GetUserLogin(string username, string password);    
+        /* Update a single user in table 'User' given a user id.
+            Returns User object on success given parameter 'id' and 'user' */  
         Task<bool> UpdateUser(int id, User user);
 
         /* Insert a single user into table 'User'.
