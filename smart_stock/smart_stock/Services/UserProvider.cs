@@ -1,8 +1,10 @@
 using BC = BCrypt.Net.BCrypt;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Dapper;
 using System.Linq;
@@ -114,6 +116,23 @@ namespace smart_stock.Services
             }
         }
 
+        public async Task<bool> GetUserCredential(string username)
+        {
+            using (MySqlConnection connection = Connection)
+            {
+                var @credParam = new { username = username };
+                Connection.Open();
+                string existingUser = await connection.QueryFirstOrDefaultAsync<string>("SELECT username FROM Credential where username = @username", credParam);
+                if (existingUser == null)
+                {
+                    return false;
+                }
+                return true;
+
+            }
+
+        }
+
         public async Task<bool> UpdateUser(int id, User user)
         {
             try
@@ -138,7 +157,7 @@ namespace smart_stock.Services
             }            
         }
 
-        public async Task<bool> InsertUser(User user)
+        public async Task<User> InsertUser(User user)
         {   
             try
             {
@@ -155,10 +174,10 @@ namespace smart_stock.Services
                     result = await connection.ExecuteAsync(sQuery, @params);
                     if (result > 0)
                     {
-                        sQuery = @"INSERT INTO PII (f_name, l_name, dob, email, phone) VALUES (@f_name, @l_name, @dob, @email, @phone)";        
+                        sQuery = @"INSERT INTO PII (fname, lname, dob, email, phone) VALUES (@FName, @LName, @dob, @email, @phone)";        
                         var @params2 = new {                            
-                            f_name = user.Pii.FName,
-                            l_name = user.Pii.LName,
+                            Fname = user.Pii.FName,
+                            LName = user.Pii.LName,
                             dob = user.Pii.Dob,
                             email = user.Pii.Email,
                             phone = user.Pii.Phone
@@ -166,24 +185,36 @@ namespace smart_stock.Services
                         result = await connection.ExecuteAsync(sQuery, @params2);
                     }
                     if (result > 0)
-                    {                        
-                        sQuery = @"INSERT INTO User (pii, credentials, join_date, date_added, date_confirmed) VALUES (@pii, @credentials, @join_date, @date_added, @date_confirmed)";        
+                    {                 
+                        int piiId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM PII ORDER BY id DESC LIMIT 1", null);       
+                        int credId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Credential ORDER BY id DESC LIMIT 1", null);
+                        sQuery = @"INSERT INTO User (pii, credentials, joindate, dateadded, dateconfirmed) VALUES (@pii, @credentials, @joinDate, @dateAdded, @dateConfirmed)";        
                         var @params3 = new {
-                            pii = user.Pii.Id,
-                            credentials = user.Credential.Id,
-                            join_date = user.JoinDate,
-                            date_added = user.DateAdded,
-                            date_confirmed = user.DateConfirmed
+                            pii = piiId,
+                            credentials = credId,
+                            joinDate = user.JoinDate,
+                            dateAdded = user.DateAdded,
+                            dateConfirmed = user.DateConfirmed
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params3);
+                        if (result > 0)
+                        {
+                            string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
+                            var @userParams = new {
+                                piiId = piiId,
+                                credentialId = credId
+                            };
+                            User newUser = await connection.QueryFirstOrDefaultAsync<User>(userQuery, @userParams);
+                            return newUser;
+                        }
                     }
                 }
-                return result > 0;
+                return null;
             }
             catch (Exception err)
             {
                 Console.WriteLine(TAG + err);
-                return false;
+                return null;
             }            
         }
 

@@ -1,11 +1,43 @@
 <body>
+    <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">thumb_up</mat-icon>
+        First
+      </ng-template>
     <div class="container">
         <mat-tab-group animationDuration="1000ms" [(selectedIndex)]="tabIndex">
-        <mat-tab label="Personal Information">
-            <app-personal-information (onSaveEvent)="updatePii($event)"></app-personal-information>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">person_pin</mat-icon>
+                Personal Information
+            </ng-template>
+            <app-personal-information (onSaveEvent)="updatePii($event)" (onNextTabChange)="unlockCredentialsView($event)"></app-personal-information>
         </mat-tab>
-        <mat-tab label="Credentials">Credentials</mat-tab>
-        <mat-tab label="Investment Preferences">Investment Preferences</mat-tab>
+        <mat-tab disabled *ngIf="!canViewCredentials">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">vpn_lock</mat-icon>
+                Credentials
+            </ng-template>
+        </mat-tab>
+        <mat-tab *ngIf="canViewCredentials">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">vpn_lock</mat-icon>
+                Credentials
+            </ng-template>
+            <app-credentials (onSaveEvent)="updateCredentials($event)" (onNextTabChange)="unlockPreferencesView($event)"></app-credentials>
+        </mat-tab>
+        <mat-tab disabled *ngIf="!canViewPreferences">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">psychology</mat-icon>
+                Investment Preferences
+            </ng-template>
+        </mat-tab>
+        <mat-tab *ngIf="canViewPreferences">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">psychology</mat-icon>
+                Investment Preferences
+            </ng-template>
+            TODO lmao
+        </mat-tab>
         </mat-tab-group>
     </div>
 </body>

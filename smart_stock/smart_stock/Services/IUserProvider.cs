@@ -15,8 +15,12 @@ namespace smart_stock.Services
 
         /* Retrieves a single user in table 'User' given a user id.
             Returns User object on success given parameter 'username' and 'password' */
-        Task<User> GetUserLogin(string username, string password);  
+        Task<User> GetUserLogin(string username, string password);
 
+        /*
+        Queries credential table for duplicate usernames, really only used for conflicts. 
+        */  
+        Task<bool> GetUserCredential(string username);
         /* Update a single user in table 'User' given a user id.
             Returns User object on success given parameter 'id' and 'user' */  
         Task<bool> UpdateUser(int id, User user);
@@ -25,7 +29,7 @@ namespace smart_stock.Services
             Insert a single user's credentials into table 'Credential'.
             Insert a single user's pii into the table 'PII'
             returns true on success given the parameter 'user' */
-        Task<bool> InsertUser(User user);
+        Task<User> InsertUser(User user);
 
         /* Delete a user from table tables 'User', 'Credentials', and 'PII'.
             Returns true on success given the parameter 'user' */

@@ -7,8 +7,8 @@
 
   export interface IPii {
     id: number;
-    f_Name: string;
-    l_Name: string;
+    fName: string;
+    lName: string;
     dob: Date;
     email: string;
     phone: string;
@@ -16,9 +16,9 @@
 
   export interface IUser {
     id: number;
-    join_Date: Date;
-    date_Added: Date;
-    date_Confirmed: Date;
+    joinDate: Date;
+    dateAdded: Date;
+    dateConfirmed: Date;
     pii: IPii;
     credential: ICredential;
   }

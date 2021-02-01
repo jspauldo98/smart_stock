@@ -28,8 +28,10 @@ import { HomeComponent } from '../app/home/home.component';
 import { LoginComponent } from '../app/login/login.component';
 import { RegisterComponent } from '../app/register/register.component';
 import { PersonalInformationComponent } from '../app/register/personal-information.component';
+import { CredentialsComponent } from '../app/register/credentials.component';
 
 import { LoginService } from './services/login.service';
+import { UserService } from './services/user.service';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -37,7 +39,8 @@ import { LoginService } from './services/login.service';
     HomeComponent,
     LoginComponent,
     RegisterComponent,
-    PersonalInformationComponent
+    PersonalInformationComponent,
+    CredentialsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -64,7 +67,9 @@ import { LoginService } from './services/login.service';
     MatNativeDateModule
   ],
   providers: [DatePipe,
-  LoginService],
+  LoginService,
+  UserService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
