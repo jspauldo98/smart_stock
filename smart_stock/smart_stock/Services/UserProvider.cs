@@ -89,7 +89,7 @@ namespace smart_stock.Services
                     var @piiParam = new {id = piiId};
                     Pii pii = await connection.QueryFirstOrDefaultAsync<Pii>(piiQuery, @piiParam);
 
-                    string userQuery = "SELECT id, join_date, date_added, date_confirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
+                    string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
                     var @userParams = new {
                         piiId = pii.id,
                         credentialId = credential.id
