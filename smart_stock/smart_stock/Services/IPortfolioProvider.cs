@@ -25,7 +25,7 @@ namespace smart_stock.Services
 
         /* Delete a portfolio from table 'Portfolio'.
             Returns true on success given the parameter of portfolio id */
-        Task<bool> DeleteUser(int id);
+        Task<bool> DeletePortfolio(int id);
 
         /* Check if a portfolio exists. Checks from table 'Portfolio'.
             Returns true on success given the parameter 'id' */
