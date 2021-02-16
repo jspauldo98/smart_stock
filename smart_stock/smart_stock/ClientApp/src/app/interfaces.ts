@@ -22,3 +22,9 @@
     pii: IPii;
     credential: ICredential;
   }
+
+  export interface ITradeStrategies {
+    id: number;
+    strategy: string[];
+    dateAdded: Date;
+  }

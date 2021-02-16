@@ -1,11 +1,11 @@
 <div class="container">
-    <h3 style="align-content: center;">Investor Information</h3>
+    <h3 style="align-content: center;" class="form-colors">Investor Information</h3>
     <form [formGroup]="piiForm">
     <div class="row">
         <div class="col-md-6">
             <mat-form-field style="width: 100%">
-                <mat-label for="fName">First Name</mat-label>
-                <input matInput type="string" formControlName="fName">
+                <mat-label for="fName" class="form-colors">First Name</mat-label>
+                <input matInput type="string" formControlName="fName" style="color: cornsilk;">
                 <mat-error *ngIf="isSubmitAttempt && f.fName.hasError('required')">A first name is <strong>required</strong></mat-error>
             </mat-form-field>
         </div>
@@ -13,8 +13,8 @@
     <div class="row">
         <div class="col-md-6">
             <mat-form-field style="width: 100%">
-                <mat-label for="lName">Last Name</mat-label>
-                <input matInput type="string" formControlName="lName">
+                <mat-label for="lName" class="form-colors">Last Name</mat-label>
+                <input matInput type="string" formControlName="lName" style="color: cornsilk;">
                 <mat-error *ngIf="isSubmitAttempt && f.lName.hasError('required')">A last name is <strong>required</strong></mat-error>
             </mat-form-field>
         </div>
@@ -22,10 +22,10 @@
     <div class="row">
         <div class="col-md-6">
             <mat-form-field style="width: 100%;">
-                <mat-label for="dob">Date Of Birth</mat-label>
-                <input matInput [matDatepicker]="picker" formControlName="dob">
+                <mat-label for="dob" class="form-colors">Date Of Birth</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="dob" style="color: cornsilk;">
                 <mat-error *ngIf="isSubmitAttempt && f.dob.hasError('required')">A date of birth is <strong>required</strong></mat-error>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker-toggle matSuffix [for]="picker" class="form-colors"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
         </div>
@@ -33,8 +33,8 @@
     <div class="row">
         <div class="col-md-6">
             <mat-form-field style="width: 100%;">
-                <mat-label for="email">Email</mat-label>
-                <input matInput type="email" formControlName="email">
+                <mat-label for="email" class="form-colors">Email</mat-label>
+                <input matInput type="email" formControlName="email" style="color: cornsilk;">
                 <mat-error *ngIf="isSubmitAttempt && f.email.hasError('required')">An email address is <strong>required</strong> </mat-error>
             </mat-form-field>
         </div>
@@ -42,8 +42,8 @@
     <div class="row">
         <div class="col-md-6">
             <mat-form-field style="width: 100%; margin-right: 30px;">
-                <mat-label for="phone">Phone Number</mat-label>
-                <input matInput type="string" formControlName="phone">
+                <mat-label for="phone" class="form-colors">Phone Number</mat-label>
+                <input matInput type="string" formControlName="phone" style="color: cornsilk;">
             </mat-form-field>
         </div>
     </div>

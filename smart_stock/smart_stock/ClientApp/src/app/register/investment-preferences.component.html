@@ -1,0 +1,54 @@
+<div class="container" style="min-height: 100%;">
+    <h3 style="align-content: center;" class="form-colors">Choose Your Preferences</h3>
+    <form [formGroup]="strategiesForm">
+    <mat-list>
+        <mat-list-item>
+            <mat-checkbox class="form-colors" formControlName="blue chip">Blue Chip Trading</mat-checkbox>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="descriptions" style="padding-left: 160px; color: cornsilk;">Based on low risk and slow, steady returns, blue chip trading is best for beginner investors who want to take an incremental, hands-off approach to trading. This strategy focuses on well known fortune 500 tickers, and stability above all else.</span>
+                </div>
+            </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+            <mat-checkbox class="form-colors" formControlName="long term">Long Term Trading</mat-checkbox>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="descriptions" style="padding-left: 152px; color: cornsilk;">Similar to blue chip trading, but places a more intense focus on long term viability and growth potential.</span>
+                </div>
+            </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+            <mat-checkbox class="form-colors" formControlName="swing">Swing Trading</mat-checkbox>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="descriptions" style="padding-left: 186px; color: cornsilk;">Higher risk trading strategy with higher potential returns. Focuses on more volatile tickers, and will execute several buy/sell cycles over the course of a week. Focuses on volume and momentum over stability and long term returns.</span>
+                </div>
+            </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+            <mat-checkbox class="form-colors" formControlName="scalp">Scalp Trading</mat-checkbox>
+            <div class="row">
+                <div class="col-md-12">
+                    <br><span class="descriptions" style="padding-left: 188px; padding-top: 10px; color: cornsilk;">Similar to swing trading in the respect that this strategy focuses on momentum and volume, but takes more advantage of intra-day trading. As a result, this strategy is a mix between day trading and long trading, but tends to favor day trading. Make sure you have the funds for this!</span>
+                </div>
+            </div>
+        </mat-list-item>
+        <br><mat-divider></mat-divider>
+        <mat-list-item>
+            <mat-checkbox class="form-colors" formControlName="day">Day Trading</mat-checkbox>
+            <div class="row">
+                <div class="col-md-12">
+                    <br><span class="descriptions" style="padding-left: 198px; padding-bottom: 0px; color: cornsilk;">Highest risk with highest potential returns. This strategy focuses exlcusively on intra-day trading, and will never hold over night. This selection will make more then three, but rather several (30++) buy/sell cycles throughout a single day, and as a result, your account net worth must exceed $25,000 before selecting this strategy.</span>
+                </div>
+            </div>
+        </mat-list-item>
+        <br><mat-divider></mat-divider>
+        <mat-error *ngIf="!isSubmissionValid && isSubmissionAttempt">You must choose at least <strong>one</strong> strategy</mat-error>
+    </mat-list>
+    <button (click)="onSubmit()" mat-raised-button color="primary">Save</button>
+</form>
+</div>

@@ -28,6 +28,7 @@ namespace smart_stock
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddTransient<IUserProvider, UserProvider>();
+            services.AddTransient<ITradeStrategiesProvider, TradeStrategyProvider>();
             services.AddCors(options => options.AddPolicy("PaymentDetail", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();

@@ -12,6 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatListModule } from '@angular/material/list';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -29,6 +31,7 @@ import { LoginComponent } from '../app/login/login.component';
 import { RegisterComponent } from '../app/register/register.component';
 import { PersonalInformationComponent } from '../app/register/personal-information.component';
 import { CredentialsComponent } from '../app/register/credentials.component';
+import { InvestmentPreferencesComponent } from '../app/register/investment-preferences.component';
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
@@ -40,7 +43,8 @@ import { UserService } from './services/user.service';
     LoginComponent,
     RegisterComponent,
     PersonalInformationComponent,
-    CredentialsComponent
+    CredentialsComponent,
+    InvestmentPreferencesComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -64,7 +68,9 @@ import { UserService } from './services/user.service';
     MatSelectModule, 
     MatTabsModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatCheckboxModule,
+    MatListModule
   ],
   providers: [DatePipe,
   LoginService,
