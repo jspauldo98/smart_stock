@@ -39,6 +39,16 @@ For the last three weeks our team planned on completing the following:
 - Home page drafting and refining. (Stefan and Jared)
 - **OTHER MEMBER WORK HERE**
 
+### Metrics
+
+The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
+
+- Bryce : 9.25
+- Spencer : 0
+- Stefan : 32.5001
+- Jared : 13.5
+- Zack : 10.25
+
 ## Successes
 - Constructing beautiful and functional login, registration, portfolio, and homepage services, along with Alpaca experimentation has been our most recent, but great successes.
 
@@ -61,3 +71,4 @@ For the last three weeks our team planned on completing the following:
 - Spencer: Despite beinig sidelined for the majority of the development process in the last three weeks, I feel good about where everyone is going, and where the project is too, so out of a scale of 1-10, I'm going with an 8.
 - Bryce: 5
 - Zach: 5
+- Jared : 4 - Not a five because one member recorded zero hours of project contribution on our shared metrics spreadsheet. In his defense he was having computer troubles. 
