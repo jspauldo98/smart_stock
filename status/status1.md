@@ -37,7 +37,6 @@ For the last three weeks our team planned on completing the following:
 - All Front End and Back End components related to sign in, authentication, cookie implementation, and user registration. (Stefan and Jared)
 - User Portfolio Back End components, ready for UI scaffolding. (Stefan and Jared)
 - Home page drafting and refining. (Stefan and Jared)
-- **OTHER MEMBER WORK HERE**
 
 ### Metrics
 
