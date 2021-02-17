@@ -43,6 +43,8 @@ For the last three weeks our team planned on completing the following:
 ## Roadblocks/Challenges
 - Figuring out how to efficiently use Alpaca and begin trying new things with the third party API has been our greatest challenge, as we have been focusing intently on UI and API development. 
 
+- Spencer : Ran into a problem with having my hard drive fail, causing a delay on my end that lasted for nearly a week as the hard drive had to get replaced and the data re-transferred. 
+
 ## Changes/Plan Deviations
 - No changes or plan deviations with the exception of Spencer's hard drive. All members have been a little busy, so we are not as ahead as we'd like to be.
 
