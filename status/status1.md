@@ -35,6 +35,8 @@ For the last three weeks our team planned on completing the following:
 
 ## Roadblocks/Challenges
 
+- Spencer : Ran into a problem with having my hard drive fail, causing a delay on my end that lasted for nearly a week as the hard drive had to get replaced and the data re-transferred. 
+
 ## Changes/Plan Deviations
 
 ## Next 3 Weeks Goals/Plans
