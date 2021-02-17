@@ -31,12 +31,14 @@ For the last three weeks our team planned on completing the following:
 - Back-end Model(s) : C# Model(s) needed for portfolio content. (Stefan, Jared, in progress)
 - Unit Testing : Unit test and document the bounds of user login system. 
 - Unit Testing : Unit test and document the bounds of user registration system.
+- Getting Familiar with Alpaca API (Bryce and Zach, in progress)
 
 ## Last 3 Weeks Completions (By Whom)
 - All Front End and Back End components related to sign in, authentication, cookie implementation, and user registration. (Stefan and Jared)
 - User Portfolio Back End components, ready for UI scaffolding. (Stefan and Jared)
 - Home page drafting and refining. (Stefan and Jared)
 - **OTHER MEMBER WORK HERE**
+
 ## Successes
 - Constructing beautiful and functional login, registration, portfolio, and homepage services, along with Alpaca experimentation has been our most recent, but great successes.
 
@@ -57,3 +59,4 @@ For the last three weeks our team planned on completing the following:
 ## Completion Confidence (Per Member)
 - Stefan: 5
 - Spencer: Despite beinig sidelined for the majority of the development process in the last three weeks, I feel good about where everyone is going, and where the project is too, so out of a scale of 1-10, I'm going with an 8.
+- Bryce: 5
