@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { IUser } from '../interfaces';
 
@@ -9,11 +9,13 @@ import { IUser } from '../interfaces';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private readonly loginService: LoginService) { }
+  constructor(private readonly loginService: LoginService,
+    public changeDetectorRef: ChangeDetectorRef) {}
 
   user: IUser
 
   ngOnInit(): void {
+    this.changeDetectorRef.detectChanges();
     this.loginService.currentUser.subscribe(x => {
       this.user = x;
       console.log(this.user)

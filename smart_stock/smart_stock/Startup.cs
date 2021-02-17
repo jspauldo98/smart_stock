@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using smart_stock.Services;
@@ -34,6 +35,10 @@ namespace smart_stock
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();
             }));
             services.AddSwaggerGen(c => { c.SwaggerDoc("v0.1", new OpenApiInfo {Title = "Smart Stock API", Version= "v0.1"}); });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
+                options.LoginPath = "/login";
+                options.LogoutPath = "/login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +62,9 @@ namespace smart_stock
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseCookiePolicy();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
