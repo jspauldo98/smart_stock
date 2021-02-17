@@ -60,3 +60,4 @@ For the last three weeks our team planned on completing the following:
 - Stefan: 5
 - Spencer: Despite beinig sidelined for the majority of the development process in the last three weeks, I feel good about where everyone is going, and where the project is too, so out of a scale of 1-10, I'm going with an 8.
 - Bryce: 5
+- Zach: 5
