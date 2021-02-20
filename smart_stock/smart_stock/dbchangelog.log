@@ -98,3 +98,11 @@ ALTER TABLE Portfolio DROP log;
 ALTER TABLE TradeAccount DROP log;
 ALTER TABLE Log ADD Portfolio INT(64) NOT NULL AFTER Id;
 ALTER TABLE Log ADD TradeAccount INT(64) NOT NULL AFTER Portfolio;
+
+2/20/2021 CHANGES:
+ALTER TABLE TradeStrategies DROP Strategy;
+ALTER TABLE TradeStrategies ADD BlueChip BIT NOT NULL;
+ALTER TABLE TradeStrategies ADD LongTerm BIT NOT NULL;
+ALTER TABLE TradeStrategies ADD Swing BIT NOT NULL;
+ALTER TABLE TradeStrategies ADD Scalp BIT NOT NULL;
+ALTER TABLE TradeStrategies ADD Day BIT NOT NULL;

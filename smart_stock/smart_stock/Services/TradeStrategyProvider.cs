@@ -35,9 +35,13 @@ namespace smart_stock.Services
                 int result = -1;
                 using (MySqlConnection connection = Connection)
                 {                
-                    var stratQuery = @"INSERT INTO TradeStrategies (Strategy, DateAdded) VALUES (@strategy, @dateAdded)";        
+                    var stratQuery = @"INSERT INTO TradeStrategies (BlueChip, LongTerm, Swing, Scalp, Day, DateAdded) VALUES (@blueChip, @longTerm, @swing, @scalp, @day, @dateAdded)";        
                     var @params = new {
-                        strategy = string.Join(",", tradeStrategy.Strategy),
+                        blueChip = tradeStrategy.BlueChip,
+                        longTerm = tradeStrategy.LongTerm,
+                        swing = tradeStrategy.Swing,
+                        scalp = tradeStrategy.Scalp,
+                        day = tradeStrategy.Day,
                         dateAdded = tradeStrategy.DateAdded     
                     };      
                     connection.Open();
