@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { IUser } from '../interfaces';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { IUser } from '../interfaces';
 export class HomeComponent implements OnInit {
 
   constructor(private readonly loginService: LoginService,
+    private router : Router,
     public changeDetectorRef: ChangeDetectorRef) {}
 
   user: IUser
@@ -20,6 +22,10 @@ export class HomeComponent implements OnInit {
       this.user = x;
       console.log(this.user)
     });
+  }
+
+  toDashboardView() : void {
+    this.router.navigateByUrl("/dashboard")
   }
 
 }

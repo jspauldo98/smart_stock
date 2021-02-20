@@ -36,6 +36,7 @@ import { InvestmentPreferencesComponent } from '../app/register/investment-prefe
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { UserService } from './services/user.service';
     RegisterComponent,
     PersonalInformationComponent,
     CredentialsComponent,
-    InvestmentPreferencesComponent
+    InvestmentPreferencesComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
