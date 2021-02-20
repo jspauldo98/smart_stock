@@ -18,7 +18,7 @@ export class InvestmentPreferencesComponent implements OnInit {
   strategiesForm: FormGroup;
   isSubmissionValid: boolean = false; 
   isSubmissionAttempt: boolean = false;
-  transformedValues: string[] = [];
+  transformedValues: boolean[] = [false, false, false, false, false];
 
   get f() { return this.strategiesForm.controls };
 
@@ -46,25 +46,17 @@ export class InvestmentPreferencesComponent implements OnInit {
     }
     else {
       for(let [index, obj] of submittedValues.entries()) {
-        if (index === 0) {
-          this.transformedValues.push("Blue Chip: " + obj.toString());
-        }
-        else if (index === 1) {
-          this.transformedValues.push("Long Term: " + obj.toString());
-        }
-        else if (index === 2) {
-          this.transformedValues.push("Swing: " + obj.toString());
-        }
-        else if (index === 3) {
-          this.transformedValues.push("Scalp: " + obj.toString());
-        }
-        else if (index === 4) {
-          this.transformedValues.push("Day: " + obj.toString());
+        if (obj) {
+          this.transformedValues[index]=true;
         }
       }
       let tradeStrategiesObj: ITradeStrategies = {
         id: 0,
-        strategy: this.transformedValues,
+        blueChip: this.transformedValues[0],
+        longTerm: this.transformedValues[1],
+        swing: this.transformedValues[2],
+        scalp: this.transformedValues[3],
+        day: this.transformedValues[4],
         dateAdded: new Date()
       };
       console.log(tradeStrategiesObj);
