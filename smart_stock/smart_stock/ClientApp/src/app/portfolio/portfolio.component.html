@@ -1,0 +1,32 @@
+<mat-card>
+   <mat-card-title>
+      {{this.portfolioService.portfolio.user.pii.fName}}'s Portfolio
+   </mat-card-title>
+   <mat-card-subtitle>
+      <mat-grid-list cols=3 rowHeight="30px">
+         <mat-grid-tile>
+            <h6>{{this.portfolioService.portfolio.net}}</h6>
+            <mat-grid-tile-footer class="portfolio-footer">
+               <h3>Net</h3>
+            </mat-grid-tile-footer>
+         </mat-grid-tile>
+         <mat-grid-tile>
+            <h6>{{this.portfolioService.portfolio.profit}}</h6>
+            <mat-grid-tile-footer class="portfolio-footer">
+               <h3>Profit</h3>
+            </mat-grid-tile-footer>
+         </mat-grid-tile>
+         <mat-grid-tile>
+            <h6>{{this.portfolioService.portfolio.loss}}</h6>
+            <mat-grid-tile-footer class="portfolio-footer">
+               <h3>Losses</h3>
+            </mat-grid-tile-footer>
+         </mat-grid-tile>
+      </mat-grid-list>
+   </mat-card-subtitle>
+   <mat-card-actions>
+      <button mat-button (click)="createTradeAccount()">Create New Trade Account</button>
+   </mat-card-actions>
+</mat-card>
+<br>
+<app-trade-account></app-trade-account>

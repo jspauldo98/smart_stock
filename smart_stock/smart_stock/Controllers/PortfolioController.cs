@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +11,9 @@ using System.ComponentModel;
 
 namespace smart_stock.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/portfolio")]
     [ApiController]
-    [EnableCors("Portfolio")]
+    [EnableCors("portfolio")]
     public class PortfolioController : ControllerBase
     {
         private readonly IPortfolioProvider _portfolioProvider;
@@ -22,66 +23,61 @@ namespace smart_stock.Controllers
             _portfolioProvider = portfolioProvider;
         }
 
-        // GET: api/Portfolio/id
+        // GET: api/Portfolio/id        
         [HttpGet("{id}")]
-        public async Task<ActionResult<Portfolio>> GetPortfolio(User u)
+        public async Task<ActionResult<Portfolio>> GetPortfolio(int id)
         {
-            var portfolio = await _portfolioProvider.GetPortfolio(u);
+            Console.WriteLine("GET" + id);
+            var portfolio = await _portfolioProvider.GetPortfolio(id);
             if (portfolio == null)
             {
                 return NotFound();
             }
 
-            return portfolio;
-        }
-
-        // GET: api/Portfolio/TradeAccount
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TradeAccount>>> GetTradeAccounts(Portfolio p)
-        {
-            var tas = await _portfolioProvider.GetTradeAccounts(p);
-            return tas.ToList();
-        }
-
-        // PUT: api/Portfolio/id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, Portfolio p)
-        {
-            if (id != p.Id)
-            {
-                return BadRequest();
-            }
-
-            if (_portfolioProvider.PortfolioExists(id))
-            {
-                await _portfolioProvider.UpdatePortfolio(id, p);
-            }  
-            else 
-            {
-                return NotFound();
-            }          
-
-            return NoContent();
-        }
-
-        // POST: api/Portfolio
-        [HttpPost]
-        public async Task<ActionResult<bool>> PostPortfolio(Portfolio p)
-        {
-            return await _portfolioProvider.InsertPortfolio(p);
-        }
-
-        // DELETE: api/Portfolio/id
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeletePortfolio(int id)
-        {
-            var portfolio = await _portfolioProvider.DeletePortfolio(id);
-            if (!portfolio)
-            {
-                return NotFound();
-            }
+            Console.WriteLine(portfolio.Profit);
 
             return portfolio;
         }
+
+        // // PUT: api/Portfolio/id
+        // [HttpPut("{id}")]
+        // public async Task<IActionResult> PutUser(int id, Portfolio p)
+        // {
+        //     if (id != p.Id)
+        //     {
+        //         return BadRequest();
+        //     }
+
+        //     if (_portfolioProvider.PortfolioExists(id))
+        //     {
+        //         await _portfolioProvider.UpdatePortfolio(id, p);
+        //     }  
+        //     else 
+        //     {
+        //         return NotFound();
+        //     }          
+
+        //     return NoContent();
+        // }
+
+        // // POST: api/Portfolio
+        // [HttpPost]
+        // public async Task<ActionResult<bool>> PostPortfolio(Portfolio p)
+        // {
+        //     return await _portfolioProvider.InsertPortfolio(p);
+        // }
+
+        // // DELETE: api/Portfolio/id
+        // [HttpDelete("{id}")]
+        // public async Task<ActionResult<bool>> DeletePortfolio(int id)
+        // {
+        //     var portfolio = await _portfolioProvider.DeletePortfolio(id);
+        //     if (!portfolio)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     return portfolio;
+        // }
     }
 }

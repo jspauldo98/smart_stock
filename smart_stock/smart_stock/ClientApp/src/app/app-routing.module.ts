@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component'
 import { AuthGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 //Do not allow for routes to be modified after compile time, keep routing variables set as const's
 const routes: Routes = [
@@ -13,7 +14,8 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-    { path: 'dashboard', component: DashboardComponent}
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+    { path: 'portfolio', component: PortfolioComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

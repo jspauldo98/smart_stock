@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BC = BCrypt.Net.BCrypt;
 using System;
 using System.Text.Json;
@@ -163,7 +164,8 @@ namespace smart_stock.Services
             {
                 int result = -1;
                 using (MySqlConnection connection = Connection)
-                {                
+                {              
+                    // Add entry to Crential table  
                     var sQuery = @"INSERT INTO Credential (username, password) VALUES (@username, @password)";        
                     var @params = new {
                         username = user.Credential.Username,
@@ -172,6 +174,7 @@ namespace smart_stock.Services
                     };      
                     connection.Open();
                     result = await connection.ExecuteAsync(sQuery, @params);
+                    // Add entry to PII table  
                     if (result > 0)
                     {
                         sQuery = @"INSERT INTO PII (fname, lname, dob, email, phone) VALUES (@FName, @LName, @dob, @email, @phone)";        
@@ -184,6 +187,7 @@ namespace smart_stock.Services
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params2);
                     }
+                    // Add entry to User table  
                     if (result > 0)
                     {                 
                         int piiId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM PII ORDER BY id DESC LIMIT 1", null);       
@@ -198,14 +202,54 @@ namespace smart_stock.Services
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params3);
                         if (result > 0)
-                        {
+                        {                            
                             string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
                             var @userParams = new {
                                 piiId = piiId,
                                 credentialId = credId
                             };
                             User newUser = await connection.QueryFirstOrDefaultAsync<User>(userQuery, @userParams);
-                            return newUser;
+
+                            // Add entry to Portfolio table
+                            var portQuery = @"INSERT INTO Portfolio (User, Profit, Loss, Net) VALUES (@user, 0, 0, 0)";
+                            var @paramsPort = new {
+                                user = newUser.Id
+                            };
+                            result = -1;
+                            result = await connection.ExecuteAsync(portQuery, @paramsPort);
+
+                            // Retrieve Portfolio Id
+                            int portId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Portfolio ORDER BY id DESC LIMIT 1", null);  
+
+                            // Add entry into Preference table
+                            var prefQ = "INSERT INTO Preference (RiskLevel, CapitalToRisk) VALUES (@risk, @capital)";
+                            var @prefP = new {
+                                risk = 1,
+                                capital = 10
+                            };
+                            result = await connection.ExecuteAsync(prefQ, @prefP);
+
+                            // Retrieve Preference Id
+                            int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);  
+
+                            // Add entry to TradeAccount Table                                                       
+                            var taQuery = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, DateCreated) VALUES (@portfolio, @preference, @title, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @dateCreated)";
+                            var @paramsTa = new {
+                                portfolio = portId,
+                                preference = prefId,
+                                title = "Default Account",
+                                profit = 0,
+                                loss = 0,
+                                net = 0,
+                                numTrades = 0,
+                                numSTrades = 0,
+                                numFTrades = 0, 
+                                dateCreated = DateTime.Now
+                            };
+                            result = -1;
+                            result = await connection.ExecuteAsync(taQuery, @paramsTa);
+                            
+                            if (result > 0) return newUser;
                         }
                     }
                 }

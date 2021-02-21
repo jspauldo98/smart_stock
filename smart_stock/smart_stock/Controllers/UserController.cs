@@ -24,7 +24,8 @@ namespace smart_stock.Controllers
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {            
+        {          
+            Console.WriteLine("GET");  
             var test = await _userProvider.GetAllUsers();
             return test.ToList();
         }

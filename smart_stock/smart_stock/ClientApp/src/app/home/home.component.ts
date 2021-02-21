@@ -28,4 +28,8 @@ export class HomeComponent implements OnInit {
     this.router.navigateByUrl("/dashboard")
   }
 
+  toPortfolioView() : void {
+    this.router.navigateByUrl("/portfolio")
+  }
+
 }

@@ -34,9 +34,13 @@ namespace smart_stock.Services
             {
                 int result = -1;
                 using (MySqlConnection connection = Connection)
-                {                
-                    var stratQuery = @"INSERT INTO TradeStrategies (BlueChip, LongTerm, Swing, Scalp, Day, DateAdded) VALUES (@blueChip, @longTerm, @swing, @scalp, @day, @dateAdded)";        
+                {                            
+                    // Retrieve Preference Id
+                    int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);   
+                    // Add entry into TradeStrategies Table  
+                    var stratQuery = @"INSERT INTO TradeStrategies (Preference, BlueChip, LongTerm, Swing, Scalp, Day, DateAdded) VALUES (@preference, @blueChip, @longTerm, @swing, @scalp, @day, @dateAdded)";        
                     var @params = new {
+                        preference = prefId,
                         blueChip = tradeStrategy.BlueChip,
                         longTerm = tradeStrategy.LongTerm,
                         swing = tradeStrategy.Swing,
@@ -45,7 +49,7 @@ namespace smart_stock.Services
                         dateAdded = tradeStrategy.DateAdded     
                     };      
                     connection.Open();
-                    result = await connection.ExecuteAsync(stratQuery, @params);
+                    result = await connection.ExecuteAsync(stratQuery, @params);                                        
                 }
                 return null;  
             }

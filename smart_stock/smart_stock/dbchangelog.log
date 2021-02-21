@@ -106,3 +106,15 @@ ALTER TABLE TradeStrategies ADD LongTerm BIT NOT NULL;
 ALTER TABLE TradeStrategies ADD Swing BIT NOT NULL;
 ALTER TABLE TradeStrategies ADD Scalp BIT NOT NULL;
 ALTER TABLE TradeStrategies ADD Day BIT NOT NULL;
+
+2/21/2021 CHANGES:
+INSERT INTO RiskLevels (Risk, DateAdded) VALUES ('Low', '2021-02-21');
+INSERT INTO RiskLevels (Risk, DateAdded) VALUES ('Moderate', '2021-02-21');
+INSERT INTO RiskLevels (Risk, DateAdded) VALUES ('High', '2021-02-21');
+INSERT INTO RiskLevels (Risk, DateAdded) VALUES ('Aggressive', '2021-02-21');
+ALTER TABLE Preference DROP Constraint FK_TradeStrategy;
+ALTER TABLE Preference DROP TradeStrategy;
+ALTER TABLE TradeStrategies ADD Preference INT(64) NOT NULL;
+ALTER TABLE Preference CHANGE CaptialToRisk CapitalToRisk DECIMAL(5,3) NOT NULL;
+ALTER TABLE TradeAccount DROP Constraint FK_Portfolio_TradeAccount;
+ALTER TABLE TradeAccount DROP Constraint FK_Preference_TradeAccount;
