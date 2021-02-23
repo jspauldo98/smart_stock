@@ -1,5 +1,3 @@
-import { InvestmentPreferencesComponent } from "./register/investment-preferences.component";
-
 //All data models that are a part of both the client side and API side should always be declared here, as interfaces
   export interface ICredential {
     id       : number;
@@ -49,11 +47,29 @@ import { InvestmentPreferencesComponent } from "./register/investment-preference
     dateAdded : Date  ;
   }
 
+  export interface ISector {
+    id                    : number ;
+    informationTechnology : boolean;
+    healthCare            : boolean;
+    financials            : boolean;
+    consumerDiscretionary : boolean;
+    communication         : boolean;
+    industrials           : boolean;
+    consumerStaples       : boolean;
+    energey               : boolean;
+    utilities             : boolean;
+    realEstate            : boolean;
+    materials             : boolean;
+    dateAdded             : Date   ;
+  }
+
   export interface IPreference {
-    id            : number    ;
-    riskLevel     : IRiskLevel;
-    dateModified  : Date      ;
-    CapitalToRisk : number    ;
+    id            : number          ;
+    riskLevel     : IRiskLevel      ;
+    tradeStrategy : ITradeStrategies;
+    sector        : ISector         ;
+    dateModified  : Date            ;
+    capitalToRisk : number          ;
   }
 
   export interface ITradeAccount {

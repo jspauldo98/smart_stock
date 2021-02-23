@@ -97,11 +97,20 @@ namespace smart_stock.Services
                         var riskQ = "SELECT Id, Risk, DateAdded FROM RiskLevels WHERE Id = @rId";
                         var @riskParam = new {rId = riskId};
                         RiskLevel riskLevel = await connection.QueryFirstOrDefaultAsync<RiskLevel>(riskQ, @riskParam);
+                        // get strat id
+                        var stratIdQ = "SELECT TradeStrategy FROM Preference WHERE Id = @pId";
+                        var @stratIdParam = new {pId = prefID};
+                        int stratId = await connection.QueryFirstOrDefaultAsync<int>(stratIdQ, @stratIdParam);
+                        // get trade strat
+                        var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day, DateAdded FROM TradeStrategies WHERE Id = @sId";
+                        var @stratParam = new {sId = stratId};
+                        TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>(stratQ, @stratParam);
                         // get preference
                         var prefQ = "SELECT Id, DateModified, CapitalToRisk FROM Preference WHERE Id = @pId";
                         var @prefParam = new {pId = prefID};
                         t.Preference = await connection.QueryFirstOrDefaultAsync<Preference>(prefQ, @prefParam);
                         t.Preference.RiskLevel = riskLevel;
+                        t.Preference.TradeStrategy = strategy;
                     }
                     return tas.ToList();
                 }

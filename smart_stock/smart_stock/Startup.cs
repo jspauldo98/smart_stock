@@ -29,7 +29,7 @@ namespace smart_stock
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddTransient<IUserProvider, UserProvider>();
-            services.AddTransient<ITradeStrategiesProvider, TradeStrategyProvider>();
+            services.AddTransient<IPreferenceProvider, PreferenceProvider>();
             services.AddTransient<IPortfolioProvider, PortfolioProvider>();
             services.AddCors(options => options.AddPolicy("PaymentDetail", builder =>
             {

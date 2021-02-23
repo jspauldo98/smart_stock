@@ -17,6 +17,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -26,7 +28,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { PlatformModule } from '@angular/cdk/platform';
- 
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CommonModule } from '@angular/common';
@@ -41,6 +43,7 @@ import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
+import { PreferenceService } from './services/preference.service';
 import { TradeAccountComponent } from './portfolio/trade-account/trade-account.component';
 //Root module, everything needs to be imported here first
 @NgModule({
@@ -84,11 +87,14 @@ import { TradeAccountComponent } from './portfolio/trade-account/trade-account.c
     MatListModule,
     MatSidenavModule,
     MatGridListModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSliderModule,
+    MatRadioModule
   ],
   providers: [DatePipe,
   LoginService,
-  UserService
+  UserService,
+  PreferenceService
   ],
   bootstrap: [AppComponent]
 })

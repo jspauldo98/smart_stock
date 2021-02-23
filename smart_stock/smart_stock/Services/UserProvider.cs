@@ -216,38 +216,7 @@ namespace smart_stock.Services
                                 user = newUser.Id
                             };
                             result = -1;
-                            result = await connection.ExecuteAsync(portQuery, @paramsPort);
-
-                            // Retrieve Portfolio Id
-                            int portId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Portfolio ORDER BY id DESC LIMIT 1", null);  
-
-                            // Add entry into Preference table
-                            var prefQ = "INSERT INTO Preference (RiskLevel, CapitalToRisk) VALUES (@risk, @capital)";
-                            var @prefP = new {
-                                risk = 1,
-                                capital = 10
-                            };
-                            result = await connection.ExecuteAsync(prefQ, @prefP);
-
-                            // Retrieve Preference Id
-                            int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);  
-
-                            // Add entry to TradeAccount Table                                                       
-                            var taQuery = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, DateCreated) VALUES (@portfolio, @preference, @title, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @dateCreated)";
-                            var @paramsTa = new {
-                                portfolio = portId,
-                                preference = prefId,
-                                title = "Default Account",
-                                profit = 0,
-                                loss = 0,
-                                net = 0,
-                                numTrades = 0,
-                                numSTrades = 0,
-                                numFTrades = 0, 
-                                dateCreated = DateTime.Now
-                            };
-                            result = -1;
-                            result = await connection.ExecuteAsync(taQuery, @paramsTa);
+                            result = await connection.ExecuteAsync(portQuery, @paramsPort);                            
                             
                             if (result > 0) return newUser;
                         }

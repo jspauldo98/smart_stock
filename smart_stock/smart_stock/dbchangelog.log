@@ -118,3 +118,35 @@ ALTER TABLE TradeStrategies ADD Preference INT(64) NOT NULL;
 ALTER TABLE Preference CHANGE CaptialToRisk CapitalToRisk DECIMAL(5,3) NOT NULL;
 ALTER TABLE TradeAccount DROP Constraint FK_Portfolio_TradeAccount;
 ALTER TABLE TradeAccount DROP Constraint FK_Preference_TradeAccount;
+
+2/22/2021 CHANGES:
+ALTER TABLE TradeStrategies DROP Preference;
+ALTER TABLE Preference ADD TradeStrategy INT(64) NOT NULL;
+ALTER TABLE Sectors DROP Constraint FK_Preference_Sectors;
+ALTER TABLE Sectors DROP Preference;
+ALTER TABLE Sectors DROP Constraint UNI_Sector;
+ALTER TABLE Sectors DROP Sector;
+ALTER TABLE Sectors ADD InformationTechnology BIT NOT NULL;
+ALTER TABLE Sectors ADD HealthCare BIT NOT NULL;
+ALTER TABLE Sectors ADD Financials BIT NOT NULL;
+ALTER TABLE Sectors ADD ConsumerDiscretionary BIT NOT NULL;
+ALTER TABLE Sectors ADD Communication BIT NOT NULL;
+ALTER TABLE Sectors ADD Industrials BIT NOT NULL;
+ALTER TABLE Sectors ADD ConsumerStaples BIT NOT NULL;
+ALTER TABLE Sectors ADD Energy BIT NOT NULL;
+ALTER TABLE Sectors ADD Utilities BIT NOT NULL;
+ALTER TABLE Sectors ADD RealEstate BIT NOT NULL;
+ALTER TABLE Sectors ADD Materials BIT NOT NULL;
+ALTER TABLE Preference ADD Sector INT(64) NOT NULL;
+
+2/23/2021 CHANGES:
+DELETE FROM Preference;
+DELETE FROM RiskLevels;
+ALTER TABLE Preference DROP Constraint FK_RiskLevel;
+ALTER TABLE RiskLevels CHANGE Id Id INT(64) NOT NULL;
+ALTER TABLE Preference ADD Constraint FK_Preference_Strategy FOREIGN KEY (TradeStrategy) REFERENCES TradeStrategies (Id);
+ALTER TABLE Preference ADD Constraint FK_Preference_Risk FOREIGN KEY (RiskLevel) REFERENCES RiskLevels (Id);
+INSERT INTO RiskLevels (Id, Risk, DateAdded) VALUES (1, 'Low', '2021-02-23');
+INSERT INTO RiskLevels (Id, Risk, DateAdded) VALUES (2, 'Moderate', '2021-02-23');
+INSERT INTO RiskLevels (Id, Risk, DateAdded) VALUES (3, 'High', '2021-02-23');
+INSERT INTO RiskLevels (Id, Risk, DateAdded) VALUES (4, 'Aggressive', '2021-02-23');

@@ -1,54 +1,178 @@
 <div class="container" style="min-height: 100%;">
-    <h3 style="align-content: center;" class="form-colors">Choose Your Preferences</h3>
+    <h3 style="align-content: center;" class="form-colors">Choose Your Trade Preferences</h3>
     <form [formGroup]="strategiesForm">
     <mat-list>
         <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="blue chip">Blue Chip Trading</mat-checkbox>
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="descriptions" style="padding-left: 160px; color: cornsilk;">Based on low risk and slow, steady returns, blue chip trading is best for beginner investors who want to take an incremental, hands-off approach to trading. This strategy focuses on well known fortune 500 tickers, and stability above all else.</span>
-                </div>
-            </div>
+            <mat-icon #tooltip="matTooltip" 
+                    matTooltip="Based on low risk and slow, steady returns, blue chip trading is best for beginner investors who want to take an incremental, hands-off approach to trading. This strategy focuses on well known fortune 500 tickers, and stability above all else."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>            
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="long term">Long Term Trading</mat-checkbox>
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="descriptions" style="padding-left: 152px; color: cornsilk;">Similar to blue chip trading, but places a more intense focus on long term viability and growth potential.</span>
-                </div>
-            </div>
+            <mat-icon #tooltip="matTooltip" 
+                    matTooltip="Similar to blue chip trading, but places a more intense focus on long term viability and growth potential."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>      
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="swing">Swing Trading</mat-checkbox>
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="descriptions" style="padding-left: 186px; color: cornsilk;">Higher risk trading strategy with higher potential returns. Focuses on more volatile tickers, and will execute several buy/sell cycles over the course of a week. Focuses on volume and momentum over stability and long term returns.</span>
-                </div>
-            </div>
+            <mat-icon #tooltip="matTooltip" 
+                    matTooltip="Higher risk trading strategy with higher potential returns. Focuses on more volatile tickers, and will execute several buy/sell cycles over the course of a week. Focuses on volume and momentum over stability and long term returns."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>           
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="scalp">Scalp Trading</mat-checkbox>
-            <div class="row">
-                <div class="col-md-12">
-                    <br><span class="descriptions" style="padding-left: 188px; padding-top: 10px; color: cornsilk;">Similar to swing trading in the respect that this strategy focuses on momentum and volume, but takes more advantage of intra-day trading. As a result, this strategy is a mix between day trading and long trading, but tends to favor day trading. Make sure you have the funds for this!</span>
-                </div>
-            </div>
+            <mat-icon #tooltip="matTooltip" 
+                    matTooltip="Similar to swing trading in the respect that this strategy focuses on momentum and volume, but takes more advantage of intra-day trading. As a result, this strategy is a mix between day trading and long trading, but tends to favor day trading. Make sure you have the funds for this!"
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>          
         </mat-list-item>
         <br><mat-divider></mat-divider>
         <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="day">Day Trading</mat-checkbox>
-            <div class="row">
-                <div class="col-md-12">
-                    <br><span class="descriptions" style="padding-left: 198px; padding-bottom: 0px; color: cornsilk;">Highest risk with highest potential returns. This strategy focuses exlcusively on intra-day trading, and will never hold over night. This selection will make more then three, but rather several (30++) buy/sell cycles throughout a single day, and as a result, your account net worth must exceed $25,000 before selecting this strategy.</span>
-                </div>
-            </div>
+            <mat-icon #tooltip="matTooltip" 
+                    matTooltip="Highest risk with highest potential returns. This strategy focuses exlcusively on intra-day trading, and will never hold over night. This selection will make more then three, but rather several (30++) buy/sell cycles throughout a single day, and as a result, your account net worth must exceed $25,000 before selecting this strategy."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>          
         </mat-list-item>
         <br><mat-divider></mat-divider>
-        <mat-error *ngIf="!isSubmissionValid && isSubmissionAttempt">You must choose at least <strong>one</strong> strategy</mat-error>
+        <mat-error *ngIf="!isSubmissionStratValid && isSubmissionAttempt">You must choose at least <strong>one</strong> strategy</mat-error>
     </mat-list>
-    <button (click)="onSubmit()" mat-raised-button color="primary">Save</button>
-</form>
+    
+    <h3 style="align-content: center;" class="form-colors">Choose Your Risk Tolerance</h3>
+    <mat-radio-group [formControl]="riskControl">
+        <mat-radio-button class="form-colors" *ngFor="let risk of this.riskLevels" [value]="risk">{{risk.risk}}</mat-radio-button>
+    </mat-radio-group>
+    <br>
+    <mat-error *ngIf="isSubmissionAttempt">You must choose a risk tolerance option.</mat-error>
+    </form>
+
+    <form [formGroup]="sectorsForm">
+        <h3 style="align-content: center;" class="form-colors">Choose Sectors To Trade</h3>
+        <mat-list>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="energy">Energy</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The energy sector covers companies that do business in the oil and natural gas industry. It includes oil and gas exploration and production companies, as well as producers of other consumable fuels like coal and ethanol. The energy sector also includes the related businesses that provide equipment, materials, and services to oil and gas producers. Oddly enough, though, it doesn't include many renewable energy companies, which instead are considered utilities."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="materials">Materials</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The materials sector includes companies that provide various goods for use in manufacturing and other applications. You'll find makers of chemicals, construction materials, and containers and packaging within the materials sector, along with mining stocks and companies specializing in making paper and forest products."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="industrials">Industrials</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The industrials sector encompasses a wide range of different businesses that generally involve the use of heavy equipment. Transportation stocks such as airlines, railroads, and logistics companies are found within the industrials sector, as are companies in the aerospace, defense, construction, and engineering industries. Companies making building products, electrical equipment, and machinery also fall into this sector, as do many conglomerates."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="utilities">Utilities</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The utilities sector encompasses just about every different type of utility company you can think of. Within the sector, you'll find utilities specializing in making electrical power available to residential and commercial customers, as well as specialists in natural gas transmission and distribution. Other utilities are responsible for delivering water to customers. Some utility companies engage in more than one of these different subspecialties. In addition, independent producers of power and renewable electricity also land in the utilities sector, even though they don't exactly resemble the traditional regulated utility in an era of deregulation."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="healthCare">Healthcare</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The healthcare sector has two primary components. One component includes companies that develop pharmaceuticals and treatments based on biotechnology, as well as the analytical tools and supplies needed for the clinical trials that test those treatments. The other encompasses healthcare equipment and services, including surgical supplies, medical diagnostic tools, and health insurance."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="financials">Financials</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The financials sector includes businesses that are primarily related to handling money. Banks are a key industry group within the sector, but you'll also find insurance companies, brokerage houses, consumer finance providers, and mortgage-related real estate investment trusts among financials."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="consumerDiscretionary">Consumer Discretionary</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The consumer discretionary sector covers goods and services for which consumer demand depends upon consumer financial status. For example, if you make $25,000 per year, you probably buy a different car than someone who makes $25 million per year. The sector includes companies that sell higher-priced items like automobiles and luxury goods, as well as leisure products. You'll find both brick-and-mortar and e-commerce-based retail companies in this category, along with hotel and restaurant stocks."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="consumerStaples">Consumer Staples</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The consumer staples sector includes goods and services that consumers need, regardless of their current financial condition. The category includes companies in the food, beverage, and tobacco industries, as well as household and personal care products. You'll also find retail companies that specialize in selling staples, such as supermarkets, in this group."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="informationTechnology">Information Technology</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The communication services sector is the newest of the GICS sectors and includes a couple of major areas that used to be part of other sectors. Telecommunication services providers, including both wireless telecom networks and providers of old-style landline services, make up one wing of the sector. At the other end are media and entertainment companies, including both older media like television and radio and interactive media via the internet and newer forms of communication."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="communication">Communication Services</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The communication services sector is the newest of the GICS sectors and includes a couple of major areas that used to be part of other sectors. Telecommunication services providers, including both wireless telecom networks and providers of old-style landline services, make up one wing of the sector. At the other end are media and entertainment companies, including both older media like television and radio and interactive media via the internet and newer forms of communication."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-checkbox class="form-colors" formControlName="realEstate">Real Estate</mat-checkbox>
+                <mat-icon #tooltip="matTooltip" 
+                    matTooltip="The real estate sector generally includes two different types of investments related to real estate. Some stocks in the sector are responsible for developing new real estate projects and then managing them by obtaining tenants for various spaces within the project property. In addition, most real estate investment trusts, which are special tax-favored business entities that operate in various areas of the real estate industry, get counted as within the real estate sector."
+                    matTooltipPosition="right">
+                    help_ouline
+                </mat-icon>
+            </mat-list-item>
+            <mat-divider></mat-divider>          
+            
+            <mat-error *ngIf="!isSubmissionSectorValid && isSubmissionAttempt">You must choose at least <strong>one</strong> sector</mat-error>
+        </mat-list>   
+    </form>
+
+<h3 style="align-content: center;" class="form-colors">Set Per Trade Tolerance</h3>
+<mat-slider class="form-colors" style="width: 500px;" [(ngModel)]="capital" thumbLabel [displayWith]="formatLabel" tickInterval="1" min="1" max="100" ></mat-slider>
+<div class="row">
+    <div class="col-md-12">
+        <mat-label class="descriptions" style="padding-left: 100px; padding-bottom: 0px; color: cornsilk;">Percent of capital to risk per trade</mat-label>
+    </div>
+</div> 
+<br>
+
+<button (click)="onSubmit()" mat-raised-button color="primary">Save</button><br>
 </div>

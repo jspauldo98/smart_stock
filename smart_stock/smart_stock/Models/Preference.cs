@@ -15,6 +15,12 @@ namespace smart_stock.Models
         [Required]
         public RiskLevel RiskLevel { get; set; }
 
+        [Required]
+        public TradeStrategy TradeStrategy { get; set; }
+
+        [Required]
+        public Sector Sector { get; set; }
+
         public DateTime? DateModified { get; set; }
 
         [Required]

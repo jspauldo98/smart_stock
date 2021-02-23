@@ -4,3 +4,17 @@
     display: inline-flex;
     padding-bottom: 8px;
 }
+.mat-icon {
+    width: 20px;
+    height: 20px;
+    color: cornsilk;
+    margin-top: -10px;
+    margin-left: 20px;
+}
+.mat-radio-button {
+    padding-left: 15px;
+}
+.mat-radio-group {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
