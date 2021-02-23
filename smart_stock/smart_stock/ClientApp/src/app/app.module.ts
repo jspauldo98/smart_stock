@@ -41,10 +41,11 @@ import { InvestmentPreferencesComponent } from '../app/register/investment-prefe
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { PortfolioComponent } from './portfolio/portfolio.component';
+import { DashboardComponent } from './home/dashboard/dashboard.component';
+import { PortfolioComponent } from './home/portfolio/portfolio.component';
 import { PreferenceService } from './services/preference.service';
-import { TradeAccountComponent } from './portfolio/trade-account/trade-account.component';
+import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
+import { HomeAboutComponent } from './home/home-about/home-about.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { TradeAccountComponent } from './portfolio/trade-account/trade-account.c
     InvestmentPreferencesComponent,
     DashboardComponent,
     PortfolioComponent,
-    TradeAccountComponent
+    TradeAccountComponent,
+    HomeAboutComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

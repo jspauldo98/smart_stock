@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IPortfolio, IUser } from '../interfaces';
-import { LoginService } from '../services/login.service';
-import { PortfolioService } from '../services/portfolio.service';
+import { IPortfolio, IUser } from '../../interfaces';
+import { LoginService } from '../../services/login.service';
+import { PortfolioService } from '../../services/portfolio.service';
 
 @Component({
   selector: 'app-portfolio',
