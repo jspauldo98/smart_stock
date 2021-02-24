@@ -38,5 +38,11 @@ namespace smart_stock.Services
         /* Check if a user exists. Checks from table 'User'.
             Returns true on success given the parameter 'id' */
         bool UserExists(int id);
+
+        /*
+        Functions that are exclusively used by the authentication service, used for adding, checking,
+        and removing javascript web tokens
+        */
+        
     }
 }

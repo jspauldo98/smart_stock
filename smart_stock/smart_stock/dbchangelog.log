@@ -98,3 +98,7 @@ ALTER TABLE Portfolio DROP log;
 ALTER TABLE TradeAccount DROP log;
 ALTER TABLE Log ADD Portfolio INT(64) NOT NULL AFTER Id;
 ALTER TABLE Log ADD TradeAccount INT(64) NOT NULL AFTER Portfolio;
+
+2/23/2021 CHANGES:
+alter table User add column RefreshTokens varchar(500);
+

@@ -28,3 +28,9 @@
     strategy: string[];
     dateAdded: Date;
   }
+
+  export interface ILoginResult {
+    username: string;
+    accessToken: string;
+    refreshToken: string;
+  }

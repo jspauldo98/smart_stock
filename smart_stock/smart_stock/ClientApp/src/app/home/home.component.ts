@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
-import { IUser } from '../interfaces';
+import { ICredential, IUser } from '../interfaces';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +12,18 @@ export class HomeComponent implements OnInit {
   constructor(private readonly loginService: LoginService,
     public changeDetectorRef: ChangeDetectorRef) {}
 
-  user: IUser
+  userCredentials: ICredential
 
   ngOnInit(): void {
     this.changeDetectorRef.detectChanges();
-    this.loginService.currentUser.subscribe(x => {
-      this.user = x;
-      console.log(this.user)
+    this.loginService.userCredentials$.subscribe(x => {
+      this.userCredentials = x;
+      console.log(this.userCredentials);
     });
+  }
+
+  public userLogout() {
+    this.loginService.userLogout();
   }
 
 }

@@ -17,7 +17,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -36,6 +36,9 @@ import { InvestmentPreferencesComponent } from '../app/register/investment-prefe
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
+import { appInitializer } from './services/app-initializer';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -74,9 +77,26 @@ import { UserService } from './services/user.service';
     MatListModule,
     MatSidenavModule
   ],
-  providers: [DatePipe,
-  LoginService,
-  UserService
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      multi: true,
+      deps: [LoginService]
+    },
+    {
+      provide: HTTP_INTERCEPTORS, 
+      useClass: JwtInterceptor, 
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
+      multi: true
+    },
+    DatePipe,
+    LoginService,
+    UserService
   ],
   bootstrap: [AppComponent]
 })

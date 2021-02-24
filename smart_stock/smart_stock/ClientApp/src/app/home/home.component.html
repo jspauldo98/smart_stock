@@ -14,7 +14,7 @@
          account_circle
       </mat-icon>
    </button>
-   <button mat-icon-button class="nav-icon">
+   <button mat-icon-button class="nav-icon" (click)="userLogout()">
       <mat-icon>
          logout
       </mat-icon>
@@ -29,10 +29,11 @@
    </mat-sidenav>
 
    <mat-sidenav-content>
-   <h1 class="display-1">Smart Stock</h1>
-   <h2 class="display-2, text-center">The service that does the trading for you!</h2>
-
-   <div class="container">   
+      <mat-card>
+         <mat-card-title style="padding-left: 45% !important;">Smart Stock</mat-card-title>
+         <mat-card-subtitle style="padding-left: 40% !important;">The service that does the trading for you!</mat-card-subtitle>
+         <mat-card-content>
+            <div class="container">   
 
       <img src="https://academy.aaxpro.com/wp-content/uploads/2020/10/automatedtrading_20201005-768x432.jpg" alt="Emotional Stock Trading Image" class="img-fluid, mx-auto d-block"> <br/>
 
@@ -80,5 +81,7 @@
       </p>
 
    </div>
+   </mat-card-content>
+   </mat-card>
    </mat-sidenav-content>
 </mat-sidenav-container>

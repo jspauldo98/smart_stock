@@ -259,5 +259,6 @@ namespace smart_stock.Services
                 return false;
             }            
         }
+
     }
 }
