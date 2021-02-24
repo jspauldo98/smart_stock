@@ -15,6 +15,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatGridListModule } from '@angular/material/grid-list';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -24,9 +28,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { PlatformModule } from '@angular/cdk/platform';
- 
+import { ToastrModule } from "ngx-toastr";
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CommonModule } from '@angular/common';
 import { HomeComponent } from '../app/home/home.component';
 import { LoginComponent } from '../app/login/login.component';
 import { RegisterComponent } from '../app/register/register.component';
@@ -36,7 +42,11 @@ import { InvestmentPreferencesComponent } from '../app/register/investment-prefe
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from './home/dashboard/dashboard.component';
+import { PortfolioComponent } from './home/portfolio/portfolio.component';
+import { PreferenceService } from './services/preference.service';
+import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
+import { HomeAboutComponent } from './home/home-about/home-about.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -47,16 +57,21 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     PersonalInformationComponent,
     CredentialsComponent,
     InvestmentPreferencesComponent,
-    DashboardComponent
+    DashboardComponent,
+    PortfolioComponent,
+    TradeAccountComponent,
+    HomeAboutComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    CommonModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
+    ToastrModule.forRoot({positionClass :'toast-bottom-right'}),
     PlatformModule,
     MatToolbarModule,
     MatMenuModule,
@@ -74,11 +89,16 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatNativeDateModule,
     MatCheckboxModule,
     MatListModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatGridListModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatRadioModule
   ],
   providers: [DatePipe,
   LoginService,
-  UserService
+  UserService,
+  PreferenceService
   ],
   bootstrap: [AppComponent]
 })

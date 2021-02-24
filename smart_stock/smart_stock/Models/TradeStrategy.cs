@@ -28,10 +28,6 @@ namespace smart_stock.Models
 
         [Required]
         [Column(TypeName = "bit")]
-        public bool Day { get; set; }
-
-        [Required]
-        [Column(TypeName = "date")]
-        public DateTime DateAdded { get; set; }
+        public bool Day { get; set; }     
     }
 }

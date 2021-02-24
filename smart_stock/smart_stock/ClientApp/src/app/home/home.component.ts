@@ -15,6 +15,8 @@ export class HomeComponent implements OnInit {
     public changeDetectorRef: ChangeDetectorRef) {}
 
   user: IUser
+  page : number = 0;
+  title : string = "About";
 
   ngOnInit(): void {
     this.changeDetectorRef.detectChanges();
@@ -24,8 +26,19 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  toAboutView() : void {
+    this.page = 0;
+    this.title = "About"
+  }
+
   toDashboardView() : void {
-    this.router.navigateByUrl("/dashboard")
+    this.page = 1;
+    this.title = "DashBoard"
+  }
+
+  toPortfolioView() : void {
+    this.page = 2;
+    this.title = "Portfolio"
   }
 
 }

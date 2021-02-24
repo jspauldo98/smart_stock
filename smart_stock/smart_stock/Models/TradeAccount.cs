@@ -12,34 +12,40 @@ namespace smart_stock.Models
         [Column(TypeName = "int(64)")]
         public int? Id { get; set; }
 
-        [Required]
-        public Portfolio Portfolio { get; set; }
-
-        // TODO - Add with Preference ability
+        // TODO - Is a portfolio even needed here since its already an object in the service?
         // [Required]
-        // public Preference Preference { get; set; }
+        // public Portfolio Portfolio { get; set; }
+
+        [Required]
+        public Preference Preference { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(50)")]
         public string Title { get; set;}
 
-        [Column(TypeName = "decimal(13, 2)")]
-        public double? Profit { get; set; }
+        [Column(TypeName = "text")]
+        public string Description { get; set;}
 
         [Column(TypeName = "decimal(13, 2)")]
-        public double? Loss { get; set; }
+        public double Amount { get; set; }
 
         [Column(TypeName = "decimal(13, 2)")]
-        public double? Net { get; set;}
+        public double Profit { get; set; }
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Loss { get; set; }
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Net { get; set;}
 
         [Column(TypeName = "int(64)")]
         public int? NumTrades { get; set; }
 
         [Column(TypeName = "int(64)")]
-        public int? NumSTrades { get; set; }
+        public int NumSTrades { get; set; }
 
         [Column(TypeName = "int(64)")]
-        public int? NumFTrades { get; set; }
+        public int NumFTrades { get; set; }
 
         [Required]
         [Column(TypeName = "date")]
@@ -47,5 +53,11 @@ namespace smart_stock.Models
 
         [Column(TypeName = "date")]
         public DateTime DateModified { get; set;}
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Invested { get; set; }
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Cash { get; set; }
     }
 }

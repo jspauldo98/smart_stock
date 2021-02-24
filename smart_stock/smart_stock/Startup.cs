@@ -29,7 +29,8 @@ namespace smart_stock
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddTransient<IUserProvider, UserProvider>();
-            services.AddTransient<ITradeStrategiesProvider, TradeStrategyProvider>();
+            services.AddTransient<IPreferenceProvider, PreferenceProvider>();
+            services.AddTransient<IPortfolioProvider, PortfolioProvider>();
             services.AddCors(options => options.AddPolicy("PaymentDetail", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();
@@ -49,9 +50,9 @@ namespace smart_stock
                 app.UseDeveloperExceptionPage();
                 //Incredibly helpful for tracking exactly what JSON goes to which endpoint (controller functions)
                 // TODO Swagger throwing errors so commenting it out 
-                 app.UseSwagger();
-                 app.UseSwaggerUI(config => {
-                     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
+                app.UseSwagger();
+                app.UseSwaggerUI(config => {
+                    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
                 });
             }
             else

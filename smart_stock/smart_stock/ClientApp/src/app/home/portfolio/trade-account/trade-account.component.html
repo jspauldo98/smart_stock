@@ -1,0 +1,52 @@
+<br><div align="center">
+   <button (click)="createTradeAccount()" mat-raised-button color="primary">Create New Trade Account</button>
+</div><br>
+<div *ngFor="let ta of this.tradeAccounts" align="center">
+   <mat-card class="trade-account-card" align="left">
+      <div class="container">
+         <div class="row">
+            <div class="col-lg">
+               <mat-card-title>
+                  {{ta.title}}
+               </mat-card-title>
+               <mat-card-subtitle>
+                  {{ta.description}}
+               </mat-card-subtitle>
+               <mat-card-content>
+                  <h5 class="text-center">${{ta.amount}}</h5>
+                  <div class="container text-center">
+                     <div class="row">
+                        <div class="col-sm">
+                           <h6 *ngIf="ta.net < 0" style="color: red;">-${{ta.net}}</h6>
+                           <h6 *ngIf="ta.net >= 0" style="color: green;">+${{ta.net}}</h6>
+                        </div>
+                        <div class="col-sm">
+                           <h6 *ngIf="ta.net < 0" style="color: red;">-{{(ta.loss / ta.amount) * 100}}%</h6>
+                           <h6 *ngIf="ta.net >= 0" style="color: green;">+{{(ta.profit / ta.amount) * 100}}%</h6>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm">
+                           <h6>${{ta.invested}} Invested</h6>
+                        </div>
+                        <div class="col-sm">
+                           <h6>${{ta.cash}} Cash</h6>
+                        </div>
+                     </div>
+                  </div>
+               </mat-card-content>
+            </div>
+            <div class="col-lg" align="right">
+               <mat-card style="background: grey; height: 200px;">
+                  <mat-card-title>Graph?</mat-card-title>
+               </mat-card>
+            </div>
+         </div>
+      </div>
+      <mat-card-actions>
+         <button mat-raised-button color="accent">View Account</button>
+         <button mat-raised-button color="accent" >Edit Account</button>
+      </mat-card-actions>
+   </mat-card>
+   <br>
+</div>
