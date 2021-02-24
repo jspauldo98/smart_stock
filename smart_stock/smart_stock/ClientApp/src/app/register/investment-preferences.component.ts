@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPreference, IRiskLevel, ISector, ITradeAccount, ITradeStrategies } from '../interfaces';
 import { Router } from '@angular/router';
 import {PreferenceService } from '../services/preference.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-investment-preferences',
@@ -13,7 +14,8 @@ export class InvestmentPreferencesComponent implements OnInit {
 
   constructor(private readonly formBuilder: FormBuilder,
     private router: Router,
-    private preferenceService: PreferenceService) { }
+    private preferenceService: PreferenceService,
+    private toastr : ToastrService) { }
 
   strategiesForm: FormGroup;
   sectorsForm : FormGroup;
@@ -96,8 +98,7 @@ export class InvestmentPreferencesComponent implements OnInit {
         longTerm : this.stratTransformedValues[1],
         swing    : this.stratTransformedValues[2],
         scalp    : this.stratTransformedValues[3],
-        day      : this.stratTransformedValues[4],
-        dateAdded: new Date()
+        day      : this.stratTransformedValues[4]
       };
       // Init risk level obj
       let riskLevelObj : IRiskLevel = {
@@ -119,7 +120,6 @@ export class InvestmentPreferencesComponent implements OnInit {
         utilities             : this.sectorTransformedValues[8],
         realEstate            : this.sectorTransformedValues[9],
         materials             : this.sectorTransformedValues[10],
-        dateAdded             : new Date()
       };
       // Init preference Obj
       let preferenceObj : IPreference = {
@@ -127,12 +127,12 @@ export class InvestmentPreferencesComponent implements OnInit {
         riskLevel     : riskLevelObj,
         tradeStrategy : tradeStrategiesObj,
         sector        : sectorsObj,
-        dateModified  : null,
         capitalToRisk : this.capital
       };
       console.log(preferenceObj);
       this.preferenceService.createPreference(preferenceObj).subscribe(() => {
         this.router.navigateByUrl("/login");
+        this.toastr.success('Updated sucessfully', 'Investment Preferences');
       });
     }
   }

@@ -30,15 +30,17 @@
     swing     : boolean;
     scalp     : boolean;
     day       : boolean;
-    dateAdded : Date   ;
   }
 
   export interface IPortfolio {
-    id     : number;
-    user   : IUser ;
-    profit : number;
-    loss   : number;
-    net    : number;
+    id       : number;
+    user     : IUser ;
+    amount   : number;
+    profit   : number;
+    loss     : number;
+    net      : number;
+    invested : number;
+    cash     : number;
   }
 
   export interface IRiskLevel {
@@ -60,7 +62,6 @@
     utilities             : boolean;
     realEstate            : boolean;
     materials             : boolean;
-    dateAdded             : Date   ;
   }
 
   export interface IPreference {
@@ -68,7 +69,6 @@
     riskLevel     : IRiskLevel      ;
     tradeStrategy : ITradeStrategies;
     sector        : ISector         ;
-    dateModified  : Date            ;
     capitalToRisk : number          ;
   }
 
@@ -77,12 +77,16 @@
     portfolio    : IPortfolio ;
     preference   : IPreference;
     title        : string     ;
+    description  : string     ;
+    amount       : number     ;
     profit       : number     ;
     loss         : number     ;
     net          : number     ;
     numTrades    : number     ;
     numSTrades   : number     ;
     numFTrades   : number     ;
+    invested     : number     ;
+    cash         : number     ;
     dateCreated  : Date       ;
     dateModified : Date       ;
   }

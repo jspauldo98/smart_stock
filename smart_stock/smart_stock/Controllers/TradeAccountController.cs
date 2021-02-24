@@ -27,7 +27,6 @@ namespace smart_stock.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<TradeAccount>>> GetTradeAccounts(int id)
         {
-            Console.WriteLine("GET TA" + id);
             var tas = await _portfolioProvider.GetTradeAccounts(id);
             return tas.ToList();
         }
@@ -37,7 +36,6 @@ namespace smart_stock.Controllers
         [HttpPost("{id}")]
         public async Task<ActionResult<bool>> PostPaymentDetail(int id)
         {
-            Console.WriteLine("POST" + id);
             return await _portfolioProvider.InsertTradeAccount(id);
         }
     }

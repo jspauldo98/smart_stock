@@ -30,44 +30,6 @@ namespace smart_stock.Services
                 return new MySqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-        public async Task<IEnumerable<User>> GetAllUsers()
-        {
-            try
-            {
-                using (MySqlConnection connection = Connection)
-                {
-                    string sQuery = "SELECT * FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii";
-                    connection.Open();
-                    var result = await connection.QueryAsync<User>(sQuery);
-                    return result.ToList();
-                }
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return null;
-            }
-        }
-
-        public async Task<User> GetUser(int id)
-        {
-            try
-            {
-                using (MySqlConnection connection = Connection)
-                {
-                    string sQuery = "SELECT * FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii WHERE u.id = @id";
-                    var @param = new {id = id };
-                    connection.Open();
-                    var result = await connection.QueryAsync<User>(sQuery, @param);
-                    return result.FirstOrDefault();
-                }
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return null;
-            }
-        }
 
         public async Task<User> GetUserLogin(string username, string password)
         {
@@ -134,30 +96,6 @@ namespace smart_stock.Services
 
         }
 
-        public async Task<bool> UpdateUser(int id, User user)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"UPDATE User SET date_confirmed = @date_confirmed WHERE id = @id";        
-                    var @params = new {
-                        join_date = user.DateConfirmed,
-                        id = id
-                    };      
-                    connection.Open();
-                    result = await connection.ExecuteAsync(sQuery, @params);
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }            
-        }
-
         public async Task<User> InsertUser(User user)
         {   
             try
@@ -181,7 +119,7 @@ namespace smart_stock.Services
                         var @params2 = new {                            
                             Fname = user.Pii.FName,
                             LName = user.Pii.LName,
-                            dob = user.Pii.Dob,
+                            dob   = user.Pii.Dob  ,
                             email = user.Pii.Email,
                             phone = user.Pii.Phone
                         };      
@@ -194,26 +132,32 @@ namespace smart_stock.Services
                         int credId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Credential ORDER BY id DESC LIMIT 1", null);
                         sQuery = @"INSERT INTO User (pii, credentials, joindate, dateadded, dateconfirmed) VALUES (@pii, @credentials, @joinDate, @dateAdded, @dateConfirmed)";        
                         var @params3 = new {
-                            pii = piiId,
-                            credentials = credId,
-                            joinDate = user.JoinDate,
-                            dateAdded = user.DateAdded,
-                            dateConfirmed = user.DateConfirmed
+                            pii           = piiId ,
+                            credentials   = credId,
+                            joinDate      = user  .JoinDate,
+                            dateAdded     = user  .DateAdded,
+                            dateConfirmed = user  .DateConfirmed
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params3);
                         if (result > 0)
                         {                            
                             string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
                             var @userParams = new {
-                                piiId = piiId,
+                                piiId        = piiId ,
                                 credentialId = credId
                             };
                             User newUser = await connection.QueryFirstOrDefaultAsync<User>(userQuery, @userParams);
 
                             // Add entry to Portfolio table
-                            var portQuery = @"INSERT INTO Portfolio (User, Profit, Loss, Net) VALUES (@user, 0, 0, 0)";
+                            var portQuery = @"INSERT INTO Portfolio (User, Amount, Profit, Loss, Net, Invested, Cash) VALUES (@user, @amount, @profit, @loss, @net, @invested, @cash)";
                             var @paramsPort = new {
-                                user = newUser.Id
+                                user     = newUser.Id,
+                                amount   = 0,
+                                profit   = 0,
+                                loss     = 0,
+                                net      = 0,
+                                invested = 0,
+                                cash     = 0
                             };
                             result = -1;
                             result = await connection.ExecuteAsync(portQuery, @paramsPort);                            
@@ -228,48 +172,6 @@ namespace smart_stock.Services
             {
                 Console.WriteLine(TAG + err);
                 return null;
-            }            
-        }
-
-        public async Task<bool> DeleteUser(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"DELETE u.*, c.*, p.* FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii WHERE user.id = @id";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = await connection.ExecuteAsync(sQuery, @params);
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }
-        }
-
-        public bool UserExists(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"SELECT EXISTS (SELECT * FROM User WHERE id = @id)";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = connection.Query<int>(sQuery, @params).FirstOrDefault();
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
             }            
         }
     }

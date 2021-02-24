@@ -78,7 +78,7 @@ namespace smart_stock.Services
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT ta.Id, ta.Title, ta.Profit, ta.Loss, ta.Net, ta.NumTrades, ta.NumSTrades, ta.NumFTrades, ta.DateCreated, ta.DateModified FROM TradeAccount ta, Portfolio p WHERE p.Id = ta.Portfolio and p.Id = @id";
+                    string sQuery = "SELECT ta.Id, ta.Title, ta.Description, ta.Amount, ta.Profit, ta.Loss, ta.Net, ta.NumTrades, ta.NumSTrades, ta.NumFTrades, ta.Invested, ta.Cash, ta.DateCreated, ta.DateModified FROM TradeAccount ta, Portfolio p WHERE p.Id = ta.Portfolio and p.Id = @id";
                     var @param = new {id = pId};
                     connection.Open();
                     var tas = await connection.QueryAsync<TradeAccount>(sQuery, @param);
@@ -102,11 +102,11 @@ namespace smart_stock.Services
                         var @stratIdParam = new {pId = prefID};
                         int stratId = await connection.QueryFirstOrDefaultAsync<int>(stratIdQ, @stratIdParam);
                         // get trade strat
-                        var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day, DateAdded FROM TradeStrategies WHERE Id = @sId";
+                        var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day FROM TradeStrategies WHERE Id = @sId";
                         var @stratParam = new {sId = stratId};
                         TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>(stratQ, @stratParam);
                         // get preference
-                        var prefQ = "SELECT Id, DateModified, CapitalToRisk FROM Preference WHERE Id = @pId";
+                        var prefQ = "SELECT Id, CapitalToRisk FROM Preference WHERE Id = @pId";
                         var @prefParam = new {pId = prefID};
                         t.Preference = await connection.QueryFirstOrDefaultAsync<Preference>(prefQ, @prefParam);
                         t.Preference.RiskLevel = riskLevel;
@@ -122,53 +122,6 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<bool> UpdatePortfolio(int id, Portfolio p)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"UPDATE Portfolio SET Profit = @profit, Loss = @loss, Net = @net WHERE id = @id";        
-                    var @params = new {
-                        profit = p.Profit,
-                        loss = p.Loss,
-                        net = p.Net,
-                        id = id
-                    };      
-                    connection.Open();
-                    result = await connection.ExecuteAsync(sQuery, @params);
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }            
-        }
-
-        public async Task<bool> DeletePortfolio(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"DELETE * From Portfolio WHERE user.id = @id";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = await connection.ExecuteAsync(sQuery, @params);
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }
-        }
-
         // TODO - right now this is just generating a template trade account. In future get rid of portfolio id param and use real trade account object 
         public async Task<bool> InsertTradeAccount(int portfolioId)
         {
@@ -176,44 +129,71 @@ namespace smart_stock.Services
             {
                 int result = -1;
                 using (MySqlConnection connection = Connection)
-                {       
+                {                                                
+                    // Add entry to TradeStratiegies
+                    var stratQ = @"INSERT INTO TradeStrategies (BlueChip, LongTerm, Swing, Scalp, Day) VALUES (@bluechip, @longterm, @swing, @scalp, @day)";        
+                    var @stratP = new {
+                        bluechip = true,
+                        longterm = true,
+                        swing    = true,
+                        scalp    = true,
+                        day      = true,
+                    };      
+                    result = await connection.ExecuteAsync(stratQ, @stratP); 
+
+                    // REtrieve strat id
+                    int stratId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM TradeStrategies ORDER BY id DESC LIMIT 1", null);
+
+                    // Add entry to Sectors
+                    var secQ = "INSERT INTO Sectors (InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials) VALUES (@infoTech, @healthCare, @fin, @consumeD, @comm, @indust, @consumS, @energy, @util, @realE, @mat)";
+                    var @secP = new {
+                        infoTech   = true,
+                        healthCare = true,
+                        fin        = true,
+                        consumeD   = true,
+                        comm       = true,
+                        indust     = true,
+                        consumS    = true,
+                        energy     = true,
+                        util       = true,
+                        realE      = true,
+                        mat        = true
+                    };    
+                    result = await connection.ExecuteAsync(secQ, @secP); 
+
+                    // REtrieve sector id
+                    int sectorId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Sectors ORDER BY id DESC LIMIT 1", null);
+
                     // Add entry to Preference
-                    var prefQ = @"INSERT INTO Preference (RiskLevel, CapitalToRisk) VALUES (@risk, @capital)";        
+                    var prefQ = @"INSERT INTO Preference (RiskLevel, TradeStrategy, Sector, CapitalToRisk) VALUES (@risk, @strat, @sector, @capital)";        
                     var @prefP = new {
-                        risk = 1,
+                        risk    = 1,
+                        strat   = stratId,
+                        sector  = sectorId,
                         capital = 10
                     };      
                     connection.Open();
-                    result = await connection.ExecuteAsync(prefQ, @prefP);
+                    result = await connection.ExecuteAsync(prefQ, @prefP);  
 
                     // REtrieve preference id
-                    int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM PII ORDER BY id DESC LIMIT 1", null); 
-
-                    // Add entry to TradeStratiegies
-                    var stratQ = @"INSERT INTO TradeStrategies (Preference, BlueChip, LongTerm, Swing, Scalp, Day, DateAdded) VALUES (@pref, @bluechip, @longterm, @swing, @scalp, @day, @dateAdded)";        
-                    var @stratP = new {
-                        pref = prefId,
-                        bluechip = 1,
-                        longterm = 0,
-                        swing = 1,
-                        scalp = 0,
-                        day = 0,
-                        dateAdded = DateTime.Now
-                    };      
-                    result = await connection.ExecuteAsync(stratQ, @stratP);   
+                    int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);
                     
                     // Add entry to TradeAccount         
-                    var tradeQ = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, DateCreated) VALUES (@port, @pref, @title, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @dateCreated)";        
+                    var tradeQ = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated) VALUES (@port, @pref, @title, @desc, @amount, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @invested, @cash, @dateCreated)";        
                     var @tradeP = new {
-                        port = portfolioId,
-                        pref = prefId,
-                        title = "User Created Account",
-                        profit = 0,
-                        loss = 0,
-                        net = 0,
-                        numTrades = 0,
-                        numSTrades = 0,
-                        numFTrades = 0,
+                        port        = portfolioId,
+                        pref        = prefId,
+                        title       = "User Created Account",
+                        desc        = "This account is generated as a template for now.",
+                        amount      = 0,
+                        profit      = 0,
+                        loss        = 0,
+                        net         = 0,
+                        numTrades   = 0,
+                        numSTrades  = 0,
+                        numFTrades  = 0,
+                        invested    = 0,
+                        cash        = 0,
                         dateCreated = DateTime.Now
                     };      
                     result = await connection.ExecuteAsync(tradeQ, @tradeP);
@@ -225,27 +205,6 @@ namespace smart_stock.Services
                 Console.WriteLine(TAG + err);
                 return false;
             }
-        }
-
-        public bool PortfolioExists(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"SELECT EXISTS (SELECT * FROM Portfolio WHERE id = @id)";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = connection.Query<int>(sQuery, @params).FirstOrDefault();
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }            
         }
     }
 }

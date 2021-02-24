@@ -55,9 +55,5 @@ namespace smart_stock.Models
         [Required]
         [Column(TypeName = "bit")]
         public Boolean Materials { get; set; }
-
-        [Required]
-        [Column(TypeName = "date")]
-        public DateTime DateAdded { get; set; }
     }
 }

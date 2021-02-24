@@ -34,13 +34,11 @@ export class HomeComponent implements OnInit {
   toDashboardView() : void {
     this.page = 1;
     this.title = "DashBoard"
-    // this.router.navigateByUrl("/dashboard")
   }
 
   toPortfolioView() : void {
     this.page = 2;
     this.title = "Portfolio"
-    // this.router.navigateByUrl("/portfolio")
   }
 
 }

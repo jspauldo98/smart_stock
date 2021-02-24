@@ -21,50 +21,6 @@ namespace smart_stock.Controllers
             _userProvider = userProvider;
         }
 
-        // GET: api/User
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {          
-            Console.WriteLine("GET");  
-            var test = await _userProvider.GetAllUsers();
-            return test.ToList();
-        }
-
-        // GET: api/User/id
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _userProvider.GetUser(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/User/id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            if (_userProvider.UserExists(id))
-            {
-                await _userProvider.UpdateUser(id, user);
-            }  
-            else 
-            {
-                return NotFound();
-            }          
-
-            return NoContent();
-        }
-
         // POST: api/User
         [HttpPost]
         public async Task<IActionResult> PostUser([FromBody] User user)
@@ -85,19 +41,6 @@ namespace smart_stock.Controllers
                 return new JsonResult(errorJson);
             }
             return new JsonResult(repoResult);
-        }
-
-        // DELETE: api/User/id
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteUser(int id)
-        {
-            var user = await _userProvider.DeleteUser(id);
-            if (!user)
-            {
-                return NotFound();
-            }
-
-            return user;
         }
     }
 }

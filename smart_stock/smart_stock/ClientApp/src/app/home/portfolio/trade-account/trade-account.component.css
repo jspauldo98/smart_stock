@@ -1,17 +1,3 @@
 .trade-account-card {
-   max-width: 500px;
-}
-.trade-account-footer {
-   max-height: 20px;
-}
-.redbg {
-   background-color: #E87060;
-}
-.greenbg {
-   background-color: #64BD63
-   ;
-}
-.netralbg {
-   background-color: #e0dbd1
-   ;
+   max-width: 90%;
 }

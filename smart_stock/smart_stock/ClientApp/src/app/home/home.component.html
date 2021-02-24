@@ -29,18 +29,20 @@
       </mat-nav-list>
    </mat-sidenav>
 
-   <mat-sidenav-content *ngIf="this.page==0">
-   <h1 class="display-1">Smart Stock</h1>
-   <h2 class="display-2, text-center">The service that does the trading for you!</h2>
+   <mat-sidenav-content>
    
-   <div class="container">
+   <div class="container" *ngIf="this.page==0">
+      <h1 class="display-1">Smart Stock</h1>
+      <h2 class="display-2, text-center">The service that does the trading for you!</h2> 
       <app-home-about></app-home-about>
    </div>
 
-   </mat-sidenav-content>
+   <body>
+      <div class="container">
+         <br><app-dashboard *ngIf="this.page==1"></app-dashboard>
+         <app-portfolio *ngIf="this.page==2"></app-portfolio>
+      </div>
+   </body>
 
-   <div class="container">
-      <app-dashboard *ngIf="this.page==1"></app-dashboard>
-      <app-portfolio *ngIf="this.page==2"></app-portfolio>
-   </div>
+   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -21,8 +21,6 @@ namespace smart_stock.Models
         [Required]
         public Sector Sector { get; set; }
 
-        public DateTime? DateModified { get; set; }
-
         [Required]
         public double CapitalToRisk { get; set; }
     }

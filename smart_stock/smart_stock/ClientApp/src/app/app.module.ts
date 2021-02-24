@@ -28,6 +28,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { PlatformModule } from '@angular/cdk/platform';
+import { ToastrModule } from "ngx-toastr";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -70,6 +71,7 @@ import { HomeAboutComponent } from './home/home-about/home-about.component';
     AppRoutingModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
+    ToastrModule.forRoot({positionClass :'toast-bottom-right'}),
     PlatformModule,
     MatToolbarModule,
     MatMenuModule,

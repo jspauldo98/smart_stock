@@ -1,32 +1,38 @@
-<mat-card>
-   <mat-card-title>
-      {{this.portfolioService.portfolio.user.pii.fName}}'s Portfolio
-   </mat-card-title>
-   <mat-card-subtitle>
-      <mat-grid-list cols=3 rowHeight="30px">
-         <mat-grid-tile>
-            <h6>{{this.portfolioService.portfolio.net}}</h6>
-            <mat-grid-tile-footer class="portfolio-footer">
-               <h3>Net</h3>
-            </mat-grid-tile-footer>
-         </mat-grid-tile>
-         <mat-grid-tile>
-            <h6>{{this.portfolioService.portfolio.profit}}</h6>
-            <mat-grid-tile-footer class="portfolio-footer">
-               <h3>Profit</h3>
-            </mat-grid-tile-footer>
-         </mat-grid-tile>
-         <mat-grid-tile>
-            <h6>{{this.portfolioService.portfolio.loss}}</h6>
-            <mat-grid-tile-footer class="portfolio-footer">
-               <h3>Losses</h3>
-            </mat-grid-tile-footer>
-         </mat-grid-tile>
-      </mat-grid-list>
-   </mat-card-subtitle>
-   <mat-card-actions>
-      <button mat-button (click)="createTradeAccount()">Create New Trade Account</button>
-   </mat-card-actions>
-</mat-card>
-<br>
-<app-trade-account></app-trade-account>
+<ng-container *ngIf="this.portfolio">
+   <div class="container text-left">
+      <div class="row">
+         <div class="col-lg">
+            <h2 style="color: cornsilk;">{{this.user.pii.fName}}'s Portfolio</h2> 
+         </div>
+         <div class="col-lg">
+            <h2 style="color: cornsilk;">${{this.portfolio.amount}}</h2>
+         </div>
+      </div>
+      <div class="row w-25">
+         <div class="col-lg">
+            <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-${{this.portfolio.net}}</h6>
+         </div>
+         <div class="col-lg">
+            <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+${{this.portfolio.net}}</h6>
+         </div>
+         <div class="col-lg">
+            <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-{{(this.portfolio.loss / this.portfolio.amount)*100}}%</h6>
+         </div>
+         <div class="col-lg">
+            <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
+         </div>
+      </div>
+      <div class="row">            
+         <div class="col-lg">
+            <h5 style="color: cornsilk;">${{this.portfolio.invested}} Invested</h5>
+         </div>
+         <div class="col-lg">
+            <h5 style="color: cornsilk;">${{this.portfolio.cash}} Cash</h5>
+         </div>
+      </div>
+   </div>                     
+<div style="background: grey; height: 300px;">
+   <h3>Graph?</h3>
+</div>
+   <app-trade-account></app-trade-account>
+</ng-container>

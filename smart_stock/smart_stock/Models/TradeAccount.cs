@@ -23,6 +23,12 @@ namespace smart_stock.Models
         [Column(TypeName = "varchar(50)")]
         public string Title { get; set;}
 
+        [Column(TypeName = "text")]
+        public string Description { get; set;}
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Amount { get; set; }
+
         [Column(TypeName = "decimal(13, 2)")]
         public double Profit { get; set; }
 
@@ -47,5 +53,11 @@ namespace smart_stock.Models
 
         [Column(TypeName = "date")]
         public DateTime DateModified { get; set;}
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Invested { get; set; }
+
+        [Column(TypeName = "decimal(13, 2)")]
+        public double Cash { get; set; }
     }
 }
