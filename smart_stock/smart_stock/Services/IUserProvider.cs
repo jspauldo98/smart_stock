@@ -18,9 +18,6 @@ namespace smart_stock.Services
             Insert a single user's pii into the table 'PII'
             returns true on success given the parameter 'user' */
         Task<User> InsertUser(User user);
-
-        /* Delete a user from table tables 'User', 'Credentials', and 'PII'.
-            Returns true on success given the parameter 'user' */
         
     }
 }
