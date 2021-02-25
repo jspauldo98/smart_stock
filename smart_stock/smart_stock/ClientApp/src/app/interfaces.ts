@@ -90,3 +90,9 @@
     dateCreated  : Date       ;
     dateModified : Date       ;
   }
+
+  export interface ILoginResult {
+    username: string;
+    accessToken: string;
+    refreshToken: string;
+  }

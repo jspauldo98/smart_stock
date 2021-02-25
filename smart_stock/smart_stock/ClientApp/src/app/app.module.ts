@@ -21,7 +21,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatRadioModule} from '@angular/material/radio';
 
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -47,6 +47,9 @@ import { PortfolioComponent } from './home/portfolio/portfolio.component';
 import { PreferenceService } from './services/preference.service';
 import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
 import { HomeAboutComponent } from './home/home-about/home-about.component';
+import { appInitializer } from './services/app-initializer';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -95,10 +98,27 @@ import { HomeAboutComponent } from './home/home-about/home-about.component';
     MatSliderModule,
     MatRadioModule
   ],
-  providers: [DatePipe,
-  LoginService,
-  UserService,
-  PreferenceService
+  providers:[
+    DatePipe,
+    LoginService,
+    UserService,
+    PreferenceService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      multi: true,
+      deps: [LoginService]
+    },
+    {
+      provide: HTTP_INTERCEPTORS, 
+      useClass: JwtInterceptor, 
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

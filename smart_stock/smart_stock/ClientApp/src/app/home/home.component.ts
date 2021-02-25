@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
-import { IUser } from '../interfaces';
 import { Router } from '@angular/router';
+import { ICredential, IUser } from '../interfaces';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +17,13 @@ export class HomeComponent implements OnInit {
   user: IUser
   page : number = 0;
   title : string = "About";
+  userCredentials: ICredential
 
   ngOnInit(): void {
     this.changeDetectorRef.detectChanges();
-    this.loginService.currentUser.subscribe(x => {
-      this.user = x;
-      console.log(this.user)
+    this.loginService.userCredentials$.subscribe(x => {
+      this.userCredentials = x;
+      console.log(this.userCredentials);
     });
   }
 
@@ -39,6 +40,10 @@ export class HomeComponent implements OnInit {
   toPortfolioView() : void {
     this.page = 2;
     this.title = "Portfolio"
+  }
+  
+  public userLogout() {
+    this.loginService.userLogout();
   }
 
 }
