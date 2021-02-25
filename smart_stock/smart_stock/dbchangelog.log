@@ -160,4 +160,3 @@ ALTER TABLE TradeStrategies DROP DateAdded;
 ALTER TABLE Sectors DROP DateAdded;
 ALTER TABLE Preference DROP DateModified;
 ALTER TABLE TradeAccount ADD Description TEXT;
-alter table User add column RefreshTokens varchar(500);
