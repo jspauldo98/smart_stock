@@ -174,51 +174,5 @@ namespace smart_stock.Services
                 return null;
             }            
         }
-<<<<<<< HEAD
-=======
-
-        public async Task<bool> DeleteUser(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"DELETE u.*, c.*, p.* FROM User u JOIN Credential c on c.id = u.credentials JOIN PII p on p.id = u.pii WHERE user.id = @id";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = await connection.ExecuteAsync(sQuery, @params);
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }
-        }
-
-        public bool UserExists(int id)
-        {
-            try
-            {
-                int result = -1;
-                using (MySqlConnection connection = Connection)
-                {                
-                    var sQuery = @"SELECT EXISTS (SELECT * FROM User WHERE id = @id)";     
-                    var @params = new { id = id };         
-                    connection.Open();
-                    result = connection.Query<int>(sQuery, @params).FirstOrDefault();
-                }
-                return result > 0;
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine(TAG + err);
-                return false;
-            }            
-        }
-
->>>>>>> JWT-auth-refresh
     }
 }
