@@ -47,7 +47,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     let credentialBody: ICredential = {
       id: null,
       username: this.userForm.value.username,
-      password: this.userForm.value.password
+      password: this.userForm.value.password,
+      loginResultUserId: null
     };
     this.loginService.getUserLogin(credentialBody).subscribe(user => {
       if (user === null) {

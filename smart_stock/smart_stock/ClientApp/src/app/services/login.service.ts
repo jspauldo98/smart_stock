@@ -30,6 +30,7 @@ export class LoginService {
           this.userCredentials.next({
             id: null,
             username: x.username,
+            loginResultUserId: x.userId,
             password: null
           });
         });
@@ -57,7 +58,8 @@ export class LoginService {
           this.userCredentials.next({
             id: null,
             username: x.username,
-            password: null
+            password: null,
+            loginResultUserId: x.userId
           });
           this.setLocalStorage(x);
           this.startTokenTimer();
@@ -96,7 +98,8 @@ export class LoginService {
         this.userCredentials.next({
           username: x.username,
           id: null,
-          password: null
+          password: null,
+          loginResultUserId: x.userId
         });
         this.setLocalStorage(x);
         this.startTokenTimer();

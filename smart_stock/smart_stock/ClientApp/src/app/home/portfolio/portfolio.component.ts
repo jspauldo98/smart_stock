@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IPortfolio, ITradeAccount, IUser } from '../../interfaces';
+import { IPortfolio, ITradeAccount, IUser, ICredential } from '../../interfaces';
 import { LoginService } from '../../services/login.service';
 import { PortfolioService } from '../../services/portfolio.service';
 
@@ -9,7 +9,7 @@ import { PortfolioService } from '../../services/portfolio.service';
   styleUrls: ['./portfolio.component.css']
 })
 export class PortfolioComponent implements OnInit {
-  user : IUser; 
+  userCredentials: ICredential; 
   portfolio : IPortfolio;
 
   constructor(private readonly loginService : LoginService, private readonly portfolioService : PortfolioService) { }
@@ -19,11 +19,11 @@ export class PortfolioComponent implements OnInit {
   }
 
   getData() {
-    this.loginService.currentUser.subscribe(x=>{
-      this.user = x;
-      console.log(this.user);
+    this.loginService.userCredentials$.subscribe(x=>{
+      this.userCredentials = x;
+      console.log(this.userCredentials);
     });
-    this.portfolioService.getPortfolio(this.user).subscribe(res => {
+    this.portfolioService.getPortfolio(this.userCredentials).subscribe(res => {
       this.portfolio = res;
       console.log(res);
     });

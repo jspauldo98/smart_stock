@@ -58,7 +58,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.credential = {
       id: null,
       username: event.username,
-      password: event.password
+      password: event.password,
+      loginResultUserId: null
     };
     this.user.credential = this.credential;
     this.createUserSub = this.userService.createNewUser(this.user).subscribe(x => {

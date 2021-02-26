@@ -12,5 +12,8 @@ namespace smart_stock.Models
 
         [JsonPropertyName("refreshToken")]
         public string RefreshToken { get; set; }
+
+        [JsonPropertyName("userId")]
+        public int? UserId { get; set; }
     }
 }

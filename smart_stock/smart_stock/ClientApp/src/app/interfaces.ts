@@ -3,6 +3,7 @@
     id       : number;
     username : string;
     password : string;
+    loginResultUserId: number;
   }
 
   export interface IPii {
@@ -93,6 +94,7 @@
 
   export interface ILoginResult {
     username: string;
+    userId: number;
     accessToken: string;
     refreshToken: string;
   }

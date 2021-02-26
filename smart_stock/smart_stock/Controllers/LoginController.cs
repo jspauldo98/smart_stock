@@ -40,13 +40,15 @@ namespace smart_stock.Controllers
                 {
                     var claims = new[]
                     {
-                        new Claim(ClaimTypes.Name, user.Credential.Username)
+                        new Claim(ClaimTypes.Name, user.Credential.Username),
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
                     };
                     var jwtResult = _jwtAuthManager.GenerateTokens(user.Credential.Username, claims, DateTime.Now);
                     
                     LoginResult result = new LoginResult 
                     {
                         Username = user.Credential.Username,
+                        UserId = user.Id,
                         AccessToken = jwtResult.AccessToken,
                         RefreshToken = jwtResult.RefreshToken.TokenString
                     };
@@ -65,7 +67,8 @@ namespace smart_stock.Controllers
         {
             return Ok(new LoginResult
             {
-                Username = User.Identity.Name
+                Username = User.Identity.Name,
+                UserId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
             });
         }
 
@@ -85,6 +88,7 @@ namespace smart_stock.Controllers
             try
             {
                 var username = User.Identity.Name;
+                int? userId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 if (string.IsNullOrWhiteSpace(request.RefreshToken))
                 {
                     return Unauthorized();
@@ -94,6 +98,7 @@ namespace smart_stock.Controllers
                 var jwtResult = _jwtAuthManager.Refresh(request.RefreshToken, accessToken, DateTime.Now);
                 LoginResult result = new LoginResult {
                     Username = username,
+                    UserId = userId,
                     AccessToken = jwtResult.AccessToken,
                     RefreshToken = jwtResult.RefreshToken.TokenString
                 };
