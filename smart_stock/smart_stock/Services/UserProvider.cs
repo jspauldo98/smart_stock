@@ -174,5 +174,47 @@ namespace smart_stock.Services
                 return null;
             }            
         }
+
+        public async Task<User> GetAllUserInformation(int userId, string username)
+        {
+            try
+            {
+                using (MySqlConnection connection = Connection)
+                {
+                    string credIdQuery = "SELECT Id, Username FROM Credential WHERE Username = @username";
+                    var @idParam = new {
+                        Username = username
+                    };
+                    connection.Open();
+                    Credential credential = await connection.QueryFirstOrDefaultAsync<Credential>(credIdQuery, idParam);
+                    if (credential == null)
+                    {
+                        return null;
+                    }
+                    string piiIdQuery = "SELECT pii FROM User WHERE credentials = @credentialId";
+                    var @piiIdParam = new {credentialId = credential.Id};
+                    int? piiId = await connection.QueryFirstOrDefaultAsync<int?>(piiIdQuery, @piiIdParam);
+
+                    string piiQuery = "SELECT * FROM PII WHERE id = @id";
+                    var @piiParam = new {id = piiId};
+                    Pii pii = await connection.QueryFirstOrDefaultAsync<Pii>(piiQuery, @piiParam);
+
+                    string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
+                    var @userParams = new {
+                        piiId = pii.Id,
+                        credentialId = credential.Id
+                    };
+                    User user = await connection.QueryFirstOrDefaultAsync<User>(userQuery, @userParams);
+                    user.Pii = pii;
+                    user.Credential = credential;
+                    return user;
+                }
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return null;
+            }
+        }
     }
 }

@@ -1,8 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject} from '@angular/core';
 import { LoginService } from '../services/login.service';
+import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
 import { ICredential, IUser } from '../interfaces';
-
+import { first } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { UserDialogComponent } from '../mat-dialog-views/user-dialog.component';
+ 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,7 +17,9 @@ export class HomeComponent implements OnInit {
 
   constructor(private readonly loginService: LoginService,
     private router : Router,
-    public changeDetectorRef: ChangeDetectorRef) {}
+    private readonly userService: UserService,
+    public changeDetectorRef: ChangeDetectorRef,
+    public dialog: MatDialog) {}
 
   user: IUser
   page : number = 0;
@@ -23,7 +30,9 @@ export class HomeComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
     this.loginService.userCredentials$.subscribe(x => {
       this.userCredentials = x;
-      console.log(this.userCredentials);
+      this.userService.getAllUserInformation(this.userCredentials.loginResultUserId, this.userCredentials.username).pipe(first()).subscribe(x => {
+        this.user = x;
+      });
     });
   }
 
@@ -46,4 +55,11 @@ export class HomeComponent implements OnInit {
     this.loginService.userLogout();
   }
 
+  public launchUserDialog(): void {
+    this.dialog.open(UserDialogComponent, {
+      data: {
+        userInfo: this.user
+      }
+    });
+  }
 }

@@ -19,5 +19,10 @@ namespace smart_stock.Services
             returns true on success given the parameter 'user' */
         Task<User> InsertUser(User user);
         
+        /*
+        Once a user has been properly logged in and set up with a claim, they will be able to access this
+        method and retrieve all their information as needed
+        */
+        Task<User> GetAllUserInformation(int userId, string username);
     }
 }

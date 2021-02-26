@@ -19,6 +19,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatRadioModule} from '@angular/material/radio';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
@@ -39,6 +40,7 @@ import { RegisterComponent } from '../app/register/register.component';
 import { PersonalInformationComponent } from '../app/register/personal-information.component';
 import { CredentialsComponent } from '../app/register/credentials.component';
 import { InvestmentPreferencesComponent } from '../app/register/investment-preferences.component';
+import { UserDialogComponent } from '../app/mat-dialog-views/user-dialog.component';
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
@@ -63,7 +65,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     DashboardComponent,
     PortfolioComponent,
     TradeAccountComponent,
-    HomeAboutComponent
+    HomeAboutComponent,
+    UserDialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -96,7 +99,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     MatGridListModule,
     MatTooltipModule,
     MatSliderModule,
-    MatRadioModule
+    MatRadioModule,
+    MatDialogModule
   ],
   providers:[
     DatePipe,
@@ -120,6 +124,7 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
       multi: true
     },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [UserDialogComponent]
 })
 export class AppModule { }

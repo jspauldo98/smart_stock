@@ -41,7 +41,8 @@ namespace smart_stock.Controllers
                     var claims = new[]
                     {
                         new Claim(ClaimTypes.Name, user.Credential.Username),
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Role, "Member")
                     };
                     var jwtResult = _jwtAuthManager.GenerateTokens(user.Credential.Username, claims, DateTime.Now);
                     
