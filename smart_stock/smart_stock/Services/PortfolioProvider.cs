@@ -105,12 +105,21 @@ namespace smart_stock.Services
                         var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day FROM TradeStrategies WHERE Id = @sId";
                         var @stratParam = new {sId = stratId};
                         TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>(stratQ, @stratParam);
+                        // get sector id
+                        var secIdQ = "SELECT Sector FROM Preference WHERE Id = @pId";
+                        var @secIdParam = new {pId = prefID};
+                        int secId = await connection.QueryFirstOrDefaultAsync<int>(secIdQ, @secIdParam);
+                        // get sector
+                        var secQ = "SELECT InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials FROM Sectors WHERE Id = @secId";
+                        var @secParam = new {secId = secId};
+                        Sector sector = await connection.QueryFirstOrDefaultAsync<Sector>(secQ, @secParam);
                         // get preference
                         var prefQ = "SELECT Id, CapitalToRisk FROM Preference WHERE Id = @pId";
                         var @prefParam = new {pId = prefID};
                         t.Preference = await connection.QueryFirstOrDefaultAsync<Preference>(prefQ, @prefParam);
                         t.Preference.RiskLevel = riskLevel;
                         t.Preference.TradeStrategy = strategy;
+                        t.Preference.Sector = sector;
                     }
                     return tas.ToList();
                 }

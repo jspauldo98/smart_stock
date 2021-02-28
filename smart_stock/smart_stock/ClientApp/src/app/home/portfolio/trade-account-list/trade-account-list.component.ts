@@ -43,6 +43,11 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
     );
   }
 
+  viewTa(ta : ITradeAccount) {
+    this.PortfolioComponent.content = 1;
+    this.PortfolioComponent.tradeAccount = ta;
+  }
+
   ngOnDestroy() {
     this.subs.unsubscribe();
   }

@@ -52,6 +52,7 @@ import { HomeAboutComponent } from './home/home-about/home-about.component';
 import { appInitializer } from './services/app-initializer';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
+import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     PortfolioComponent,
     TradeAccountListComponent,
     HomeAboutComponent,
-    UserDialogComponent
+    UserDialogComponent,
+    TradeAccountComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

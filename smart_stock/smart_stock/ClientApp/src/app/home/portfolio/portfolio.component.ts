@@ -14,7 +14,9 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
   public userCredentials: ICredential; 
   public portfolio : IPortfolio;
+  public tradeAccount : ITradeAccount;
   public user: IUser;
+  public content : number;
 
   constructor(private readonly loginService : LoginService, 
     private readonly portfolioService : PortfolioService,
@@ -22,6 +24,7 @@ export class PortfolioComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getData();
+    this.content = 0;
   }
 
   getData() {
