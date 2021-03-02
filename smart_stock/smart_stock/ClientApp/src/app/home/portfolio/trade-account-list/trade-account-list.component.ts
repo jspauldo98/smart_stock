@@ -17,7 +17,7 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
 
   constructor(private readonly loginService : LoginService,
     private readonly portfolioService : PortfolioService,
-    private PortfolioComponent : PortfolioComponent,
+    private portfolioComponent : PortfolioComponent,
     private toastr : ToastrService) { }
 
   ngOnInit(): void {    
@@ -26,7 +26,7 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
 
   refreshData() {
     this.subs.add(
-      this.portfolioService.getTradeAccounts(this.PortfolioComponent.portfolio.id).subscribe(res => {
+      this.portfolioService.getTradeAccounts(this.portfolioComponent.portfolio.id).subscribe(res => {
         this.tradeAccounts = res as ITradeAccount[];
         console.log(res);
       })
@@ -34,18 +34,12 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
   }
 
   createTradeAccount() {
-    this.subs.add(
-      this.portfolioService.postTradeAccount(this.PortfolioComponent.portfolio.id).subscribe(res => {
-        this.tradeAccounts = res as ITradeAccount[];
-        this.refreshData();
-        this.toastr.success('Created successfully', 'Trade Account');
-      })
-    );
+    this.portfolioComponent.content = 2;
   }
 
   viewTa(ta : ITradeAccount) {
-    this.PortfolioComponent.content = 1;
-    this.PortfolioComponent.tradeAccount = ta;
+    this.portfolioComponent.content = 1;
+    this.portfolioComponent.tradeAccount = ta;
   }
 
   ngOnDestroy() {

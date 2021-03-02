@@ -22,7 +22,11 @@ export class PortfolioService {
     return this.httpClient.get<ITradeAccount[]>(`${this.apiPath}` + "/tradeaccount/" + portfolioId);
   }
 
-  public postTradeAccount(portfolioId : number) {
+  public postPorfolio(portfolioId : number) {
     return this.httpClient.post(`${this.apiPath}` + "/tradeaccount/"+portfolioId, portfolioId);
+  }
+
+  public postTradeAccount(tradeAccount : ITradeAccount) {
+    return this.httpClient.post(`${this.apiPath}` + "/tradeaccount/", tradeAccount);
   }
 }
