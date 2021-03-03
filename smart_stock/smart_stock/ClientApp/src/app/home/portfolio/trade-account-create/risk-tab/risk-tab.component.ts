@@ -25,7 +25,7 @@ export class RiskTabComponent implements OnInit {
     this.riskLevel = {
       id        : null,
       risk      : null,
-      dateAdded : null
+      dateAdded : new Date()
     };
     this.preferenceService.getRiskLevels().then(res => this.riskLevels = res as IRiskLevel[]);
   }
@@ -49,8 +49,7 @@ export class RiskTabComponent implements OnInit {
     }
 
     this.riskLevel.id = this.riskControl.value.id;
-    this.riskLevel.id = this.riskControl.value.risk;
-    this.riskLevel.id = this.riskControl.value.dateAdded;
+    this.riskLevel.risk = this.riskControl.value.risk;
 
     this.emitRisk();
     this.isNextAttempt = false;

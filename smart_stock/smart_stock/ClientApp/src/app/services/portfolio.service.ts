@@ -26,7 +26,7 @@ export class PortfolioService {
     return this.httpClient.post(`${this.apiPath}` + "/tradeaccount/"+portfolioId, portfolioId);
   }
 
-  public postTradeAccount(tradeAccount : ITradeAccount) {
-    return this.httpClient.post(`${this.apiPath}` + "/tradeaccount/", tradeAccount);
+  public postTradeAccount(tradeAccount : ITradeAccount){
+    return this.httpClient.post(`${this.apiPath}` + "/tradeaccount", tradeAccount);
   }
 }

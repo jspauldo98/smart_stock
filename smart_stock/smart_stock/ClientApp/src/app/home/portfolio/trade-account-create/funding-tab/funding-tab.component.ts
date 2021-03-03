@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ICredential, IPortfolio, IUser } from 'src/app/interfaces';
 import { LoginService } from 'src/app/services/login.service';
@@ -20,7 +20,8 @@ export class FundingTabComponent implements OnInit, OnDestroy {
 
   constructor(private readonly loginService : LoginService,
     private readonly userService : UserService,
-    private readonly portfolioService : PortfolioService) { }
+    private readonly portfolioService : PortfolioService,
+    private formbuilder : FormBuilder) { }
   private subs = new SubSink();
   private user : IUser;
   private userCredentials : ICredential;
@@ -28,10 +29,11 @@ export class FundingTabComponent implements OnInit, OnDestroy {
   public submitAttempt : boolean = false;
   // TODO - again this would be a bank or portfolio past Smart Stock Beta version
   public selectedAccount : IPortfolio;
-  public accountControl : FormControl;
   public depositAmount : number;
+  public fundingForm : FormGroup;
 
   ngOnInit(): void {
+    let cash : number;
     this.subs.add(
       this.loginService.userCredentials$.subscribe(x=>{
         this.userCredentials = x;
@@ -41,10 +43,14 @@ export class FundingTabComponent implements OnInit, OnDestroy {
       }),
       this.portfolioService.getPortfolio(this.userCredentials).subscribe(res => {
         // TODO - For now just push current portfolio unto account stack. In the future bank accounts would be here
-        this.accounts = [res];
+        this.accounts = [res];   
+        cash = res.cash;           
       }
-    ));
-    this.accountControl = new FormControl('', Validators.required);
+    )); 
+    this.fundingForm = this.formbuilder.group({
+      account : [null, Validators.required],
+      deposit : [null, [Validators.required, Validators.min(0)]]
+    });   
   }
 
   ngOnDestroy() {
@@ -59,9 +65,10 @@ export class FundingTabComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.submitAttempt = true;
 
-    this.selectedAccount = this.accountControl.value;
+    this.selectedAccount = this.fundingForm.value.account;
+    this.depositAmount = this.fundingForm.value.deposit;
 
-    if (this.selectedAccount == null || this.depositAmount == null) {
+    if (this.selectedAccount == null || this.depositAmount == null || this.depositAmount > this.selectedAccount.cash || this.depositAmount < 0) {
       return;
     }
 

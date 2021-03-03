@@ -19,7 +19,8 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
   constructor(private readonly loginService : LoginService,
     private readonly userService : UserService,
     private readonly portfolioService : PortfolioService,
-    private portfolioComponent : PortfolioComponent) { }
+    private portfolioComponent : PortfolioComponent,
+    private toastr : ToastrService) { }
 
   private subs = new SubSink();
   public tabIndex : number = 0;
@@ -66,7 +67,7 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
       invested     : 0,
       cash         : 0,
       dateCreated  : new Date(),
-      dateModified : null
+      dateModified : new Date()
     };
     this.preference = {
       id            : null,
@@ -84,6 +85,7 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
   public updateTradeAccount(event : any) {
     this.tabIndex = (this.tabIndex + 1) % this.tabCount;
     this.tradingAccount.title = event.title;
+    this.tradingAccount.description = event.description;
   }
 
   public updateStrategy(event : any) {
@@ -109,8 +111,12 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
     this.tradingAccount.amount = event[1];
     this.tradingAccount.cash = event[1];
     this.tradingAccount.preference = this.preference;
-    this.portfolioComponent.content = 0;
-    this.portfolioService.postTradeAccount(this.tradingAccount);
+    console.log(this.tradingAccount);
+    this.subs.add(this.portfolioService.postTradeAccount(this.tradingAccount).subscribe(res => {
+      this.portfolioComponent.getData();
+      this.toastr.success('Successful Account Creation', this.tradingAccount.title);
+      this.portfolioComponent.content = 0;
+    }));
   }
 
   public unlockStrategyView(event : any) {

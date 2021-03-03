@@ -1,4 +1,3 @@
-using System.Data.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Cors;
 using smart_stock.Models;
 using smart_stock.Services;
 using System;
-using System.ComponentModel;
 
 namespace smart_stock.Controllers
 {
@@ -31,12 +29,11 @@ namespace smart_stock.Controllers
             return tas.ToList();
         }
 
-        // TODO- this is generating a template trade account for portfolio. In future replace portfolio id param with real trade account object
         // POST: api/portfolio/tradeaccount
-        [HttpPost("{id}")]
-        public async Task<ActionResult<bool>> PostPaymentDetail(int id)
+        [HttpPost]
+        public async Task<ActionResult<bool>> PostTradeAccount([FromBody]TradeAccount ta)
         {
-            return await _portfolioProvider.InsertTradeAccount(id);
+            return await _portfolioProvider.InsertTradeAccount(ta);
         }
     }
 }

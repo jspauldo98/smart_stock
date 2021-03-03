@@ -37,7 +37,7 @@
                help_ouline
             </mat-icon>          
          </mat-list-item>
-         <br><mat-divider></mat-divider>
+         <mat-divider></mat-divider>
          <mat-list-item>
             <mat-checkbox class="form-colors" formControlName="day">Day Trading</mat-checkbox>
             <mat-icon #tooltip="matTooltip" 
@@ -46,7 +46,7 @@
                help_ouline
             </mat-icon>          
          </mat-list-item>
-         <br><mat-divider></mat-divider>
+         <mat-divider></mat-divider>
          <mat-error *ngIf="!isSubmissionAttemptValid && isNextAttempt">You must choose at least <strong>one</strong> strategy</mat-error>
       </mat-list>
    </form>

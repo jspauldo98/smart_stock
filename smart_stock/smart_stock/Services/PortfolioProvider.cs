@@ -37,7 +37,7 @@ namespace smart_stock.Services
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT Id, Profit, Loss, Net FROM Portfolio p WHERE p.User = @userId";
+                    string sQuery = "SELECT Id, Amount, Profit, Loss, Net, Cash, Invested FROM Portfolio p WHERE p.User = @userId";
                     var @param = new {userId = id};
                     connection.Open();
                     Portfolio p = await connection.QueryFirstOrDefaultAsync<Portfolio>(sQuery, @param);
@@ -131,8 +131,7 @@ namespace smart_stock.Services
             }
         }
 
-        // TODO - right now this is just generating a template trade account. In future get rid of portfolio id param and use real trade account object 
-        public async Task<bool> InsertTradeAccount(int portfolioId)
+        public async Task<bool> InsertTradeAccount(TradeAccount ta)
         {
             try
             {
@@ -142,11 +141,11 @@ namespace smart_stock.Services
                     // Add entry to TradeStratiegies
                     var stratQ = @"INSERT INTO TradeStrategies (BlueChip, LongTerm, Swing, Scalp, Day) VALUES (@bluechip, @longterm, @swing, @scalp, @day)";        
                     var @stratP = new {
-                        bluechip = true,
-                        longterm = true,
-                        swing    = true,
-                        scalp    = true,
-                        day      = true,
+                        bluechip = ta.Preference.TradeStrategy.BlueChip,
+                        longterm = ta.Preference.TradeStrategy.LongTerm,
+                        swing    = ta.Preference.TradeStrategy.Swing,
+                        scalp    = ta.Preference.TradeStrategy.Scalp,
+                        day      = ta.Preference.TradeStrategy.Day,
                     };      
                     result = await connection.ExecuteAsync(stratQ, @stratP); 
 
@@ -156,17 +155,17 @@ namespace smart_stock.Services
                     // Add entry to Sectors
                     var secQ = "INSERT INTO Sectors (InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials) VALUES (@infoTech, @healthCare, @fin, @consumeD, @comm, @indust, @consumS, @energy, @util, @realE, @mat)";
                     var @secP = new {
-                        infoTech   = true,
-                        healthCare = true,
-                        fin        = true,
-                        consumeD   = true,
-                        comm       = true,
-                        indust     = true,
-                        consumS    = true,
-                        energy     = true,
-                        util       = true,
-                        realE      = true,
-                        mat        = true
+                        infoTech   = ta.Preference.Sector.InformationTechnology,
+                        healthCare = ta.Preference.Sector.HealthCare,
+                        fin        = ta.Preference.Sector.Financials,
+                        consumeD   = ta.Preference.Sector.ConsumerDiscretionary,
+                        comm       = ta.Preference.Sector.Communication,
+                        indust     = ta.Preference.Sector.Industrials,
+                        consumS    = ta.Preference.Sector.ConsumerStaples,
+                        energy     = ta.Preference.Sector.Energy,
+                        util       = ta.Preference.Sector.Utilities,
+                        realE      = ta.Preference.Sector.RealEstate,
+                        mat        = ta.Preference.Sector.Materials
                     };    
                     result = await connection.ExecuteAsync(secQ, @secP); 
 
@@ -176,25 +175,25 @@ namespace smart_stock.Services
                     // Add entry to Preference
                     var prefQ = @"INSERT INTO Preference (RiskLevel, TradeStrategy, Sector, CapitalToRisk) VALUES (@risk, @strat, @sector, @capital)";        
                     var @prefP = new {
-                        risk    = 1,
+                        risk    = ta.Preference.RiskLevel.Id,
                         strat   = stratId,
                         sector  = sectorId,
-                        capital = 10
+                        capital = ta.Preference.CapitalToRisk
                     };      
                     connection.Open();
                     result = await connection.ExecuteAsync(prefQ, @prefP);  
 
-                    // REtrieve preference id
+                    // Retrieve preference id
                     int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);
                     
                     // Add entry to TradeAccount         
                     var tradeQ = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated) VALUES (@port, @pref, @title, @desc, @amount, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @invested, @cash, @dateCreated)";        
                     var @tradeP = new {
-                        port        = portfolioId,
+                        port        = ta.Portfolio.Id,
                         pref        = prefId,
-                        title       = "User Created Account",
-                        desc        = "This account is generated as a template for now.",
-                        amount      = 0,
+                        title       = ta.Title,
+                        desc        = ta.Description,
+                        amount      = ta.Amount,
                         profit      = 0,
                         loss        = 0,
                         net         = 0,
@@ -202,10 +201,18 @@ namespace smart_stock.Services
                         numSTrades  = 0,
                         numFTrades  = 0,
                         invested    = 0,
-                        cash        = 0,
+                        cash        = ta.Cash,
                         dateCreated = DateTime.Now
                     };      
                     result = await connection.ExecuteAsync(tradeQ, @tradeP);
+
+                    // Update portfolio
+                    var portQ = @"UPDATE Portfolio SET Cash = @cash WHERE Id=@pId";        
+                    var @portP = new {
+                        cash = ta.Portfolio.Cash - ta.Amount,
+                        pId = ta.Portfolio.Id
+                    };      
+                    result = await connection.ExecuteAsync(portQ, @portP);
                 }
                 return result > 0;
             }

@@ -18,7 +18,7 @@ namespace smart_stock.Services
         /* Insert a single trade account into table 'TradeAccount'
             Insert a single preference object into table 'Preference'
             Insert a single trade strategy object into table 'TradeStrategies'
-            returns true on success given the parameter 't' representing a trade account */
-        Task<bool> InsertTradeAccount(int portfolioId);    //TODO - right now this generates a template add real trade account in future and remove portfolio id as a param. Replace with trade account object
+            returns true on success given the parameter 'ta' representing a trade account */
+        Task<bool> InsertTradeAccount(TradeAccount ta);
     }
 }
