@@ -22,6 +22,8 @@
     dateConfirmed : Date       ;
     pii           : IPii       ;
     credential    : ICredential;
+    alpacaKeyId: string;
+    alpacaKey: string;
   }
 
   export interface ITradeStrategies {

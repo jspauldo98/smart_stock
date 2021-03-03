@@ -130,18 +130,20 @@ namespace smart_stock.Services
                     {                 
                         int piiId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM PII ORDER BY id DESC LIMIT 1", null);       
                         int credId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Credential ORDER BY id DESC LIMIT 1", null);
-                        sQuery = @"INSERT INTO User (pii, credentials, joindate, dateadded, dateconfirmed) VALUES (@pii, @credentials, @joinDate, @dateAdded, @dateConfirmed)";        
+                        sQuery = @"INSERT INTO User (pii, credentials, joindate, dateadded, dateconfirmed, alpacakeyid, alpacakey) VALUES (@pii, @credentials, @joinDate, @dateAdded, @dateConfirmed, @alpacaKeyId, @alpacaKey)";        
                         var @params3 = new {
                             pii           = piiId ,
                             credentials   = credId,
                             joinDate      = user  .JoinDate,
                             dateAdded     = user  .DateAdded,
-                            dateConfirmed = user  .DateConfirmed
+                            dateConfirmed = user  .DateConfirmed,
+                            alpacaKeyId = user.AlpacaKeyId,
+                            alpacaKey = user.AlpacaKey
                         };      
                         result = await connection.ExecuteAsync(sQuery, @params3);
                         if (result > 0)
                         {                            
-                            string userQuery = "SELECT id, joindate, dateadded, dateconfirmed FROM User WHERE pii = @piiId AND credentials = @credentialId";
+                            string userQuery = "SELECT id, joindate, dateadded, dateconfirmed, alpacakeyid, alpacakey FROM User WHERE pii = @piiId AND credentials = @credentialId";
                             var @userParams = new {
                                 piiId        = piiId ,
                                 credentialId = credId

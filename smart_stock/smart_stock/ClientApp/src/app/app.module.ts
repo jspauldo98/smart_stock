@@ -41,6 +41,7 @@ import { PersonalInformationComponent } from '../app/register/personal-informati
 import { CredentialsComponent } from '../app/register/credentials.component';
 import { InvestmentPreferencesComponent } from '../app/register/investment-preferences.component';
 import { UserDialogComponent } from '../app/mat-dialog-views/user-dialog.component';
+import { AlpacaAccountSetupComponent } from '../app/register/alpaca-account-setup.component';
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
@@ -66,7 +67,8 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     PortfolioComponent,
     TradeAccountComponent,
     HomeAboutComponent,
-    UserDialogComponent
+    UserDialogComponent,
+    AlpacaAccountSetupComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

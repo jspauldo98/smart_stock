@@ -28,5 +28,7 @@ namespace smart_stock.Models
 
         [Required]
         public Credential Credential { get; set; }
+        public string AlpacaKeyId { get; set; }
+        public string AlpacaKey { get; set; }
     }
 }
