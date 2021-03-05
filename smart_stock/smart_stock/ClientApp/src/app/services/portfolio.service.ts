@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ICredential, IPortfolio, ITradeAccount, IUser } from '../interfaces';
+import { ICredential, IPortfolio, ITradeAccount, ITradeStrategies, IUser } from '../interfaces';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -28,5 +28,9 @@ export class PortfolioService {
 
   public postTradeAccount(tradeAccount : ITradeAccount){
     return this.httpClient.post(`${this.apiPath}` + "/tradeaccount", tradeAccount);
+  }
+
+  public putTradeAccount(tradeAccount : ITradeAccount){
+    return this.httpClient.put(`${this.apiPath}` + "/tradeaccount/" + tradeAccount.id, tradeAccount);
   }
 }

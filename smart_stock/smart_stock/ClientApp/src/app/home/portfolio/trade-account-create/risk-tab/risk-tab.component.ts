@@ -1,6 +1,6 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { IRiskLevel } from 'src/app/interfaces';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, NgForm } from '@angular/forms';
+import { IRiskLevel, ITradeAccount } from 'src/app/interfaces';
 import { PreferenceService } from 'src/app/services/preference.service';
 
 @Component({
@@ -12,26 +12,45 @@ export class RiskTabComponent implements OnInit {
 
   @Output() onSaveEvent = new EventEmitter<[IRiskLevel, number]>();
   @Output() onNextTabChange = new EventEmitter<boolean>();
+  @Input() ta : ITradeAccount;
+
+  public risk : [IRiskLevel, number];
 
   constructor(private readonly preferenceService : PreferenceService) { }
-  public riskControl = new FormControl();
+  // public riskControl = new FormControl();
   public isNextAttempt : boolean = false;
-  public isSubmissionAttemptValid : boolean = false;
-  public capital : number = 1;
+  // public isSubmissionAttemptValid : boolean = false;
+  // public capital : number = 1;
   public riskLevels : IRiskLevel[];
-  public riskLevel : IRiskLevel;
 
   ngOnInit(): void {
-    this.riskLevel = {
-      id        : null,
-      risk      : null,
-      dateAdded : new Date()
-    };
+    this.dontClear();
+    
     this.preferenceService.getRiskLevels().then(res => this.riskLevels = res as IRiskLevel[]);
   }
 
-  emitRisk() : void {
-    this.onSaveEvent.emit([this.riskLevel, this.capital]);
+  dontClear(form? : NgForm) {
+    if (form != null)
+    {
+      this.risk = [form.value.risk, form.value.capital];
+    }
+    else if (this.ta.id != null && form == null) 
+    {
+      this.risk = [this.ta.preference.riskLevel, this.ta.preference.capitalToRisk];
+    }
+    else
+    {
+      let nullRisk : IRiskLevel = {
+        id : null,
+        risk : null,
+        dateAdded : new Date()
+      };
+      this.risk = [nullRisk, 1];
+    }
+  }
+
+  emitRisk(form : NgForm) : void {
+    this.onSaveEvent.emit([form.value.risk, form.value.capital]);
     this.onNextTabChange.emit(true);
   }
 
@@ -41,17 +60,16 @@ export class RiskTabComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  onSubmit(form : NgForm) {
     this.isNextAttempt = true;
 
-    if (this.riskControl.value == null) {
+    if (form.value.risk === null || form.value.capital === null || 
+        form.value.capital === "") {
       return;
     }
 
-    this.riskLevel.id = this.riskControl.value.id;
-    this.riskLevel.risk = this.riskControl.value.risk;
-
-    this.emitRisk();
+    this.dontClear(form);
+    this.emitRisk(form);
     this.isNextAttempt = false;
   }
 }

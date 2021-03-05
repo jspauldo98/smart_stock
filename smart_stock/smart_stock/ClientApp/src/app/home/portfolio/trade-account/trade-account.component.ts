@@ -9,15 +9,21 @@ import { PortfolioComponent } from '../portfolio.component';
 })
 export class TradeAccountComponent implements OnInit {
   public tradeAccount : ITradeAccount;
+  public isEdit : boolean = false;
 
   constructor(private readonly portfolioComponent : PortfolioComponent) { }
 
   ngOnInit(): void {
     this.tradeAccount = this.portfolioComponent.tradeAccount;
+    console.log(this.tradeAccount);
   }
 
   backToPortfolio() {
     this.portfolioComponent.content = 0;
+  }
+
+  editTa() {
+    this.isEdit = true;
   }
 
 }

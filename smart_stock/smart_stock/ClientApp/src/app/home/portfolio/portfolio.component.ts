@@ -38,7 +38,6 @@ export class PortfolioComponent implements OnInit, OnDestroy {
       this.portfolioService.getPortfolio(this.userCredentials).subscribe(res => {
         this.portfolio = res;
         console.log(res);
-        console.log("getdata");
       })
     );
   }

@@ -5,7 +5,7 @@
             <div class="col-lg">
                <h2 style="color: cornsilk;">{{user.pii.fName}}'s Portfolio</h2> 
             </div>
-            <div class="col-lg">
+            <div class="col-lg-2">
                <h2 style="color: cornsilk;">${{portfolio.amount}}</h2>
             </div>
          </div>
@@ -27,7 +27,7 @@
             <div class="col-lg">
                <h5 style="color: cornsilk;">${{this.portfolio.invested}} Invested</h5>
             </div>
-            <div class="col-lg">
+            <div class="col-lg-2">
                <h5 style="color: cornsilk;">${{this.portfolio.cash}} Cash</h5>
             </div>
          </div>
@@ -42,5 +42,5 @@
    <app-trade-account></app-trade-account>
 </div>
 <div *ngIf="this.content==2">
-   <app-trade-account-create></app-trade-account-create>
+   <app-trade-account-create [ta]="null"></app-trade-account-create>
 </div>

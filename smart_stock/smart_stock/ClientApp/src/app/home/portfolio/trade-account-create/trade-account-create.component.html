@@ -6,7 +6,7 @@
                <mat-icon style="margin-right: 10px;" class="form-colors">mode_edit</mat-icon>
                <span class="form-colors">Cosmetics</span>
             </ng-template>
-            <app-cosmetics-tab (onSaveEvent)="updateTradeAccount($event)" (onNextTabChange)="unlockStrategyView($event)"></app-cosmetics-tab>
+            <app-cosmetics-tab [ta]="tradingAccount" (onSaveEvent)="updateTradeAccount($event)" (onNextTabChange)="unlockStrategyView($event)"></app-cosmetics-tab>
          </mat-tab>
          <mat-tab disabled *ngIf="!canViewStrategy">
             <ng-template mat-tab-label>
@@ -19,7 +19,7 @@
                <mat-icon style="margin-right: 10px;" class="form-colors">psychology</mat-icon>
                <span class="form-colors">Strategy</span>
             </ng-template>
-            <app-strategy-tab (onSaveEvent)="updateStrategy($event)" (onNextTabChange)="unlockSectorsView($event)"></app-strategy-tab>
+            <app-strategy-tab [ta]="tradingAccount" (onSaveEvent)="updateStrategy($event)" (onNextTabChange)="unlockSectorsView($event)"></app-strategy-tab>
          </mat-tab>
          <mat-tab disabled *ngIf="!canViewSectors">
             <ng-template mat-tab-label>
@@ -32,7 +32,7 @@
                <mat-icon style="margin-right: 10px;" class="form-colors">category</mat-icon>
                <span class="form-colors">Sectors</span>
             </ng-template>
-            <app-sectors-tab (onSaveEvent)="updateSectors($event)" (onNextTabChange)="unlockRiskView($event)"></app-sectors-tab>
+            <app-sectors-tab [ta]="tradingAccount" (onSaveEvent)="updateSectors($event)" (onNextTabChange)="unlockRiskView($event)"></app-sectors-tab>
          </mat-tab>
          <mat-tab disabled *ngIf="!canViewRisk">
             <ng-template mat-tab-label>
@@ -45,7 +45,7 @@
                <mat-icon style="margin-right: 10px;" class="form-colors">timeline</mat-icon>
                <span class="form-colors">Risk</span>
             </ng-template>
-            <app-risk-tab (onSaveEvent)="updatePreference($event)" (onNextTabChange)="unlockFundingView($event)"></app-risk-tab>
+            <app-risk-tab [ta]="tradingAccount" (onSaveEvent)="updatePreference($event)" (onNextTabChange)="unlockFundingView($event)"></app-risk-tab>
          </mat-tab>
          <mat-tab disabled *ngIf="!canViewFunding">
             <ng-template mat-tab-label>
@@ -53,7 +53,7 @@
                Funding
             </ng-template>
          </mat-tab>
-         <mat-tab *ngIf="canViewFunding">
+         <mat-tab *ngIf="canViewFunding && !isEdit">
             <ng-template mat-tab-label>
                <mat-icon style="margin-right: 10px;" class="form-colors">attach_money</mat-icon>
                <span class="form-colors">Funding</span>

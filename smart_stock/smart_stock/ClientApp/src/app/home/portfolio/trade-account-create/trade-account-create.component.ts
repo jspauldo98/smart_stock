@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
@@ -14,7 +14,7 @@ import { PortfolioComponent } from '../portfolio.component';
   templateUrl: './trade-account-create.component.html',
   styleUrls: ['./trade-account-create.component.css']
 })
-export class TradeAccountCreateComponent implements OnInit, OnDestroy {
+export class TradeAccountCreateComponent implements OnInit, OnDestroy {  
 
   constructor(private readonly loginService : LoginService,
     private readonly userService : UserService,
@@ -36,6 +36,9 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
   public sectors : ISector;
   public preference : IPreference;
   public tradingAccount : ITradeAccount;
+  public isEdit : boolean = false;
+
+  @Input() ta: ITradeAccount;
 
   ngOnInit(): void {
     this.subs.add(
@@ -50,32 +53,42 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
         console.log(res);
       })
     );
-    // Init trade account and preference objects with null values that will be dynamically updated
-    this.tradingAccount = {
-      id           : null,
-      portfolio    : this.portfolio,
-      preference   : null,
-      title        : null,
-      description  : null,
-      amount       : 0,
-      profit       : 0,
-      loss         : 0,
-      net          : 0,
-      numTrades    : 0,
-      numSTrades   : 0,
-      numFTrades   : 0,
-      invested     : 0,
-      cash         : 0,
-      dateCreated  : new Date(),
-      dateModified : new Date()
-    };
-    this.preference = {
-      id            : null,
-      riskLevel     : null,
-      tradeStrategy : null,
-      sector        : null,
-      capitalToRisk : null
-    };
+    // console.log(this.ta);
+    if (this.ta == null)
+    {
+      // Init trade account and preference objects with null values that will be dynamically updated
+      this.tradingAccount = {
+        id           : null,
+        portfolio    : this.portfolio,
+        preference   : null,
+        title        : null,
+        description  : null,
+        amount       : 0,
+        profit       : 0,
+        loss         : 0,
+        net          : 0,
+        numTrades    : 0,
+        numSTrades   : 0,
+        numFTrades   : 0,
+        invested     : 0,
+        cash         : 0,
+        dateCreated  : new Date(),
+        dateModified : new Date()
+      };
+      this.preference = {
+        id            : null,
+        riskLevel     : null,
+        tradeStrategy : null,
+        sector        : null,
+        capitalToRisk : null
+      };
+    }
+    else 
+    {
+      this.tradingAccount = this.ta;
+      this.preference = this.ta.preference;
+      this.isEdit = true;
+    }
   }
 
   ngOnDestroy() {
@@ -84,8 +97,8 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
 
   public updateTradeAccount(event : any) {
     this.tabIndex = (this.tabIndex + 1) % this.tabCount;
-    this.tradingAccount.title = event.title;
-    this.tradingAccount.description = event.description;
+    this.tradingAccount.title = event[0];
+    this.tradingAccount.description = event[1];
   }
 
   public updateStrategy(event : any) {
@@ -104,6 +117,16 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
     this.preference.capitalToRisk = event[1];
     this.preference.tradeStrategy = this.strategy;
     this.preference.sector = this.sectors;
+    this.tradingAccount.preference = this.preference;
+    this.tradingAccount.portfolio = this.portfolio;
+    if (this.isEdit) 
+    {
+      this.subs.add(this.portfolioService.putTradeAccount(this.tradingAccount).subscribe(res => {
+        this.portfolioComponent.getData();
+        this.toastr.success('Account Update Successful', this.tradingAccount.title);
+        this.portfolioComponent.content = 0;
+      }));
+    }
   }
 
   public submitTradeAccount(event : any) {
@@ -111,12 +134,13 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
     this.tradingAccount.amount = event[1];
     this.tradingAccount.cash = event[1];
     this.tradingAccount.preference = this.preference;
-    console.log(this.tradingAccount);
-    this.subs.add(this.portfolioService.postTradeAccount(this.tradingAccount).subscribe(res => {
-      this.portfolioComponent.getData();
-      this.toastr.success('Successful Account Creation', this.tradingAccount.title);
-      this.portfolioComponent.content = 0;
-    }));
+    if (!this.isEdit) {
+      this.subs.add(this.portfolioService.postTradeAccount(this.tradingAccount).subscribe(res => {
+        this.portfolioComponent.getData();
+        this.toastr.success('Account Creation Successful', this.tradingAccount.title);
+        this.portfolioComponent.content = 0;
+      }));
+    }
   }
 
   public unlockStrategyView(event : any) {

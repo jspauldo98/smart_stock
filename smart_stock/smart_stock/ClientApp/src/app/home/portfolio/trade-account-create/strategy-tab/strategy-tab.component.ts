@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ITradeStrategies } from 'src/app/interfaces';
+import { ITradeAccount, ITradeStrategies } from 'src/app/interfaces';
 import { __asyncGenerator } from 'tslib';
 
 @Component({
@@ -12,6 +12,7 @@ export class StrategyTabComponent implements OnInit {
 
   @Output() onSaveEvent = new EventEmitter<ITradeStrategies>();
   @Output() onNextTabChange = new EventEmitter<boolean>();
+  @Input() ta : ITradeAccount;
 
   constructor(private formbuilder : FormBuilder) { }
   public strategyForm : FormGroup;
@@ -21,13 +22,25 @@ export class StrategyTabComponent implements OnInit {
   private strat : ITradeStrategies;
 
   ngOnInit(): void {
-    this.strategyForm = this.formbuilder.group({
-      'blue chip' : new FormControl(false),
-      'long term' : new FormControl(false),
-      'swing'     : new FormControl(false),
-      'scalp'     : new FormControl(false),
-      'day'       : new FormControl(false)
-    });
+    if (this.ta.id == null)
+    {
+      this.strategyForm = this.formbuilder.group({
+        'blue chip' : new FormControl(false),
+        'long term' : new FormControl(false),
+        'swing'     : new FormControl(false),
+        'scalp'     : new FormControl(false),
+        'day'       : new FormControl(false)
+      });
+    }
+    else {
+      this.strategyForm = this.formbuilder.group({
+        'blue chip' : new FormControl(this.ta.preference.tradeStrategy.blueChip),
+        'long term' : new FormControl(this.ta.preference.tradeStrategy.longTerm),
+        'swing'     : new FormControl(this.ta.preference.tradeStrategy.swing),
+        'scalp'     : new FormControl(this.ta.preference.tradeStrategy.scalp),
+        'day'       : new FormControl(this.ta.preference.tradeStrategy.day)
+      });
+    }
   }
 
   emitStrategy() : void {
@@ -55,14 +68,26 @@ export class StrategyTabComponent implements OnInit {
           this.stratTransformedValues[index]=true;
         }
       }
-      this.strat = {
-        id       : null,
-        blueChip : this.stratTransformedValues[0],
-        longTerm : this.stratTransformedValues[1],
-        swing    : this.stratTransformedValues[2],
-        scalp    : this.stratTransformedValues[3],
-        day      : this.stratTransformedValues[4]
-      };
+      if (this.ta.id == null) {
+        this.strat = {
+          id       : null,
+          blueChip : this.stratTransformedValues[0],
+          longTerm : this.stratTransformedValues[1],
+          swing    : this.stratTransformedValues[2],
+          scalp    : this.stratTransformedValues[3],
+          day      : this.stratTransformedValues[4]
+        };
+      } else {
+        this.strat = {
+          id       : this.ta.preference.tradeStrategy.id,
+          blueChip : this.stratTransformedValues[0],
+          longTerm : this.stratTransformedValues[1],
+          swing    : this.stratTransformedValues[2],
+          scalp    : this.stratTransformedValues[3],
+          day      : this.stratTransformedValues[4]
+        };
+      }
+      
       this.emitStrategy();
       this.isNextAttempt = false;
     }

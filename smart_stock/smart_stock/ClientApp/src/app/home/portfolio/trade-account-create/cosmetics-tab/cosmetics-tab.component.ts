@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ITradeAccount, ITradeStrategies } from 'src/app/interfaces';
 import { __asyncGenerator } from 'tslib';
 
 @Component({
@@ -11,34 +12,48 @@ export class CosmeticsTabComponent implements OnInit {
 
   @Output() onSaveEvent = new EventEmitter<[string, string]>();
   @Output() onNextTabChange = new EventEmitter<boolean>();
+  @Input() ta : ITradeAccount;
 
-  constructor(private formbuilder : FormBuilder) { }
+  public cosmetics : [string, string];
 
-  public cosmeticsForm : FormGroup;
+  constructor() { }
+
   public isNextAttempt : boolean = false;
 
-  get f() { return this.cosmeticsForm.controls };
-
   ngOnInit(): void {
-    this.cosmeticsForm = this.formbuilder.group({
-      title: [null, Validators.required],
-      description: [null, Validators.required]
-    });
+    this.dontClear();
   }
 
-  emitCosmetics() : void {
-    this.onSaveEvent.emit(this.cosmeticsForm.value);
+  dontClear(form? : NgForm) {
+    if (form != null)
+    {
+      this.cosmetics = [form.value.title, form.value.desc];
+    }
+    else if (this.ta.id != null && form == null) 
+    {
+      this.cosmetics = [this.ta.title, this.ta.description];
+    }
+    else
+    {
+      this.cosmetics = ["", ""];
+    }
+  }
+
+  emitCosmetics(form : NgForm) : void {
+    this.onSaveEvent.emit([form.value.title, form.value.desc]);
     this.onNextTabChange.emit(true);
   }
 
-  onSubmit() {
+  onSubmit(form : NgForm) {
     this.isNextAttempt = true;
 
-    if (this.cosmeticsForm.invalid) {
+    if (form.value.title === null || form.value.desc === null || 
+      form.value.title === "" || form.value.desc === "") {
       return;
     }
 
-    this.emitCosmetics();
+    this.dontClear(form);
+    this.emitCosmetics(form);
     this.isNextAttempt = false;
   }
 

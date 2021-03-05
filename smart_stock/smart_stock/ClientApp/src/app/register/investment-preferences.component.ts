@@ -116,7 +116,7 @@ export class InvestmentPreferencesComponent implements OnInit {
         communication         : this.sectorTransformedValues[4],
         industrials           : this.sectorTransformedValues[5],
         consumerStaples       : this.sectorTransformedValues[6],
-        energey               : this.sectorTransformedValues[7],
+        energy                : this.sectorTransformedValues[7],
         utilities             : this.sectorTransformedValues[8],
         realEstate            : this.sectorTransformedValues[9],
         materials             : this.sectorTransformedValues[10],

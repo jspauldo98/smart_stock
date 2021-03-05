@@ -59,7 +59,7 @@
     communication         : boolean;
     industrials           : boolean;
     consumerStaples       : boolean;
-    energey               : boolean;
+    energy               : boolean;
     utilities             : boolean;
     realEstate            : boolean;
     materials             : boolean;

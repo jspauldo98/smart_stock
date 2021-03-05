@@ -80,7 +80,7 @@ import { FundingTabComponent } from './home/portfolio/trade-account-create/fundi
     StrategyTabComponent,
     SectorsTabComponent,
     RiskTabComponent,
-    FundingTabComponent
+    FundingTabComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

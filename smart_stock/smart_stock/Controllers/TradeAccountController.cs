@@ -35,5 +35,26 @@ namespace smart_stock.Controllers
         {
             return await _portfolioProvider.InsertTradeAccount(ta);
         }
+
+        // PUT: api/portfolio/tradeaccount/id
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutTradeAccount(int id, [FromBody]TradeAccount ta)
+        {
+            if (ta.Id != id)
+            {
+                return BadRequest();
+            }
+
+            if (_portfolioProvider.TradeAccountExists(id))
+            {
+                await _portfolioProvider.UpdateTradeAccount(ta, id);
+            }  
+            else 
+            {
+                return NotFound();
+            }          
+
+            return NoContent();
+        }
     }
 }
