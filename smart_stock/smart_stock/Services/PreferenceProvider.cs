@@ -81,13 +81,13 @@ namespace smart_stock.Services
                         healthCare = preference.Sector.HealthCare           ,
                         fin        = preference.Sector.Financials           ,
                         consumeD   = preference.Sector.ConsumerDiscretionary,
-                        comm       = preference.Sector.ConsumerDiscretionary,
-                        indust     = preference.Sector.ConsumerDiscretionary,
-                        consumS    = preference.Sector.ConsumerDiscretionary,
-                        energy     = preference.Sector.ConsumerDiscretionary,
-                        util       = preference.Sector.ConsumerDiscretionary,
-                        realE      = preference.Sector.ConsumerDiscretionary,
-                        mat        = preference.Sector.ConsumerDiscretionary
+                        comm       = preference.Sector.Communication,
+                        indust     = preference.Sector.Industrials,
+                        consumS    = preference.Sector.ConsumerStaples,
+                        energy     = preference.Sector.Energy,
+                        util       = preference.Sector.Utilities,
+                        realE      = preference.Sector.RealEstate,
+                        mat        = preference.Sector.Materials
                     };
                     result = await connection.ExecuteAsync(secQ, @secP);
 
