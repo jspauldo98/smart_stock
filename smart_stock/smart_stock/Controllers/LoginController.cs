@@ -1,12 +1,14 @@
-using BC = BCrypt.Net.BCrypt;
 using System;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
 using smart_stock.Models;
 using smart_stock.Services;
+using smart_stock.JwtManagement;
 
 
 
@@ -18,14 +20,17 @@ namespace smart_stock.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IUserProvider _userProvider;
-        public LoginController (IUserProvider userProvider)
+        private readonly IJwtAuthManager _jwtAuthManager;
+        public LoginController (IUserProvider userProvider, IJwtAuthManager jwtAuthManager)
         {
             _userProvider = userProvider;
+            _jwtAuthManager = jwtAuthManager;
         }
 
         // GET: api/User/id
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<User>> GetUserLogin([FromBody] Credential credential)
+        public async Task<ActionResult<LoginResult>> GetUserLogin([FromBody] Credential credential)
         {
             if (ModelState.IsValid)
             {
@@ -33,15 +38,77 @@ namespace smart_stock.Controllers
                 
                 if (user != null)
                 {
-                    credential.Password = null;
-                    user.Credential.Password = null;
-                    return Ok(user);
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Name, user.Credential.Username),
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new Claim(ClaimTypes.Role, "Member")
+                    };
+                    var jwtResult = _jwtAuthManager.GenerateTokens(user.Credential.Username, claims, DateTime.Now);
+                    
+                    LoginResult result = new LoginResult 
+                    {
+                        Username = user.Credential.Username,
+                        UserId = user.Id,
+                        AccessToken = jwtResult.AccessToken,
+                        RefreshToken = jwtResult.RefreshToken.TokenString
+                    };
+                    return Ok(result);
                 }
                 else {
                     return NoContent();
                 }
             }
             return BadRequest();
+        }
+
+        [HttpGet("user")]
+        [Authorize]
+        public ActionResult GetCurrentUser()
+        {
+            return Ok(new LoginResult
+            {
+                Username = User.Identity.Name,
+                UserId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
+            });
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public ActionResult UserLogout()
+        {
+            var username = User.Identity.Name;
+            _jwtAuthManager.RemoveRefreshTokenByUserName(username);
+            return Ok();
+        }
+
+        [HttpPost("refresh-token")]
+        [Authorize]
+        public async Task<ActionResult<LoginResult>> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            try
+            {
+                var username = User.Identity.Name;
+                int? userId = Int32.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                if (string.IsNullOrWhiteSpace(request.RefreshToken))
+                {
+                    return Unauthorized();
+                }
+
+                var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
+                var jwtResult = _jwtAuthManager.Refresh(request.RefreshToken, accessToken, DateTime.Now);
+                LoginResult result = new LoginResult {
+                    Username = username,
+                    UserId = userId,
+                    AccessToken = jwtResult.AccessToken,
+                    RefreshToken = jwtResult.RefreshToken.TokenString
+                };
+                return Ok(result);
+            }
+            catch (SecurityTokenException exception)
+            {
+                return Unauthorized(exception.Message);
+            }
         }
     }
 }

@@ -11,11 +11,23 @@ namespace smart_stock.Models
         public int? Id { get; set; }
 
         [Required]
-        [Column(TypeName = "varchar(200)")]
-        public string[] Strategy { get; set; }
+        [Column(TypeName = "bit")]
+        public bool BlueChip { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
-        public DateTime DateAdded { get; set; }
+        [Column(TypeName = "bit")]
+        public bool LongTerm { get; set; }
+
+        [Required]
+        [Column(TypeName = "bit")]
+        public bool Swing { get; set; }
+
+        [Required]
+        [Column(TypeName = "bit")]
+        public bool Scalp { get; set; }
+
+        [Required]
+        [Column(TypeName = "bit")]
+        public bool Day { get; set; }     
     }
 }

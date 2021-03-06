@@ -5,30 +5,28 @@ using smart_stock.Models;
 namespace smart_stock.Services
 {
     public interface IPortfolioProvider
-    {
-        /* Insert a single portfolio into table 'Portfolio'
-            Returns true on success given parameter 'portfolio */
-        Task<bool> InsertPortfolio(Portfolio portfolio);
-
+    {       
         /* Get portfolio from table 'Portfolio' given user object.
             Get User from table 'User' given user object 
             Returns a Portfolio object */
-        Task<Portfolio> GetPortfolio(User u);
-
-        /* Update a single user in table 'Portfolio' given a portfolio id.
-            Returns User object on success given parameter 'id' and 'p' */
-        Task<bool> UpdatePortfolio(int id, Portfolio p);
+        Task<Portfolio> GetPortfolio(int id);
 
         /* Get all Trade Accounts from table 'TradeAccount" given portfolio object
             Returns a list of TradeAccount objects that correspond to portfolio object */
-        Task<IEnumerable<TradeAccount>> GetTradeAccounts(Portfolio p);
+        Task<IEnumerable<TradeAccount>> GetTradeAccounts(int pId);
 
-        /* Delete a portfolio from table 'Portfolio'.
-            Returns true on success given the parameter of portfolio id */
-        Task<bool> DeletePortfolio(int id);
+        /* Update a single trade account in table 'TradeAccount' given a trade account object.
+            Returns true on success given parameter 'ta' and 'id' */
+        Task<bool> UpdateTradeAccount(TradeAccount ta, int id);
 
-        /* Check if a portfolio exists. Checks from table 'Portfolio'.
+        /* Insert a single trade account into table 'TradeAccount'
+            Insert a single preference object into table 'Preference'
+            Insert a single trade strategy object into table 'TradeStrategies'
+            returns true on success given the parameter 'ta' representing a trade account */
+        Task<bool> InsertTradeAccount(TradeAccount ta);
+
+        /* Check if a trade account exists. Checks from table 'TradeAccount'.
             Returns true on success given the parameter 'id' */
-        bool PortfolioExists(int id);
+        bool TradeAccountExists(int id);
     }
 }

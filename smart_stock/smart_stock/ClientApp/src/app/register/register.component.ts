@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { IUser, IPii, ICredential } from '../interfaces';
 import { UserService } from '../services/user.service';
@@ -10,7 +11,7 @@ import { UserService } from '../services/user.service';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService, private toastr : ToastrService) { }
   public tabIndex: number = 0;
   public tabCount: number = 3;
   public canViewCredentials: boolean = false;
@@ -57,12 +58,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.credential = {
       id: null,
       username: event.username,
-      password: event.password
+      password: event.password,
+      loginResultUserId: null
     };
     this.user.credential = this.credential;
     this.createUserSub = this.userService.createNewUser(this.user).subscribe(x => {
       console.log(x);
       this.user.credential.password = null;
+      this.toastr.success('Registration successful', 'Welcome ' + this.user.pii.fName);
     });
   }
 

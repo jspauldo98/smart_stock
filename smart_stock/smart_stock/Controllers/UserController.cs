@@ -1,12 +1,16 @@
 using BC = BCrypt.Net.BCrypt;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 using smart_stock.Models;
 using smart_stock.Services;
 using System;
+using Microsoft.IdentityModel.Tokens;
+using smart_stock.JwtManagement;
 
 namespace smart_stock.Controllers
 {
@@ -19,49 +23,6 @@ namespace smart_stock.Controllers
         public UserController (IUserProvider userProvider)
         {
             _userProvider = userProvider;
-        }
-
-        // GET: api/User
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {            
-            var test = await _userProvider.GetAllUsers();
-            return test.ToList();
-        }
-
-        // GET: api/User/id
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _userProvider.GetUser(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/User/id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            if (_userProvider.UserExists(id))
-            {
-                await _userProvider.UpdateUser(id, user);
-            }  
-            else 
-            {
-                return NotFound();
-            }          
-
-            return NoContent();
         }
 
         // POST: api/User
@@ -86,17 +47,18 @@ namespace smart_stock.Controllers
             return new JsonResult(repoResult);
         }
 
-        // DELETE: api/User/id
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteUser(int id)
+        [HttpGet("{userId}/{username}")]
+        [Authorize(Roles = "Member")]
+        public async Task<IActionResult> GetAllUserInformation([FromRoute] int userId, [FromRoute] string username)
         {
-            var user = await _userProvider.DeleteUser(id);
-            if (!user)
+            var repoResult = await _userProvider.GetAllUserInformation(userId, username);
+            if (repoResult == null)
             {
-                return NotFound();
+                List<Error> errorJson = new List<Error>();
+                errorJson.Add(new Error() {ExceptionMessage = "Failed to get user information with header info: " + repoResult, Tag = "User Provider", ApiArea = "User Controller"});
+                return new JsonResult(errorJson);
             }
-
-            return user;
+            return new JsonResult(repoResult);
         }
     }
 }
