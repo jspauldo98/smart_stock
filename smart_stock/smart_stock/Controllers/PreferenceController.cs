@@ -43,6 +43,7 @@ namespace smart_stock.Controllers
                 
                 if (result == null)
                 {
+                    
                     return Ok();
                 }
                 else {
