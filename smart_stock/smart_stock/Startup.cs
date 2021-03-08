@@ -11,6 +11,7 @@ using System;
 using System.Text;
 using smart_stock.Services;
 using smart_stock.JwtManagement;
+using smart_stock.AlpacaServices;
 
 namespace smart_stock
 {
@@ -60,6 +61,10 @@ namespace smart_stock
             services.AddTransient<IUserProvider, UserProvider>();
             services.AddTransient<IPreferenceProvider, PreferenceProvider>();
             services.AddTransient<IPortfolioProvider, PortfolioProvider>();
+            
+            //Space for alpaca services to be declared as injectable dependencies, MUST declare as
+            //singletons, we DON'T want multiple background threads called with each new constructor call
+            services.AddSingleton<IFirstPaperTrade, FirstPaperTrade>();
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();

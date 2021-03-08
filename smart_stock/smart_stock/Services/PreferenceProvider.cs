@@ -71,6 +71,9 @@ namespace smart_stock.Services
                     // Retrieve Portfolio Id
                     int portId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Portfolio ORDER BY id DESC LIMIT 1", null);  
 
+                    //Fetch user ID for return value and trade script usage
+                    int userId = await connection.QueryFirstOrDefaultAsync<int>("SELECT User FROM Portfolio WHERE Id = @id", new {id = portId});
+                    
                     // Retrieve Strategy Id
                     int stratId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM TradeStrategies ORDER BY id DESC LIMIT 1", null);  
 
@@ -126,9 +129,9 @@ namespace smart_stock.Services
                         dateCreated = DateTime.Now
                     };
                     result = -1;
-                    result = await connection.ExecuteAsync(taQuery, @paramsTa);                                      
-                }
-                return null;  
+                    result = await connection.ExecuteAsync(taQuery, @paramsTa);
+                    return userId.ToString();                                      
+                } 
             }
             catch (Exception err)
             {

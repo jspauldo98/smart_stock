@@ -6,6 +6,7 @@ using smart_stock.Models;
 using smart_stock.Services;
 using System.Collections.Generic;
 using System.Linq;
+using smart_stock.AlpacaServices;
 
 namespace smart_stock.Controllers
 {
@@ -15,9 +16,11 @@ namespace smart_stock.Controllers
     public class PreferenceController : ControllerBase
     {
         private readonly IPreferenceProvider _preferenceProvider;
-        public PreferenceController (IPreferenceProvider preferenceProvider)
+        private IFirstPaperTrade _firstPaperTrade;
+        public PreferenceController (IPreferenceProvider preferenceProvider, IFirstPaperTrade firstPaperTrade)
         {
             _preferenceProvider = preferenceProvider;
+            _firstPaperTrade = firstPaperTrade;
         }
 
         // GET: api/preference
@@ -41,9 +44,12 @@ namespace smart_stock.Controllers
             {
                 string result = await _preferenceProvider.InsertPreference(preference);
                 
-                if (result == null)
+                if (result != null)
                 {
-                    
+                    string[] args = new string[2];
+                    args[0] = "start";
+                    args[1] = result;
+                    _firstPaperTrade.CommunicateBackgroundWorker(args);
                     return Ok();
                 }
                 else {

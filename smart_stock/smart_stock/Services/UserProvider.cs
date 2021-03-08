@@ -218,5 +218,24 @@ namespace smart_stock.Services
                 return null;
             }
         }
+
+        public async Task<AlpacaSecret> GetUserAlpacaKeys(int userId)
+        {
+            try
+            {
+                using(MySqlConnection connection = Connection)
+                {
+                    string keyQuery = "SELECT AlpacaKeyId, AlpacaKey FROM User WHERE Id = @userId";
+                    var @keyParam = new {userId = userId};
+                    AlpacaSecret secret = await connection.QueryFirstOrDefaultAsync<AlpacaSecret>(keyQuery, @keyParam);
+                    return secret;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(TAG + e);
+                return null;
+            }
+        }
     }
 }

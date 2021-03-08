@@ -48,6 +48,7 @@ import { UserService } from './services/user.service';
 import { DashboardComponent } from './home/dashboard/dashboard.component';
 import { PortfolioComponent } from './home/portfolio/portfolio.component';
 import { PreferenceService } from './services/preference.service';
+import { FirstPaperTradeService } from './services/first-paper-trade.service';
 import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
 import { HomeAboutComponent } from './home/home-about/home-about.component';
 import { appInitializer } from './services/app-initializer';
@@ -109,6 +110,7 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     LoginService,
     UserService,
     PreferenceService,
+    FirstPaperTradeService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
