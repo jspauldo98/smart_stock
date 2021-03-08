@@ -55,7 +55,7 @@
         <mat-radio-button class="form-colors" *ngFor="let risk of this.riskLevels" [value]="risk">{{risk.risk}}</mat-radio-button>
     </mat-radio-group>
     <br>
-    <mat-error *ngIf="isSubmissionAttempt">You must choose a risk tolerance option.</mat-error>
+    <mat-error *ngIf="isSubmissionAttempt && riskControl.invalid">You must choose a risk tolerance option.</mat-error>
     </form>
 
     <form [formGroup]="sectorsForm">

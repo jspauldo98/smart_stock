@@ -37,7 +37,7 @@ namespace smart_stock.Services
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT Id, Profit, Loss, Net FROM Portfolio p WHERE p.User = @userId";
+                    string sQuery = "SELECT Id, Amount, Profit, Loss, Net, Cash, Invested FROM Portfolio p WHERE p.User = @userId";
                     var @param = new {userId = id};
                     connection.Open();
                     Portfolio p = await connection.QueryFirstOrDefaultAsync<Portfolio>(sQuery, @param);
@@ -105,12 +105,22 @@ namespace smart_stock.Services
                         var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day FROM TradeStrategies WHERE Id = @sId";
                         var @stratParam = new {sId = stratId};
                         TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>(stratQ, @stratParam);
+                        // get sector id
+                        var secIdQ = "SELECT Sector FROM Preference WHERE Id = @pId";
+                        var @secIdParam = new {pId = prefID};
+                        int secId = await connection.QueryFirstOrDefaultAsync<int>(secIdQ, @secIdParam);
+                        // get sector
+                        var secQ = "SELECT Id, InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials FROM Sectors WHERE Id = @secId";
+                        var @secParam = new {secId = secId};
+                        Sector sector = await connection.QueryFirstOrDefaultAsync<Sector>(secQ, @secParam);
+                        Console.WriteLine(sector.Id);
                         // get preference
                         var prefQ = "SELECT Id, CapitalToRisk FROM Preference WHERE Id = @pId";
                         var @prefParam = new {pId = prefID};
                         t.Preference = await connection.QueryFirstOrDefaultAsync<Preference>(prefQ, @prefParam);
                         t.Preference.RiskLevel = riskLevel;
                         t.Preference.TradeStrategy = strategy;
+                        t.Preference.Sector = sector;
                     }
                     return tas.ToList();
                 }
@@ -122,8 +132,7 @@ namespace smart_stock.Services
             }
         }
 
-        // TODO - right now this is just generating a template trade account. In future get rid of portfolio id param and use real trade account object 
-        public async Task<bool> InsertTradeAccount(int portfolioId)
+        public async Task<bool> InsertTradeAccount(TradeAccount ta)
         {
             try
             {
@@ -133,11 +142,11 @@ namespace smart_stock.Services
                     // Add entry to TradeStratiegies
                     var stratQ = @"INSERT INTO TradeStrategies (BlueChip, LongTerm, Swing, Scalp, Day) VALUES (@bluechip, @longterm, @swing, @scalp, @day)";        
                     var @stratP = new {
-                        bluechip = true,
-                        longterm = true,
-                        swing    = true,
-                        scalp    = true,
-                        day      = true,
+                        bluechip = ta.Preference.TradeStrategy.BlueChip,
+                        longterm = ta.Preference.TradeStrategy.LongTerm,
+                        swing    = ta.Preference.TradeStrategy.Swing,
+                        scalp    = ta.Preference.TradeStrategy.Scalp,
+                        day      = ta.Preference.TradeStrategy.Day,
                     };      
                     result = await connection.ExecuteAsync(stratQ, @stratP); 
 
@@ -147,17 +156,17 @@ namespace smart_stock.Services
                     // Add entry to Sectors
                     var secQ = "INSERT INTO Sectors (InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials) VALUES (@infoTech, @healthCare, @fin, @consumeD, @comm, @indust, @consumS, @energy, @util, @realE, @mat)";
                     var @secP = new {
-                        infoTech   = true,
-                        healthCare = true,
-                        fin        = true,
-                        consumeD   = true,
-                        comm       = true,
-                        indust     = true,
-                        consumS    = true,
-                        energy     = true,
-                        util       = true,
-                        realE      = true,
-                        mat        = true
+                        infoTech   = ta.Preference.Sector.InformationTechnology,
+                        healthCare = ta.Preference.Sector.HealthCare,
+                        fin        = ta.Preference.Sector.Financials,
+                        consumeD   = ta.Preference.Sector.ConsumerDiscretionary,
+                        comm       = ta.Preference.Sector.Communication,
+                        indust     = ta.Preference.Sector.Industrials,
+                        consumS    = ta.Preference.Sector.ConsumerStaples,
+                        energy     = ta.Preference.Sector.Energy,
+                        util       = ta.Preference.Sector.Utilities,
+                        realE      = ta.Preference.Sector.RealEstate,
+                        mat        = ta.Preference.Sector.Materials
                     };    
                     result = await connection.ExecuteAsync(secQ, @secP); 
 
@@ -167,25 +176,25 @@ namespace smart_stock.Services
                     // Add entry to Preference
                     var prefQ = @"INSERT INTO Preference (RiskLevel, TradeStrategy, Sector, CapitalToRisk) VALUES (@risk, @strat, @sector, @capital)";        
                     var @prefP = new {
-                        risk    = 1,
+                        risk    = ta.Preference.RiskLevel.Id,
                         strat   = stratId,
                         sector  = sectorId,
-                        capital = 10
+                        capital = ta.Preference.CapitalToRisk
                     };      
                     connection.Open();
                     result = await connection.ExecuteAsync(prefQ, @prefP);  
 
-                    // REtrieve preference id
+                    // Retrieve preference id
                     int prefId = await connection.QueryFirstOrDefaultAsync<int>("SELECT id FROM Preference ORDER BY id DESC LIMIT 1", null);
                     
                     // Add entry to TradeAccount         
                     var tradeQ = @"INSERT INTO TradeAccount (Portfolio, Preference, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated) VALUES (@port, @pref, @title, @desc, @amount, @profit, @loss, @net, @numTrades, @numSTrades, @numFTrades, @invested, @cash, @dateCreated)";        
                     var @tradeP = new {
-                        port        = portfolioId,
+                        port        = ta.Portfolio.Id,
                         pref        = prefId,
-                        title       = "User Created Account",
-                        desc        = "This account is generated as a template for now.",
-                        amount      = 0,
+                        title       = ta.Title,
+                        desc        = ta.Description,
+                        amount      = ta.Amount,
                         profit      = 0,
                         loss        = 0,
                         net         = 0,
@@ -193,10 +202,18 @@ namespace smart_stock.Services
                         numSTrades  = 0,
                         numFTrades  = 0,
                         invested    = 0,
-                        cash        = 0,
+                        cash        = ta.Cash,
                         dateCreated = DateTime.Now
                     };      
                     result = await connection.ExecuteAsync(tradeQ, @tradeP);
+
+                    // Update portfolio
+                    var portQ = @"UPDATE Portfolio SET Cash = @cash WHERE Id=@pId";        
+                    var @portP = new {
+                        cash = ta.Portfolio.Cash - ta.Amount,
+                        pId = ta.Portfolio.Id
+                    };      
+                    result = await connection.ExecuteAsync(portQ, @portP);
                 }
                 return result > 0;
             }
@@ -205,6 +222,92 @@ namespace smart_stock.Services
                 Console.WriteLine(TAG + err);
                 return false;
             }
+        }
+
+        public async Task<bool> UpdateTradeAccount(TradeAccount tradeAccount, int id) 
+        {
+            try
+            {
+                int result = -1;
+                using (MySqlConnection connection = Connection)
+                {                                                
+                    // update TradeStratiegies
+                    var stratQ = @"UPDATE TradeStrategies SET BlueChip=@bluechip, LongTerm=@longterm, Swing=@swing, Scalp=@scalp, Day=@day WHERE Id = @stratID";        
+                    var @stratP = new {
+                        bluechip = tradeAccount.Preference.TradeStrategy.BlueChip,
+                        longterm = tradeAccount.Preference.TradeStrategy.LongTerm,
+                        swing    = tradeAccount.Preference.TradeStrategy.Swing   ,
+                        scalp    = tradeAccount.Preference.TradeStrategy.Scalp   ,
+                        day      = tradeAccount.Preference.TradeStrategy.Day     ,
+                        stratId  = tradeAccount.Preference.TradeStrategy.Id
+                    };      
+                    result = await connection.ExecuteAsync(stratQ, @stratP); 
+
+                    // Updateat Sectors
+                    var secQ = "UPDATE Sectors SET InformationTechnology=@infoTech, HealthCare=@healthCare, Financials=@fin, ConsumerDiscretionary=@consumeD, Communication=@comm, Industrials=@indust, ConsumerStaples=@consumS, Energy=@energy, Utilities=@util, RealEstate=@realE, Materials=@mat WHERE Id=@secId";
+                    var @secP = new {
+                        infoTech   = tradeAccount.Preference.Sector.InformationTechnology,
+                        healthCare = tradeAccount.Preference.Sector.HealthCare           ,
+                        fin        = tradeAccount.Preference.Sector.Financials           ,
+                        consumeD   = tradeAccount.Preference.Sector.ConsumerDiscretionary,
+                        comm       = tradeAccount.Preference.Sector.Communication        ,
+                        indust     = tradeAccount.Preference.Sector.Industrials          ,
+                        consumS    = tradeAccount.Preference.Sector.ConsumerStaples      ,
+                        energy     = tradeAccount.Preference.Sector.Energy               ,
+                        util       = tradeAccount.Preference.Sector.Utilities            ,
+                        realE      = tradeAccount.Preference.Sector.RealEstate           ,
+                        mat        = tradeAccount.Preference.Sector.Materials            ,
+                        secId      = tradeAccount.Preference.Sector.Id
+                    };    
+                    result = await connection.ExecuteAsync(secQ, @secP);
+
+                    // Update Preference
+                    var prefQ = @"UPDATE Preference SET CapitalToRisk=@capital WHERE Id=@prefId";        
+                    var @prefP = new {
+                        capital = tradeAccount.Preference.CapitalToRisk,
+                        prefId  = tradeAccount.Preference.Id
+                    };      
+                    connection.Open();
+                    result = await connection.ExecuteAsync(prefQ, @prefP);  
+                    
+                    // Update TradeAccount         
+                    var tradeQ = @"UPDATE TradeAccount SET Title=@title, Description=@desc WHERE Id=@tId";        
+                    var @tradeP = new {
+                        title  = tradeAccount.Title      ,
+                        desc   = tradeAccount.Description,
+                        amount = tradeAccount.Amount     ,
+                        tId    = tradeAccount.Id
+                    };      
+                    result = await connection.ExecuteAsync(tradeQ, @tradeP);                    
+                }
+                return result > 0;
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return false;
+            }
+        }
+
+        public bool TradeAccountExists(int id)
+        {
+            try
+            {
+                int result = -1;
+                using (MySqlConnection connection = Connection)
+                {                
+                    var sQuery = @"SELECT EXISTS (SELECT * FROM TradeAccount WHERE Id = @id)";     
+                    var @params = new { id = id };         
+                    connection.Open();
+                    result = connection.Query<int>(sQuery, @params).FirstOrDefault();
+                }
+                return result > 0;
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return false;
+            }            
         }
     }
 }

@@ -1,38 +1,46 @@
-<ng-container *ngIf="this.portfolio">
-   <div class="container text-left">
-      <div class="row">
-         <div class="col-lg">
-            <h2 style="color: cornsilk;">{{user.pii.fName}}'s Portfolio</h2> 
+<div *ngIf="this.content==0">
+   <ng-container *ngIf="this.portfolio">
+      <div class="container text-left">
+         <div class="row">
+            <div class="col-lg">
+               <h2 style="color: cornsilk;">{{user.pii.fName}}'s Portfolio</h2> 
+            </div>
+            <div class="col-lg-2">
+               <h2 style="color: cornsilk;">${{portfolio.amount}}</h2>
+            </div>
          </div>
-         <div class="col-lg">
-            <h2 style="color: cornsilk;">${{portfolio.amount}}</h2>
+         <div class="row w-25">
+            <div class="col-lg">
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-${{this.portfolio.net}}</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+${{this.portfolio.net}}</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-{{(this.portfolio.loss / this.portfolio.amount)*100}}%</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
+            </div>
          </div>
-      </div>
-      <div class="row w-25">
-         <div class="col-lg">
-            <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-${{this.portfolio.net}}</h6>
+         <div class="row">            
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">${{this.portfolio.invested}} Invested</h5>
+            </div>
+            <div class="col-lg-2">
+               <h5 style="color: cornsilk;">${{this.portfolio.cash}} Cash</h5>
+            </div>
          </div>
-         <div class="col-lg">
-            <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+${{this.portfolio.net}}</h6>
-         </div>
-         <div class="col-lg">
-            <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-{{(this.portfolio.loss / this.portfolio.amount)*100}}%</h6>
-         </div>
-         <div class="col-lg">
-            <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
-         </div>
-      </div>
-      <div class="row">            
-         <div class="col-lg">
-            <h5 style="color: cornsilk;">${{this.portfolio.invested}} Invested</h5>
-         </div>
-         <div class="col-lg">
-            <h5 style="color: cornsilk;">${{this.portfolio.cash}} Cash</h5>
-         </div>
-      </div>
-   </div>                     
-<div style="background: grey; height: 300px;">
-   <h3>Graph?</h3>
+      </div>                     
+   <div style="background: grey; height: 300px;">
+      <h3>Graph?</h3>
+   </div>
+      <app-trade-account-list></app-trade-account-list>
+   </ng-container>
 </div>
+<div *ngIf="this.content==1">
    <app-trade-account></app-trade-account>
-</ng-container>
+</div>
+<div *ngIf="this.content==2">
+   <app-trade-account-create [ta]="null"></app-trade-account-create>
+</div>
