@@ -126,10 +126,11 @@
             <div class="col-lg">
                <h5 style="color: cornsilk;">{{this.tradeAccount.numFTrades}} falied trades</h5>
             </div>
-         </div>
+         </div>       
       </div>
+      <app-history [log]="log"></app-history>
    </div>
    <div *ngIf="isEdit">
-      <app-trade-account-create [ta]="tradeAccount"></app-trade-account-create>
+      <br><app-trade-account-create [ta]="tradeAccount"></app-trade-account-create>
    </div>
 </ng-container>
