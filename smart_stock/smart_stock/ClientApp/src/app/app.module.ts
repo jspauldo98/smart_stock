@@ -59,6 +59,7 @@ import { StrategyTabComponent } from './home/portfolio/trade-account-create/stra
 import { SectorsTabComponent } from './home/portfolio/trade-account-create/sectors-tab/sectors-tab.component';
 import { RiskTabComponent } from './home/portfolio/trade-account-create/risk-tab/risk-tab.component';
 import { FundingTabComponent } from './home/portfolio/trade-account-create/funding-tab/funding-tab.component';
+import { HistoryComponent } from './home/portfolio/trade-account/history/history.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { FundingTabComponent } from './home/portfolio/trade-account-create/fundi
     SectorsTabComponent,
     RiskTabComponent,
     FundingTabComponent,
+    HistoryComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

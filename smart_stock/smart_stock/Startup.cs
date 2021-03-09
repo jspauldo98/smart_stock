@@ -60,6 +60,7 @@ namespace smart_stock
             services.AddTransient<IUserProvider, UserProvider>();
             services.AddTransient<IPreferenceProvider, PreferenceProvider>();
             services.AddTransient<IPortfolioProvider, PortfolioProvider>();
+            services.AddTransient<ILogProvider, LogProvider>();
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
