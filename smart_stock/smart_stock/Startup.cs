@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Text;
 using smart_stock.Services;
+using smart_stock.JwtManagement;
 
 namespace smart_stock
 {
@@ -28,17 +32,39 @@ namespace smart_stock
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddTransient<IUserProvider, UserProvider>();
-            services.AddTransient<ITradeStrategiesProvider, TradeStrategyProvider>();
-            services.AddCors(options => options.AddPolicy("PaymentDetail", builder =>
+            var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
+            services.AddSingleton(jwtTokenConfig);
+            services.AddAuthentication(options => 
             {
-                builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader();
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearer =>
+            {
+                bearer.RequireHttpsMetadata = true;
+                bearer.SaveToken = true;
+                bearer.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtTokenConfig.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.Secret)),
+                    ValidAudience = jwtTokenConfig.Audience,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(1)
+
+                };
+            });
+            services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
+            services.AddHostedService<JwtRefreshTokenCache>();
+            services.AddTransient<IUserProvider, UserProvider>();
+            services.AddTransient<IPreferenceProvider, PreferenceProvider>();
+            services.AddTransient<IPortfolioProvider, PortfolioProvider>();
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             }));
             services.AddSwaggerGen(c => { c.SwaggerDoc("v0.1", new OpenApiInfo {Title = "Smart Stock API", Version= "v0.1"}); });
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => {
-                options.LoginPath = "/login";
-                options.LogoutPath = "/login";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,9 +75,9 @@ namespace smart_stock
                 app.UseDeveloperExceptionPage();
                 //Incredibly helpful for tracking exactly what JSON goes to which endpoint (controller functions)
                 // TODO Swagger throwing errors so commenting it out 
-                 app.UseSwagger();
-                 app.UseSwaggerUI(config => {
-                     config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
+                app.UseSwagger();
+                app.UseSwaggerUI(config => {
+                    config.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Stock V1");
                 });
             }
             else
@@ -63,7 +89,6 @@ namespace smart_stock
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseAuthorization();
             app.UseCookiePolicy();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
@@ -76,6 +101,7 @@ namespace smart_stock
             app.UseCors(options => options.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value)
                 .AllowAnyMethod().AllowAnyHeader());
 
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

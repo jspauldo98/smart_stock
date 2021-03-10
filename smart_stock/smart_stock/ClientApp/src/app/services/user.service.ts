@@ -17,4 +17,8 @@ export class UserService {
   public createNewUser(user: IUser): Observable<IUser> {
       return this.httpClient.post<IUser>(`${this.apiPath}`, user);
   }
+
+  public getAllUserInformation(userId: number, username: string): Observable<IUser> {
+    return this.httpClient.get<IUser>(`${this.apiPath}/${userId}/${username}`);
+  } 
 }

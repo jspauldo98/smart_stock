@@ -1,0 +1,21 @@
+<form #form="ngForm">
+   <div class="container">
+      <h3 style="align-content: center;" class="form-colors">Trade Account Risk Tolerance</h3>
+      <mat-radio-group name="risk" #title="ngModel" [(ngModel)]="risk[0]">
+         <mat-radio-button class="form-colors" *ngFor="let r of this.riskLevels; let i = index" [checked]="i == this.risk[0].id-1" [value]="r">{{r.risk}}</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <mat-error *ngIf="isNextAttempt">You must choose a risk tolerance option.</mat-error>
+   
+      <mat-slider name="capital" #title="ngModel" [(ngModel)]="risk[1]" class="form-colors" style="width: 500px;" thumbLabel [displayWith]="formatLabel" tickInterval="1" min="1" max="100" ></mat-slider>
+      <div class="row">
+         <div class="col-md-12">
+            <mat-label class="descriptions" style="padding-left: 100px; padding-bottom: 0px; color: cornsilk;">Percent of capital to risk per trade</mat-label>
+         </div>
+      </div> 
+      <button mat-raised-button color="primary" (click)="onSubmit(form)">
+         Next
+         <mat-icon>arrow_forward</mat-icon>
+      </button>
+   </div>
+</form>
