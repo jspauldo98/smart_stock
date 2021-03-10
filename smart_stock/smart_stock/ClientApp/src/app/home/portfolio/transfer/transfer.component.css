@@ -1,3 +1,7 @@
 :host /deep/ .mat-select-value-text {
    color: cornsilk !important;
 }
+
+mat-slider {
+   width: 500px;
+ }

@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
@@ -113,7 +115,6 @@ namespace smart_stock.Services
                         var secQ = "SELECT Id, InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials FROM Sectors WHERE Id = @secId";
                         var @secParam = new {secId = secId};
                         Sector sector = await connection.QueryFirstOrDefaultAsync<Sector>(secQ, @secParam);
-                        Console.WriteLine(sector.Id);
                         // get preference
                         var prefQ = "SELECT Id, CapitalToRisk FROM Preference WHERE Id = @pId";
                         var @prefParam = new {pId = prefID};
@@ -224,6 +225,35 @@ namespace smart_stock.Services
             }
         }
 
+        public async Task<bool> UpdatePortfolio(Portfolio p, int id) 
+        {
+            try
+            {
+                int result = -1;
+                using (MySqlConnection connection = Connection)
+                {                                                
+                    string sQuery = @"UPDATE Portfolio SET Amount=@amount, Profit=@profit, Loss=@loss, Net=@net, Invested=@invested, Cash=@cash WHERE Id=@id";
+                    var @param = new {
+                        amount   = p .Amount,
+                        profit   = p .Profit,
+                        loss     = p .Loss,
+                        net      = p .Net,
+                        invested = p .Invested,
+                        cash     = p .Cash,
+                        id       = id
+                    };
+                    connection.Open();
+                    result = await connection.ExecuteAsync(sQuery, @param);                    
+                }
+                return result > 0;
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateTradeAccount(TradeAccount tradeAccount, int id) 
         {
             try
@@ -240,7 +270,8 @@ namespace smart_stock.Services
                         scalp    = tradeAccount.Preference.TradeStrategy.Scalp   ,
                         day      = tradeAccount.Preference.TradeStrategy.Day     ,
                         stratId  = tradeAccount.Preference.TradeStrategy.Id
-                    };      
+                    };     
+                    connection.Open(); 
                     result = await connection.ExecuteAsync(stratQ, @stratP); 
 
                     // Updateat Sectors
@@ -266,17 +297,25 @@ namespace smart_stock.Services
                     var @prefP = new {
                         capital = tradeAccount.Preference.CapitalToRisk,
                         prefId  = tradeAccount.Preference.Id
-                    };      
-                    connection.Open();
+                    };                          
                     result = await connection.ExecuteAsync(prefQ, @prefP);  
                     
                     // Update TradeAccount         
-                    var tradeQ = @"UPDATE TradeAccount SET Title=@title, Description=@desc WHERE Id=@tId";        
+                    var tradeQ = @"UPDATE TradeAccount SET Title=@title, Description=@desc, Amount=@amount, Profit=@profit, Loss=@loss, Net=@net, NumTrades=@numTrades, NumSTrades=@numSTrades, NumFTrades=@numFTrades, Invested=@invested, Cash=@cash, DateModified=@dateModified WHERE Id=@tId";        
                     var @tradeP = new {
-                        title  = tradeAccount.Title      ,
-                        desc   = tradeAccount.Description,
-                        amount = tradeAccount.Amount     ,
-                        tId    = tradeAccount.Id
+                        title        = tradeAccount.Title       ,
+                        desc         = tradeAccount.Description,
+                        amount       = tradeAccount.Amount      ,
+                        profit       = tradeAccount.Profit     ,
+                        loss         = tradeAccount.Loss       ,
+                        net          = tradeAccount.Net        ,
+                        numTrades    = tradeAccount.NumTrades  ,
+                        numSTrades   = tradeAccount.NumSTrades ,
+                        numFTrades   = tradeAccount.NumFTrades ,
+                        invested     = tradeAccount.Invested   ,
+                        cash         = tradeAccount.Cash       ,
+                        dateModified = DateTime    .Now        ,
+                        tId          = tradeAccount.Id
                     };      
                     result = await connection.ExecuteAsync(tradeQ, @tradeP);                    
                 }
@@ -297,6 +336,27 @@ namespace smart_stock.Services
                 using (MySqlConnection connection = Connection)
                 {                
                     var sQuery = @"SELECT EXISTS (SELECT * FROM TradeAccount WHERE Id = @id)";     
+                    var @params = new { id = id };         
+                    connection.Open();
+                    result = connection.Query<int>(sQuery, @params).FirstOrDefault();
+                }
+                return result > 0;
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return false;
+            }            
+        }
+
+        public bool PortfolioExists(int id)
+        {
+            try
+            {
+                int result = -1;
+                using (MySqlConnection connection = Connection)
+                {                
+                    var sQuery = @"SELECT EXISTS (SELECT * FROM Portfolio WHERE Id = @id)";     
                     var @params = new { id = id };         
                     connection.Open();
                     result = connection.Query<int>(sQuery, @params).FirstOrDefault();

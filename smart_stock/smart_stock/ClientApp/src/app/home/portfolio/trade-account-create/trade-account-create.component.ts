@@ -113,12 +113,17 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
 
   public updatePreference(event : any) {
     this.tabIndex = (this.tabIndex + 1) % this.tabCount;
+    
+  }
+
+  public submitTradeAccount(event : any) {    
     this.preference.riskLevel = event[0];
     this.preference.capitalToRisk = event[1];
     this.preference.tradeStrategy = this.strategy;
     this.preference.sector = this.sectors;
     this.tradingAccount.preference = this.preference;
     this.tradingAccount.portfolio = this.portfolio;
+    this.tradingAccount.preference = this.preference;
     if (this.isEdit) 
     {
       this.subs.add(this.portfolioService.putTradeAccount(this.tradingAccount).subscribe(res => {
@@ -127,14 +132,7 @@ export class TradeAccountCreateComponent implements OnInit, OnDestroy {
         this.portfolioComponent.content = 0;
       }));
     }
-  }
-
-  public submitTradeAccount(event : any) {
-    this.tradingAccount.portfolio = event[0];
-    this.tradingAccount.amount = event[1];
-    this.tradingAccount.cash = event[1];
-    this.tradingAccount.preference = this.preference;
-    if (!this.isEdit) {
+    else if (!this.isEdit) {
       this.subs.add(this.portfolioService.postTradeAccount(this.tradingAccount).subscribe(res => {
         this.portfolioComponent.getData();
         this.toastr.success('Account Creation Successful', this.tradingAccount.title);

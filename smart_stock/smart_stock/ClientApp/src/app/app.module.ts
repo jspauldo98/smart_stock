@@ -58,8 +58,8 @@ import { CosmeticsTabComponent } from './home/portfolio/trade-account-create/cos
 import { StrategyTabComponent } from './home/portfolio/trade-account-create/strategy-tab/strategy-tab.component';
 import { SectorsTabComponent } from './home/portfolio/trade-account-create/sectors-tab/sectors-tab.component';
 import { RiskTabComponent } from './home/portfolio/trade-account-create/risk-tab/risk-tab.component';
-import { FundingTabComponent } from './home/portfolio/trade-account-create/funding-tab/funding-tab.component';
 import { HistoryComponent } from './home/portfolio/trade-account/history/history.component';
+import { TransferComponent } from './home/portfolio/transfer/transfer.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -81,8 +81,8 @@ import { HistoryComponent } from './home/portfolio/trade-account/history/history
     StrategyTabComponent,
     SectorsTabComponent,
     RiskTabComponent,
-    FundingTabComponent,
     HistoryComponent,
+    TransferComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

@@ -1,0 +1,71 @@
+<div class="container">
+   <span style="color: cornsilk;">
+      <mat-icon style="color:gold;">warning</mat-icon>
+      Smart Stock Beta will consist of strickly paper trades.
+   </span>
+   <div class="container" style="color: cornsilk;" *ngIf="!flipV">
+      <mat-form-field class="form-colors" appearance="fill">
+         <mat-label class="form-colors">From</mat-label>
+         <mat-select [(ngModel)]="portfolio" required>
+            <mat-option [value]="portfolio">Portfolio - ${{portfolio.cash}}</mat-option>
+         </mat-select>
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Flip" color="accent" (click)="flip(true)"><mat-icon>swap_horizontal_circle</mat-icon></button>
+      <mat-form-field class="form-colors" appearance="fill">
+         <mat-label class="form-colors">To</mat-label>
+         <mat-select name="selectedAccountFlip" #title="ngModel" [(ngModel)]="selectedAccount" required>
+            <mat-option [value]="t" *ngFor="let t of tradeAccounts">{{t.title}} - ${{t.cash}}</mat-option>
+         </mat-select>
+      </mat-form-field>
+   </div>
+   <div class="container" style="color: cornsilk;" *ngIf="flipV">
+      <mat-form-field appearance="fill">
+         <mat-label class="form-colors" >From</mat-label>
+         <mat-select name="selectedAccountFlip" #title="ngModel" [(ngModel)]="selectedAccount" required>
+            <mat-option [value]="t" *ngFor="let t of tradeAccounts">{{t.title}} - ${{t.cash}}</mat-option>
+         </mat-select>
+      </mat-form-field>
+      <button mat-icon-button matTooltip="Flip" color="accent" (click)="flip(false)"><mat-icon>swap_horizontal_circle</mat-icon></button>
+      <mat-form-field appearance="fill">
+         <mat-label class="form-colors">To</mat-label>
+         <mat-select [(ngModel)]="portfolio" required>
+            <mat-option class="form-colors" [value]="portfolio">Portfolio - ${{portfolio.cash}}</mat-option>
+         </mat-select>
+      </mat-form-field>
+   </div>
+   <div>
+      <div class="container" *ngIf="!flipV && selectedAccount != null">
+         <mat-slider [(ngModel)]="amount" thumbLabel [displayWith]="formatLabel" tickInterval="1" min="1" max="{{portfolio.cash}}"></mat-slider>
+      </div>
+      <div class="container" *ngIf="flipV && selectedAccount != null">
+         <mat-slider name="amountSlider" [(ngModel)]="amount" #name="ngModel" thumbLabel [displayWith]="formatLabel" tickInterval="1" min="1" max="{{selectedAccount.cash}}"></mat-slider>
+      </div>
+      <div class="container" *ngIf="flipV && selectedAccount != null" style="padding-left: 200px;">
+         <mat-form-field style="margin-bottom: 10px;" appearance="fill">
+            <mat-label class="form-colors">Amount</mat-label>
+            <input matInput type="number" style="color: cornsilk;" id="amountTxt" name="amountTxt" [(ngModel)]="amount" #amountTxt="ngModel" min="1" max="{{selectedAccount.cash}}" required>
+            <div *ngIf="amountTxt.dirty || amountTxt.touched">
+               <mat-error *ngIf="amountTxt.errors?.required">Amount is <strong>required</strong></mat-error>
+               <mat-error *ngIf="amountTxt.errors?.min">Amount must be <strong>greater</strong> than $0.99</mat-error>
+               <mat-error *ngIf="amountTxt.errors?.max">Amount must br <strong>less</strong> or <strong>equal</strong> to 'From' account</mat-error>
+            </div>            
+         </mat-form-field>
+      </div>
+      <div class="container" *ngIf="!flipV && selectedAccount != null" style="padding-left: 200px;">
+         <mat-form-field style="margin-bottom: 10px;" appearance="fill">
+            <mat-label class="form-colors">Amount</mat-label>
+            <input matInput type="number" style="color: cornsilk;" id="amountTxt" name="amountTxt" [(ngModel)]="amount" #amountTxt="ngModel" min="1" max="{{portfolio.cash}}" required>
+            <div *ngIf="amountTxt.dirty || amountTxt.touched">
+               <mat-error *ngIf="amountTxt.errors?.required">Amount is <strong>required</strong></mat-error>
+               <mat-error *ngIf="amountTxt.errors?.min">Amount must be <strong>greater</strong> than $0.99</mat-error>
+               <mat-error *ngIf="amountTxt.errors?.max">Amount must br <strong>less</strong> or <strong>equal</strong> to 'From' account</mat-error>
+            </div>            
+         </mat-form-field>
+      </div>
+      <div class="container" *ngIf="flipV && selectedAccount != null">
+         
+      </div>
+   </div>
+   
+   <button mat-raised-button (click)="confirm()" color="primary">Confirm</button>
+</div>

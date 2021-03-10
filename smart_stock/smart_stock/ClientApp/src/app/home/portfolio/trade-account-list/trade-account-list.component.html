@@ -1,6 +1,7 @@
-<br><div align="center">
-   <button (click)="createTradeAccount()" mat-raised-button color="primary">Create New Trade Account</button>
-</div><br>
+<div align="center" style="padding-top: 10px; padding-bottom: 30px;">
+   <button (click)="createTradeAccount()" mat-icon-button matTooltip="Create New Trade Account"color="primary" ><mat-icon>add_circle</mat-icon></button>
+   <button mat-icon-button matTooltip="Transfer Money" style="color: #69F0AE; padding-left: 20px;" (click)="transfer()"><mat-icon>swap_horizontal_circle</mat-icon></button>
+</div>
 <div *ngFor="let ta of this.tradeAccounts" align="center">
    <mat-card class="trade-account-card" align="left">
       <div class="container">

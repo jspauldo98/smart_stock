@@ -45,20 +45,7 @@
                <mat-icon style="margin-right: 10px;" class="form-colors">timeline</mat-icon>
                <span class="form-colors">Risk</span>
             </ng-template>
-            <app-risk-tab [ta]="tradingAccount" (onSaveEvent)="updatePreference($event)" (onNextTabChange)="unlockFundingView($event)"></app-risk-tab>
-         </mat-tab>
-         <mat-tab disabled *ngIf="!canViewFunding">
-            <ng-template mat-tab-label>
-               <mat-icon style="margin-right: 10px;">attach_money</mat-icon>
-               Funding
-            </ng-template>
-         </mat-tab>
-         <mat-tab *ngIf="canViewFunding && !isEdit">
-            <ng-template mat-tab-label>
-               <mat-icon style="margin-right: 10px;" class="form-colors">attach_money</mat-icon>
-               <span class="form-colors">Funding</span>
-            </ng-template>
-            <app-funding-tab (onSaveEvent)="submitTradeAccount($event)"></app-funding-tab>
+            <app-risk-tab [ta]="tradingAccount" (onSaveEvent)="submitTradeAccount($event)"></app-risk-tab>
          </mat-tab>
       </mat-tab-group>
    </div>
