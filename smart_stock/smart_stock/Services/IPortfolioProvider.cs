@@ -19,6 +19,10 @@ namespace smart_stock.Services
             Returns true on success given parameter 'ta' and 'id' */
         Task<bool> UpdateTradeAccount(TradeAccount ta, int id);
 
+        /* Update a single portoflio in table 'Portfolio' given a portfolio object.
+            Returns true on success given parameter 'p' and 'id' */
+        Task<bool> UpdatePortfolio(Portfolio p, int id);
+
         /* Insert a single trade account into table 'TradeAccount'
             Insert a single preference object into table 'Preference'
             Insert a single trade strategy object into table 'TradeStrategies'
@@ -28,5 +32,9 @@ namespace smart_stock.Services
         /* Check if a trade account exists. Checks from table 'TradeAccount'.
             Returns true on success given the parameter 'id' */
         bool TradeAccountExists(int id);
+
+        /* Check if a portfolio exists. Checks from table 'Portfolio'.
+            Returns true on success given the parameter 'id' */
+        bool PortfolioExists(int id);
     }
 }

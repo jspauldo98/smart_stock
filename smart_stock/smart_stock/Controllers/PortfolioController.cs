@@ -35,5 +35,26 @@ namespace smart_stock.Controllers
 
             return portfolio;
         }
+
+        // PUT: api/portfolio/id
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutPortfolio(int id, [FromBody]Portfolio p)
+        {
+            if (p.Id != id)
+            {
+                return BadRequest();
+            }
+
+            if (_portfolioProvider.PortfolioExists(id))
+            {
+                await _portfolioProvider.UpdatePortfolio(p, id);
+            }  
+            else 
+            {
+                return NotFound();
+            }          
+
+            return NoContent();
+        }
     }
 }
