@@ -22,7 +22,7 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Spencer : 
 - Stefan : 27.9
 - Jared : 
-- Zack : 
+- Zach : 
 
 ## Successes
 - Completing the shell of the UI, and preparing it for live data from alpaca trading files.
@@ -47,5 +47,5 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Stefan: 5, Extremely confident with any changes that need to be made for the UI, very confident and happy with the progress made on the API, would like to see several files working in unison after debugging alpaca data client troubles. 
 - Spencer:
 - Bryce:
-- Zach: 
+- Zach: 5 
 - Jared: 
