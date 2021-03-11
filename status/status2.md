@@ -18,11 +18,11 @@
 
 The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
 
-- Bryce : 
-- Spencer : 
+- Bryce : 15
+- Spencer : 2.2
 - Stefan : 27.9
-- Jared : 
-- Zach : 
+- Jared : 64.4
+- Zach : 36.2
 
 ## Successes
 - Completing the shell of the UI, and preparing it for live data from alpaca trading files.
@@ -48,4 +48,4 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Spencer:
 - Bryce:
 - Zach: 5 
-- Jared: 
+- Jared: 4, Awesome progress with the UI and API. Great progress getting the Alpaca SDK to interface with dotnet, however we did not meet our goal of getting a simple paper trade working. Granted there has been some issues with trade implementation. The main reason I give a four for completion confidence and not a five because a significantly larger amount of hours were logged this status update than last update without a whole lot to show for the time spent.
