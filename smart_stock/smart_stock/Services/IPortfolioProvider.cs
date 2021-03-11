@@ -19,7 +19,7 @@ namespace smart_stock.Services
             Returns true on success given parameter 'ta' and 'id' */
         Task<bool> UpdateTradeAccount(TradeAccount ta, int id);
 
-        /* Update a single portoflio in table 'Portfolio' given a portfolio object.
+        /* Update a single portfolio in table 'Portfolio' given a portfolio object.
             Returns true on success given parameter 'p' and 'id' */
         Task<bool> UpdatePortfolio(Portfolio p, int id);
 

@@ -49,5 +49,4 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subs.unsubscribe();
   }
-
 }
