@@ -92,6 +92,25 @@
     dateModified : Date       ;
   }
 
+  export interface ITrade {
+    id       : number ;
+    type     : boolean;
+    ticker   : string ;
+    amount   : number ;
+    price    : number ;
+    quantity : number ;
+    date     : Date   ;
+  }
+
+  export interface ILog {
+    id                 : number       ;
+    tradeAccount       : ITradeAccount;
+    trade              : ITrade       ;
+    date               : Date         ;
+    tradeAccountAmount : number       ;
+    portfolioAmount    : number       ;
+  }
+
   export interface ILoginResult {
     username: string;
     userId: number;

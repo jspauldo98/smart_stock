@@ -37,6 +37,10 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
     this.portfolioComponent.content = 2;
   }
 
+  transfer() {
+    this.portfolioComponent.content = 3;
+  }
+
   viewTa(ta : ITradeAccount) {
     this.portfolioComponent.content = 1;
     this.portfolioComponent.tradeAccount = ta;

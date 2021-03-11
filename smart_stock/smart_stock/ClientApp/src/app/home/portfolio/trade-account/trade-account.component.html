@@ -6,17 +6,15 @@
                <mat-icon>keyboard_arrow_left</mat-icon>
                Return To Your Portfolio
             </button>
-         </div>
-         <div class="col-lg-1">
-            <button mat-raised-button (click)="editTa()" color="accent"><mat-icon >edit</mat-icon></button>
-         </div>
+         </div>         
+         <button mat-icon-button matTooltip="Edit" class="pull-right" (click)="editTa()" color="accent"><mat-icon>edit</mat-icon></button>
       </div>
    </div>
    <div *ngIf="!isEdit">
       <div class="container text-left">
          <div class="row">
             <div class="col-lg">
-               <h2 style="color: cornsilk;">{{this.tradeAccount.title}}'s Portfolio</h2> 
+               <h2 style="color: cornsilk;">{{this.tradeAccount.title}}</h2> 
             </div>
             <div class="col-lg-2">
                <h2 style="color: cornsilk;">${{this.tradeAccount.amount}}</h2>
@@ -126,10 +124,11 @@
             <div class="col-lg">
                <h5 style="color: cornsilk;">{{this.tradeAccount.numFTrades}} falied trades</h5>
             </div>
-         </div>
+         </div>       
       </div>
+      <app-history [log]="log"></app-history>
    </div>
    <div *ngIf="isEdit">
-      <app-trade-account-create [ta]="tradeAccount"></app-trade-account-create>
+      <br><app-trade-account-create [ta]="tradeAccount"></app-trade-account-create>
    </div>
 </ng-container>
