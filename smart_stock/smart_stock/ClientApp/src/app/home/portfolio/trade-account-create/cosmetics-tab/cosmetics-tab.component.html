@@ -1,0 +1,31 @@
+<div class="container">
+   <h3 class="form-colors center">Trade Account Cosmetics</h3>
+   <form #form="ngForm" >
+      <div class="row">
+         <div class="col-md-12">
+            <mat-form-field style="width:50%">
+               <mat-label for="title" class="form-colors">
+                  Title
+               </mat-label>
+               <input matInput type="text" name="title" #title="ngModel" [(ngModel)]="cosmetics[0]" style="color: cornsilk; " required>
+               <mat-error *ngIf="isNextAttempt && title.invalid">A title is <strong>required</strong></mat-error>
+            </mat-form-field>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-md-12">
+            <mat-form-field style="width: 100%">
+               <mat-label for="description" class="form-colors">
+                  Description
+               </mat-label>
+               <textarea matInput type="text" name="desc" #desc="ngModel" [(ngModel)]="cosmetics[1]" style="color: cornsilk;height: 150px;" required></textarea>
+               <mat-error *ngIf="isNextAttempt && desc.invalid">A description is <strong>required</strong></mat-error>
+            </mat-form-field>
+         </div>
+      </div>
+      <button mat-raised-button type="submit" color="primary" (click)="onSubmit(form)">
+         Next
+         <mat-icon>arrow_forward</mat-icon>
+      </button>
+   </form>
+</div>

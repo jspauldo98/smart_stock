@@ -13,7 +13,6 @@ namespace smart_stock.Models
         [Column(TypeName = "varchar(100)")]
         public string Username { get; set; }
 
-        [Required]
         [Column(TypeName = "varchar(100)")]
         public string Password { get; set; }
     }

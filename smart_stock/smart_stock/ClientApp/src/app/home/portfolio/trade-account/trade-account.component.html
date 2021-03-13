@@ -1,52 +1,134 @@
-<br><div align="center">
-   <button (click)="createTradeAccount()" mat-raised-button color="primary">Create New Trade Account</button>
-</div><br>
-<div *ngFor="let ta of this.tradeAccounts" align="center">
-   <mat-card class="trade-account-card" align="left">
-      <div class="container">
+<ng-container *ngIf="this.tradeAccount">
+   <div *ngIf="!isEdit" class="container">
+      <div class="row">
+         <div class="col-lg pull-left">
+            <button mat-raised-button color="primary" (click)="backToPortfolio()">
+               <mat-icon>keyboard_arrow_left</mat-icon>
+               Return To Your Portfolio
+            </button>
+         </div>         
+         <button mat-icon-button matTooltip="Edit" class="pull-right" (click)="editTa()" color="accent"><mat-icon>edit</mat-icon></button>
+      </div>
+   </div>
+   <div *ngIf="!isEdit">
+      <div class="container text-left">
          <div class="row">
             <div class="col-lg">
-               <mat-card-title>
-                  {{ta.title}}
-               </mat-card-title>
-               <mat-card-subtitle>
-                  {{ta.description}}
-               </mat-card-subtitle>
-               <mat-card-content>
-                  <h5 class="text-center">${{ta.amount}}</h5>
-                  <div class="container text-center">
-                     <div class="row">
-                        <div class="col-sm">
-                           <h6 *ngIf="ta.net < 0" style="color: red;">-${{ta.net}}</h6>
-                           <h6 *ngIf="ta.net >= 0" style="color: green;">+${{ta.net}}</h6>
-                        </div>
-                        <div class="col-sm">
-                           <h6 *ngIf="ta.net < 0" style="color: red;">-{{(ta.loss / ta.amount) * 100}}%</h6>
-                           <h6 *ngIf="ta.net >= 0" style="color: green;">+{{(ta.profit / ta.amount) * 100}}%</h6>
-                        </div>
-                     </div>
-                     <div class="row">
-                        <div class="col-sm">
-                           <h6>${{ta.invested}} Invested</h6>
-                        </div>
-                        <div class="col-sm">
-                           <h6>${{ta.cash}} Cash</h6>
-                        </div>
-                     </div>
-                  </div>
-               </mat-card-content>
+               <h2 style="color: cornsilk;">{{this.tradeAccount.title}}</h2> 
             </div>
-            <div class="col-lg" align="right">
-               <mat-card style="background: grey; height: 200px;">
-                  <mat-card-title>Graph?</mat-card-title>
-               </mat-card>
+            <div class="col-lg-2">
+               <h2 style="color: cornsilk;">${{this.tradeAccount.amount}}</h2>
             </div>
          </div>
+         <div class="row">
+            <div class="col-lg">
+               <h6 class="text-muted" style="color: cornsilk; font-size: small;">{{this.tradeAccount.description}}</h6>
+            </div>
+         </div> 
+         <div class="row w-25">
+            <div class="col-lg">
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-${{this.tradeAccount.net}}</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+${{this.tradeAccount.net}}</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-{{(this.tradeAccount.loss / this.tradeAccount.amount)*100}}%</h6>
+            </div>
+            <div class="col-lg">
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
+            </div>
+         </div>
+         <div class="row">            
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">${{this.tradeAccount.invested}} Invested</h5>
+            </div>
+            <div class="col-lg-2">
+               <h5 style="color: cornsilk;">${{this.tradeAccount.cash}} Cash</h5>
+            </div>
+         </div>
+      </div>                       
+      <div style="background: grey; height: 300px;">
+         <h3>Graph?</h3>
+      </div><br>
+      <div class="container text-left">
+         <div class="row">
+            <div class="col-lg">
+               <h2 style="color: cornsilk;">{{this.tradeAccount.title}}'s Preferences</h2>
+            </div>
+         </div>
+         <div class="row ml-3">
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">Risk:</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">{{this.tradeAccount.preference.riskLevel.risk}}</h5>
+            </div>
+         </div>
+         <div class="row ml-3">
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">Strategy:</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">
+                  <span *ngIf="this.tradeAccount.preference.tradeStrategy.blueChip">Blue Chip, </span>
+                  <span *ngIf="this.tradeAccount.preference.tradeStrategy.longTerm">Long Term, </span>
+                  <span *ngIf="this.tradeAccount.preference.tradeStrategy.swing">Swing, </span>
+                  <span *ngIf="this.tradeAccount.preference.tradeStrategy.scalp">Scalp, </span>
+                  <span *ngIf="this.tradeAccount.preference.tradeStrategy.day">Day, </span>               
+               </h5>
+            </div>
+         </div>
+         <div class="row ml-3">
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">Sector(s):</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">
+                  <span *ngIf="this.tradeAccount.preference.sector.energy">Energy, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.materials">Materials, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.industrials">Industrials, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.utilities">Utilities, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.healthCare">Healthcare </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.financials">Financials, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.consumerDiscretionary">Consumer Discretionary, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.consumerStaples">Consumer Staples, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.informationTechnology">Information Technology, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.communication">Communication Services, </span>
+                  <span *ngIf="this.tradeAccount.preference.sector.realEstate">Real Estate, </span>
+               </h5>
+            </div>
+         </div>
+         <div class="row ml-3">
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">Percent of capital to risk:</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">{{this.tradeAccount.preference.capitalToRisk}}% per trade</h5>
+            </div>
+         </div>
+      </div><br><mat-divider></mat-divider><br>
+      <div class="container">
+         <div class="row text-left">
+            <div class="col-lg">
+               <h2 style="color: cornsilk;">{{this.tradeAccount.title}}'s History</h2>
+            </div>
+         </div>
+         <div class="row text-center">
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">{{this.tradeAccount.numTrades}} trades</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">{{this.tradeAccount.numSTrades}} successful trades</h5>
+            </div>
+            <div class="col-lg">
+               <h5 style="color: cornsilk;">{{this.tradeAccount.numFTrades}} falied trades</h5>
+            </div>
+         </div>       
       </div>
-      <mat-card-actions>
-         <button mat-raised-button color="accent">View Account</button>
-         <button mat-raised-button color="accent" >Edit Account</button>
-      </mat-card-actions>
-   </mat-card>
-   <br>
-</div>
+      <app-history [log]="log"></app-history>
+   </div>
+   <div *ngIf="isEdit">
+      <br><app-trade-account-create [ta]="tradeAccount"></app-trade-account-create>
+   </div>
+</ng-container>

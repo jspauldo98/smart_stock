@@ -65,6 +65,7 @@ namespace smart_stock
             //Space for alpaca services to be declared as injectable dependencies, MUST declare as
             //singletons, we DON'T want multiple background threads called with each new constructor call
             services.AddSingleton<IFirstPaperTrade, FirstPaperTrade>();
+            services.AddTransient<ILogProvider, LogProvider>();
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();

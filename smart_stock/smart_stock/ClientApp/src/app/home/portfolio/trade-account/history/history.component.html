@@ -1,0 +1,20 @@
+<div class="container">
+   <div class="row text-center" style="color: cornsilk;">
+      <div class="col-lg">Type</div>
+      <div class="col-lg">Ticker</div>
+      <div class="col-lg">Amount</div>
+      <div class="col-lg">Price</div>
+      <div class="col-lg">Quantity</div>
+      <div class="col-lg">Date</div>
+   </div>
+   <div class="row text-center" style="color: cornsilk;" *ngFor="let l of log">
+      <div class="col-lg" *ngIf="l.trade.type">Buy</div>
+      <div class="col-lg" *ngIf="!l.trade.type">Sell</div>
+      <div class="col-lg">{{l.trade.ticker}}</div>
+      <div class="col-lg">{{l.trade.amount}}</div>
+      <div class="col-lg">{{l.trade.price}}</div>
+      <div class="col-lg">{{l.trade.quantity}}</div>
+      <div class="col-lg">{{l.trade.date}}</div>
+      <mat-divider></mat-divider>
+   </div>
+</div>

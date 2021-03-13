@@ -161,6 +161,27 @@ ALTER TABLE Sectors DROP DateAdded;
 ALTER TABLE Preference DROP DateModified;
 ALTER TABLE TradeAccount ADD Description TEXT;
 
+<<<<<<< HEAD
 3/2/2021 CHANGES
 alter table User add column AlpacaKeyId varchar(200);
 alter table User add column AlpacaKey varchar(200);
+=======
+3/8/2021 CHANGES:
+ALTER TABLE Log DROP Constraint FK_Portfolio;
+ALTER TABLE Log DROP Portfolio;
+ALTER TABLE Log DROP Type;
+ALTER TABLE Log ADD TradeAccountAmount DECIMAL(13,2) NOT NULL;
+ALTER TABLE Log ADD PortfolioAmount DECIMAL(13,2) NOT NULL;
+ALTER TABLE Log Add Constraint FK_Log_Trade FOREIGN KEY (Trade) REFERENCES Trade (Id);
+ALTER TABLE Trade DROP Constraint FK_Trade;
+ALTER TABLE Trade DROP TradeAccount;
+ALTER TABLE Trade DROP BuyPrice;
+ALTER TABLE Trade DROP SellPrice;
+ALTER TABLE Trade DROP DateBought;
+ALTER TABLE Trade DROP DateSold;
+ALTER TABLE Trade Add Type BIT NOT NULL;
+ALTER TABLE Trade Add Amount DECIMAL(13, 2) NOT NULL;
+ALTER TABLE Trade Add Price DECIMAL(13, 2) NOT NULL;
+ALTER TABLE Trade Add Quantity DECIMAL(13, 2) NOT NULL;
+ALTER TABLE Trade Add Date DATE NOT NULL;
+>>>>>>> 9a2747350c0f9c3fcc9d0cec4e752a1945573271
