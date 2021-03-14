@@ -12,9 +12,8 @@ namespace smart_stock.Models
         [Column(TypeName = "int(64)")]
         public int? Id { get; set; }
 
-        // TODO - Is a portfolio even needed here since its already an object in the service?
-        // [Required]
-        // public Portfolio Portfolio { get; set; }
+        [Required]
+        public Portfolio Portfolio { get; set; }
 
         [Required]
         public Preference Preference { get; set; }

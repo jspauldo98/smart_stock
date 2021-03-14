@@ -10,23 +10,28 @@ namespace smart_stock.Models
         [Column(TypeName = "int(64)")]
         public int? Id { get; set; }
 
+        [Required]
+        [Column(TypeName = "bit")]
+        public Boolean Type { get; set;}
+
+        [Required]
         [Column(TypeName = "char(4)")]
-        public string Ticker { get; set; }
+        public string Ticker { get; set;}
 
-        //1 = buy, 0 = sell
-        [Column(TypeName = "bit(1)")]
-        public bool? Type { get; set; }
-
+        [Required]
         [Column(TypeName = "decimal(13,2)")]
-        public Decimal? Amount { get; set; }
+        public double Amount { get; set;}
 
+        [Required]
         [Column(TypeName = "decimal(13,2)")]
-        public Decimal? Price { get; set; }
+        public double Price { get; set;}
 
+        [Required]
         [Column(TypeName = "decimal(13,2)")]
-        public Decimal? Quantity { get; set; }
+        public double Quantity { get; set;}
 
+        [Required]
         [Column(TypeName = "date")]
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set;}
     }
 }

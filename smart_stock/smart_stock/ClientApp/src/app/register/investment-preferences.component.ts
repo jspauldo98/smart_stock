@@ -93,7 +93,7 @@ export class InvestmentPreferencesComponent implements OnInit {
       } 
       // Init stategy obj   
       let tradeStrategiesObj: ITradeStrategies = {
-        id       : 0,
+        id       : null,
         blueChip : this.stratTransformedValues[0],
         longTerm : this.stratTransformedValues[1],
         swing    : this.stratTransformedValues[2],
@@ -108,7 +108,7 @@ export class InvestmentPreferencesComponent implements OnInit {
       };
       // Init sectors level obj
       let sectorsObj : ISector = {
-        id                    : 0,
+        id                    : null,
         informationTechnology : this.sectorTransformedValues[0],
         healthCare            : this.sectorTransformedValues[1],
         financials            : this.sectorTransformedValues[2],
@@ -116,11 +116,12 @@ export class InvestmentPreferencesComponent implements OnInit {
         communication         : this.sectorTransformedValues[4],
         industrials           : this.sectorTransformedValues[5],
         consumerStaples       : this.sectorTransformedValues[6],
-        energey               : this.sectorTransformedValues[7],
+        energy                : this.sectorTransformedValues[7],
         utilities             : this.sectorTransformedValues[8],
         realEstate            : this.sectorTransformedValues[9],
         materials             : this.sectorTransformedValues[10],
       };
+      console.log(sectorsObj);
       // Init preference Obj
       let preferenceObj : IPreference = {
         id            : 0,

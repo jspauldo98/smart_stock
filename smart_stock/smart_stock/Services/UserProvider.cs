@@ -154,12 +154,12 @@ namespace smart_stock.Services
                             var portQuery = @"INSERT INTO Portfolio (User, Amount, Profit, Loss, Net, Invested, Cash) VALUES (@user, @amount, @profit, @loss, @net, @invested, @cash)";
                             var @paramsPort = new {
                                 user     = newUser.Id,
-                                amount   = 0,
+                                amount   = 100000,
                                 profit   = 0,
                                 loss     = 0,
                                 net      = 0,
                                 invested = 0,
-                                cash     = 0
+                                cash     = 100000
                             };
                             result = -1;
                             result = await connection.ExecuteAsync(portQuery, @paramsPort);                            

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { IPortfolio, ITradeAccount, IUser } from 'src/app/interfaces';
-import { LoginService } from 'src/app/services/login.service';
-import { PortfolioService } from 'src/app/services/portfolio.service';
+import { ILog, ITradeAccount } from 'src/app/interfaces';
+import { HistoryService } from 'src/app/services/history.service';
+import { SubSink } from 'subsink';
 import { PortfolioComponent } from '../portfolio.component';
 
 @Component({
@@ -11,29 +10,31 @@ import { PortfolioComponent } from '../portfolio.component';
   styleUrls: ['./trade-account.component.css']
 })
 export class TradeAccountComponent implements OnInit {
-  tradeAccounts : ITradeAccount[];
+  private subs = new SubSink();
+  public tradeAccount : ITradeAccount;
+  public isEdit : boolean = false;
+  public log : ILog[];
 
-  constructor(private readonly loginService : LoginService,
-    private readonly portfolioService : PortfolioService,
-    private PortfolioComponent : PortfolioComponent,
-    private toastr : ToastrService) { }
+  constructor(private readonly portfolioComponent : PortfolioComponent,
+    private readonly historyService : HistoryService) { }
 
-  ngOnInit(): void {    
-    this.refreshData();
+  ngOnInit(): void {
+    this.tradeAccount = this.portfolioComponent.tradeAccount;
+    this.subs.add(
+      this.historyService.getLog(this.tradeAccount.id).subscribe(res => {
+        console.log(res);
+        this.log = res as ILog[];
+      })
+    );
+    console.log(this.tradeAccount);
   }
 
-  refreshData() {
-    this.portfolioService.getTradeAccounts(this.PortfolioComponent.portfolio.id).subscribe(res => {
-      this.tradeAccounts = res as ITradeAccount[];
-      console.log(res);
-    })
+  backToPortfolio() {
+    this.portfolioComponent.content = 0;
   }
 
-  createTradeAccount() {
-    this.portfolioService.postTradeAccount(this.PortfolioComponent.portfolio.id).subscribe(res => {
-      this.tradeAccounts = res as ITradeAccount[];
-      this.refreshData();
-      this.toastr.success('Created successfully', 'Trade Account');
-    });
+  editTa() {
+    this.isEdit = true;
   }
+
 }

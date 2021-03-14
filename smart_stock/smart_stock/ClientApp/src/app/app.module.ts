@@ -50,10 +50,18 @@ import { PortfolioComponent } from './home/portfolio/portfolio.component';
 import { PreferenceService } from './services/preference.service';
 import { FirstPaperTradeService } from './services/first-paper-trade.service';
 import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
+import { TradeAccountListComponent } from './home/portfolio/trade-account-list/trade-account-list.component';
 import { HomeAboutComponent } from './home/home-about/home-about.component';
 import { appInitializer } from './services/app-initializer';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
+import { TradeAccountCreateComponent } from './home/portfolio/trade-account-create/trade-account-create.component';
+import { CosmeticsTabComponent } from './home/portfolio/trade-account-create/cosmetics-tab/cosmetics-tab.component';
+import { StrategyTabComponent } from './home/portfolio/trade-account-create/strategy-tab/strategy-tab.component';
+import { SectorsTabComponent } from './home/portfolio/trade-account-create/sectors-tab/sectors-tab.component';
+import { RiskTabComponent } from './home/portfolio/trade-account-create/risk-tab/risk-tab.component';
+import { HistoryComponent } from './home/portfolio/trade-account/history/history.component';
+import { TransferComponent } from './home/portfolio/transfer/transfer.component';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -66,10 +74,18 @@ import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor
     InvestmentPreferencesComponent,
     DashboardComponent,
     PortfolioComponent,
-    TradeAccountComponent,
+    TradeAccountListComponent,
     HomeAboutComponent,
     UserDialogComponent,
-    AlpacaAccountSetupComponent
+    AlpacaAccountSetupComponent,
+    TradeAccountComponent,
+    TradeAccountCreateComponent,
+    CosmeticsTabComponent,
+    StrategyTabComponent,
+    SectorsTabComponent,
+    RiskTabComponent,
+    HistoryComponent,
+    TransferComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

@@ -61,7 +61,7 @@
     communication         : boolean;
     industrials           : boolean;
     consumerStaples       : boolean;
-    energey               : boolean;
+    energy               : boolean;
     utilities             : boolean;
     realEstate            : boolean;
     materials             : boolean;
@@ -92,6 +92,25 @@
     cash         : number     ;
     dateCreated  : Date       ;
     dateModified : Date       ;
+  }
+
+  export interface ITrade {
+    id       : number ;
+    type     : boolean;
+    ticker   : string ;
+    amount   : number ;
+    price    : number ;
+    quantity : number ;
+    date     : Date   ;
+  }
+
+  export interface ILog {
+    id                 : number       ;
+    tradeAccount       : ITradeAccount;
+    trade              : ITrade       ;
+    date               : Date         ;
+    tradeAccountAmount : number       ;
+    portfolioAmount    : number       ;
   }
 
   export interface ILoginResult {
