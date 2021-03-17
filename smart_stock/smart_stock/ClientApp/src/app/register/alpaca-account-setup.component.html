@@ -1,0 +1,35 @@
+<div class="container">
+    <h3 style="align-content: center;" class="form-colors">Create An Alpaca Account</h3>
+    <p class="form-colors">We use a third party API service, Alpaca, for live stock market trading and data access.
+        To get started with our application, you must create an account through Alpaca (it's free!),
+        and submit you API key information into the forms below. We securely store these keys, and 
+        use them to make trades for you with our smart trading software! This is a one-time step, 
+        so you won't need to do this again!
+    </p>
+    <p class="form-colors">Once you've created your account, be sure to select "Paper Trading" from the dropdown menu in the top left navbar.
+        From there, click on the "view" button, on the right hand side of the dashboard, under the "Your API Keys" section.
+        Copy the API Key ID, and the Secret Key into the forms below. These are for your eyes only! Once done, you're all set!
+    </p>
+    <button mat-raised-button color="primary" (click)="toAlpaca()">Sign Up With Alpaca</button><br>
+    <form [formGroup]="alpacaForm">
+    <div class="row">
+        <div class="col-md-12">
+            <mat-form-field style="width: 100%">
+                <mat-label for="alpacaKeyId" class="form-colors">API Key ID</mat-label>
+                <input matInput type="password" formControlName="alpacaKeyId" style="color: cornsilk;">
+                <mat-error *ngIf="isSubmitAttempt && f.alpacaKeyId.hasError('required')">A key ID is <strong>required</strong></mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <mat-form-field style="width: 100%">
+                <mat-label for="alpacaKey" class="form-colors">Secret Key</mat-label>
+                <input matInput type="password" formControlName="alpacaKey" style="color: cornsilk;">
+                <mat-error *ngIf="isSubmitAttempt && f.alpacaKey.hasError('required')">A secret key is <strong>required</strong></mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    </form>
+    <button mat-raised-button color="primary" (click)="onSubmit()">Save and Continue</button><br> 
+</div>

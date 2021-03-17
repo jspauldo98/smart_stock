@@ -24,5 +24,13 @@ namespace smart_stock.Services
         method and retrieve all their information as needed
         */
         Task<User> GetAllUserInformation(int userId, string username);
+
+        Task<User[]> GetAllUsers();
+
+        /*
+            Exclusively used for alpaca API key retrieval based on user ID        
+        */
+        Task<AlpacaSecret> GetUserAlpacaKeys(int userId);
+        
     }
 }

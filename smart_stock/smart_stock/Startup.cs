@@ -11,6 +11,8 @@ using System;
 using System.Text;
 using smart_stock.Services;
 using smart_stock.JwtManagement;
+using smart_stock.AlpacaServices;
+using smart_stock.StartupServices;
 
 namespace smart_stock
 {
@@ -61,6 +63,11 @@ namespace smart_stock
             services.AddTransient<IPreferenceProvider, PreferenceProvider>();
             services.AddTransient<IPortfolioProvider, PortfolioProvider>();
             services.AddTransient<ILogProvider, LogProvider>();
+            services.AddTransient<ITradeProvider, TradeProvider>();
+            
+            //Relatively frowned upon, but we're doing it anyway.
+            var fileStartupService = new StartupBackgroundServices(Configuration);
+            services.AddSingleton<IStartupBackgroundServices>(fileStartupService);
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
