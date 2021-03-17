@@ -42,13 +42,20 @@ namespace smart_stock.Controllers
         {
             if (ModelState.IsValid)
             {
-                string result = await _preferenceProvider.InsertPreference(preference);
+                List<string> result = await _preferenceProvider.InsertPreference(preference);
                 
                 if (result != null)
                 {
-                    string[] args = new string[2];
+                    /*
+                    Three important arguments are supplied here, the command to start or stop,
+                    the userID for API keys, and the specific trade account id that a given trade file
+                    will use. We can supply multiple id's if needed. This pattern can be followed for 
+                    all other trade file calls.
+                    */ 
+                    string[] args = new string[3];
                     args[0] = "start";
-                    args[1] = result;
+                    args[1] = result[0];
+                    args[2] = result[1];
                     _firstPaperTrade.CommunicateBackgroundWorker(args);
                     return Ok();
                 }

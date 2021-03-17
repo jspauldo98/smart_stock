@@ -25,7 +25,7 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<bool> RecordTrade(Trade trade)
+        public async Task<int> RecordTrade(Trade trade)
         {
             try
             {
@@ -37,15 +37,14 @@ namespace smart_stock.Services
                     await connection.ExecuteAsync(storeQuery, storeParams);
                     string idQuery = "SELECT Id FROM Trade WHERE Ticker = @Ticker AND Amount = @Amount";
                     var @idParams = new {Ticker = trade.Ticker, Amount = trade.Amount };
-                    connection.Open();
                     int result = await connection.QueryFirstOrDefaultAsync<int>(idQuery, idParams);
-                    return true;
+                    return result;
                 }
             }
             catch(Exception e)
             {
                 Console.WriteLine(TAG + e);
-                return false;
+                return 0;
             }
         }   
     }

@@ -49,7 +49,7 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<string> InsertPreference(Preference preference)
+        public async Task<List<string>> InsertPreference(Preference preference)
         {   
             try
             {
@@ -130,13 +130,20 @@ namespace smart_stock.Services
                     };
                     result = -1;
                     result = await connection.ExecuteAsync(taQuery, @paramsTa);
-                    return userId.ToString();                                      
+                    string tradeAccountIdQuery = "SELECT Id FROM TradeAccount WHERE Portfolio = @portfolio AND Preference = @preference";
+                    var @tradeAccountIdParams = new {portfolio = portId, preference = prefId };
+                    int tradeAccountId = await connection.QueryFirstOrDefaultAsync<int>(tradeAccountIdQuery, tradeAccountIdParams);
+                    List<string> idList = new List<string>();
+                    idList.Add(userId.ToString());
+                    idList.Add(tradeAccountId.ToString());
+
+                    return idList;                                    
                 } 
             }
             catch (Exception err)
             {
                 Console.WriteLine(TAG + err);
-                return (TAG + err).ToString();
+                return null;
             }
         }          
     }

@@ -7,13 +7,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using smart_stock.Services;
-
+using smart_stock.Models;
 
 namespace smart_stock.AlpacaServices
 {
+    //THIS IS NOW DEPRECATED, ONLY USED FOR EXAMPLE ON BACKGROUND WORKERS.
     public class FirstPaperTrade : IFirstPaperTrade
     {
         private readonly IUserProvider _userProvider;
+        private readonly ITradeProvider _tradeProvider;
+        private readonly ILogProvider _logProvider;
         //This might need to be static
         private BackgroundWorker backgroundWorker = new BackgroundWorker();
         private const string Symbol = "SPY";
@@ -24,9 +27,13 @@ namespace smart_stock.AlpacaServices
         private IAlpacaDataClient alpacaDataClient;
         private Guid lastTradeId = Guid.NewGuid();
 
-        public FirstPaperTrade(IUserProvider userProvider)
+        public FirstPaperTrade(IUserProvider userProvider,
+        ITradeProvider tradeProvider,
+        ILogProvider logProvider)
         {
             _userProvider = userProvider;
+            _tradeProvider = tradeProvider;
+            _logProvider = logProvider;
             Console.WriteLine("Constructor called ");
         }
 
@@ -43,7 +50,7 @@ namespace smart_stock.AlpacaServices
                 backgroundWorker.WorkerSupportsCancellation = true;
                 backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
                 backgroundWorker.ProgressChanged += BackgroundWorkerOnProgressChanged;
-                backgroundWorker.RunWorkerAsync();
+                backgroundWorker.RunWorkerAsync(argument: suppliedArgs);
             }
             else if (suppliedArgs[0] == "stop")
             {
@@ -63,12 +70,13 @@ namespace smart_stock.AlpacaServices
             BackgroundWorker worker = sender as BackgroundWorker;
             while(!worker.CancellationPending)
             {
-                await ExecuteTradingCycle();
+                string[] suppliedArgs = (string []) e.Argument;
+                await ExecuteTradingCycle(suppliedArgs);
                 worker.ReportProgress(0, "test");
             }
         }
 
-        private async Task ExecuteTradingCycle()
+        private async Task ExecuteTradingCycle(string[] suppliedArgs)
         {
             Console.WriteLine("Trade Cycle started");
             alpacaTradingClient = Environments.Paper.GetAlpacaTradingClient(new SecretKey(API_KEY, API_SECRET));
@@ -106,6 +114,7 @@ namespace smart_stock.AlpacaServices
                 var account = await alpacaTradingClient.GetAccountAsync();
                 Decimal buyingPower = account.BuyingPower;
                 Decimal portfolioValue = account.Equity;
+                
 
                 // Get information about our existing position.
                 var positionQuantity = 0L;
@@ -137,7 +146,7 @@ namespace smart_stock.AlpacaServices
                     if (positionQuantity > 0)
                     {
                         Console.WriteLine("Setting position to zero.");
-                        await SubmitOrder(positionQuantity, currentPrice, OrderSide.Sell);
+                        await SubmitOrder(positionQuantity, currentPrice, OrderSide.Sell, Int32.Parse(suppliedArgs[2]));
                     }
                     else
                     {
@@ -162,7 +171,7 @@ namespace smart_stock.AlpacaServices
                         }
                         Int32 qtyToBuy = (Int32)(amountToAdd / currentPrice);
 
-                        await SubmitOrder(qtyToBuy, currentPrice, OrderSide.Buy);
+                        await SubmitOrder(qtyToBuy, currentPrice, OrderSide.Buy, Int32.Parse(suppliedArgs[2]));
                     }
                     else
                     {
@@ -176,7 +185,7 @@ namespace smart_stock.AlpacaServices
                             qtyToSell = positionQuantity;
                         }
 
-                        await SubmitOrder(qtyToSell, currentPrice, OrderSide.Sell);
+                        await SubmitOrder(qtyToSell, currentPrice, OrderSide.Sell, Int32.Parse(suppliedArgs[2]));
                     }
                 }
 
@@ -204,7 +213,7 @@ namespace smart_stock.AlpacaServices
         }
 
         // Submit an order if quantity is not zero.
-        private async Task SubmitOrder(Int64 quantity, Decimal price, OrderSide side)
+        private async Task SubmitOrder(Int64 quantity, Decimal price, OrderSide side, int tradeAccountId)
         {
             if (quantity == 0)
             {
@@ -215,6 +224,15 @@ namespace smart_stock.AlpacaServices
             var order = await alpacaTradingClient.PostOrderAsync(
                 side.Limit(Symbol, quantity, price));
             lastTradeId = order.OrderId;
+            Trade trade = new Trade {
+                Type = side.Equals("Sell") ? true : false,
+                Ticker = Symbol,
+                Price = (double) price,
+                Quantity = (double) quantity,
+                Date = DateTime.Now
+            };
+            int newTradeId = await _tradeProvider.RecordTrade(trade);
+            //await _logProvider.RecordTradeInLog
         }
 
         private async Task ClosePositionAtMarket()

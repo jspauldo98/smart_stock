@@ -6,6 +6,6 @@ namespace smart_stock.Services
 {
     public interface ITradeProvider
     {
-        Task<bool> RecordTrade(Trade trade);
+        Task<int> RecordTrade(Trade trade);
     }
 }

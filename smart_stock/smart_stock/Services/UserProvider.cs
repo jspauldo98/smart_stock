@@ -237,5 +237,24 @@ namespace smart_stock.Services
                 return null;
             }
         }
+
+        public async Task<User[]> GetAllUsers()
+        {
+            try
+            {
+                using(MySqlConnection connection = Connection)
+                {
+                    string usersQuery = "SELECT * FROM User";
+                    connection.Open();
+                    var users = (await connection.QueryAsync<User>(usersQuery, null)).ToArray();
+                    return users;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(TAG + e);
+                return null;
+            }
+        }
     }
 }
