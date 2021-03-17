@@ -6,7 +6,7 @@ namespace smart_stock.AlpacaServices
 {
     public interface ITrading
     {
-        Task Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts);
+        void Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts);
         void Dispose();
     }
 }

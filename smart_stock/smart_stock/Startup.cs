@@ -65,9 +65,6 @@ namespace smart_stock
             services.AddTransient<ILogProvider, LogProvider>();
             services.AddTransient<ITradeProvider, TradeProvider>();
             
-            //Space for alpaca services to be declared as injectable dependencies, MUST declare as
-            //singletons, we DON'T want multiple background threads called with each new constructor call
-            services.AddSingleton<IFirstPaperTrade, FirstPaperTrade>();
             //Relatively frowned upon, but we're doing it anyway.
             var fileStartupService = new StartupBackgroundServices(Configuration);
             services.AddSingleton<IStartupBackgroundServices>(fileStartupService);

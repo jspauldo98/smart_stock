@@ -15,16 +15,11 @@ namespace smart_stock.AlpacaServices
         private IAlpacaDataClient alpacaDataClient;
         private IReadOnlyList<IAsset> assets;
 
-        // Make sure nothing but the CreateAsync can call constructor
-        private Trading(){}
-        public static async Task<Trading> CreateAsync(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
-        {
-            Trading t = new Trading();
-            Console.WriteLine("started traing");
-            await t.Start(secret, tradeAccounts);
-            return t;
+        public Trading(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts){
+            Console.WriteLine($"started trading");
+            Start(secret, tradeAccounts);
         }
-        public async Task Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
+        public async void Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
         {
             // First assign trading client and data client
             alpacaTradingClient = Environments.Paper.GetAlpacaTradingClient(
@@ -119,6 +114,7 @@ namespace smart_stock.AlpacaServices
             foreach (var ta in tradeAccounts)
             {
                 // Check strategies
+                Console.WriteLine($"Checking strategies for: {ta.Title}");
                 if (ta.Preference.TradeStrategy.Scalp)
                 {
                     await Scalp(ta.Preference);
@@ -149,8 +145,8 @@ namespace smart_stock.AlpacaServices
         {
             try 
             {
-                // Market data example - Get daily price data for SPY over the last 5 trading days.
-                var bars = await GetMarketData("SPY", TimeFrame.Day, 5);
+                // Market data example - Get daily price data for SPY over the last 2 trading days.
+                var bars = await GetMarketData("SPY", TimeFrame.Day, 2);
 
                 // print data collected
                 foreach (var b in bars["SPY"])
@@ -271,12 +267,13 @@ namespace smart_stock.AlpacaServices
                 var order = await alpacaTradingClient.PostOrderAsync(
                     orderType.Market(symbol, quantity)
                 );
-                Console.WriteLine($"Submitting {order.OrderType} order for {order.Quantity} shares at ${order.LimitPrice}.");
+                Console.WriteLine($"Submitting {symbol} {orderType} market order for {quantity} shares at market value.");
+                return;
             }
             var limitorder = await alpacaTradingClient.PostOrderAsync(
                 orderType.Limit(symbol, quantity, price)
             );
-            Console.WriteLine($"Submitting {limitorder.OrderType} order for {limitorder.Quantity} shares at ${limitorder.LimitPrice}.");
+            Console.WriteLine($"Submitting {symbol} {orderType} limit order for {quantity} shares at ${price}.");
 
             // TODO - find a way to log trade and update all users tradeaccount and portfolio information. I don't think we will be able to inject a provider here.
         }

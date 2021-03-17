@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FirstPaperTradeService } from '../../services/first-paper-trade.service';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -9,13 +8,9 @@ import { first } from 'rxjs/operators';
 })
 export class HomeAboutComponent implements OnInit {
 
-  constructor(private readonly firstPaperTradeService: FirstPaperTradeService) { }
+  constructor() { }
 
   ngOnInit(): void {
-  }
-
-  public callWorkerShutdown() {
-    this.firstPaperTradeService.stopWorkerThread().pipe(first()).subscribe(() => {});  
   }
 
 }

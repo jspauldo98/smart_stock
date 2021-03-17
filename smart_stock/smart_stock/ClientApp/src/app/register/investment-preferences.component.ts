@@ -91,7 +91,7 @@ export class InvestmentPreferencesComponent implements OnInit {
           this.sectorTransformedValues[index]=true;
         }
       } 
-      // Init stategy obj   
+      // Init strategy obj   
       let tradeStrategiesObj: ITradeStrategies = {
         id       : null,
         blueChip : this.stratTransformedValues[0],
@@ -133,7 +133,7 @@ export class InvestmentPreferencesComponent implements OnInit {
       console.log(preferenceObj);
       this.preferenceService.createPreference(preferenceObj).subscribe(() => {
         this.router.navigateByUrl("/login");
-        this.toastr.success('Updated sucessfully', 'Investment Preferences');
+        this.toastr.success('Updated successfully', 'Investment Preferences');
       });
     }
   }
