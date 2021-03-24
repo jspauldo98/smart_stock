@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Alpaca.Markets;
 using smart_stock.Models;
+using smart_stock.Services;
 
 namespace smart_stock.AlpacaServices
 {
@@ -14,9 +15,13 @@ namespace smart_stock.AlpacaServices
         private IAlpacaTradingClient alpacaTradingClient;
         private IAlpacaDataClient alpacaDataClient;
         private IReadOnlyList<IAsset> assets;
+        private readonly ITradeProvider _tradeProvider;
+        private readonly ILogProvider _logProvider;
 
-        public Trading(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts){
+        public Trading(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts, ITradeProvider tradeProvider, ILogProvider logProvider) {
             Console.WriteLine($"started trading");
+            _tradeProvider = tradeProvider;
+            _logProvider = logProvider;
             Start(secret, tradeAccounts);
         }
         public async void Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
@@ -114,34 +119,39 @@ namespace smart_stock.AlpacaServices
             foreach (var ta in tradeAccounts)
             {
                 // Check strategies
+                // I need that MF UHHHHH trade account ID for each strategy being used to effectively log
                 Console.WriteLine($"Checking strategies for: {ta.Title}");
                 if (ta.Preference.TradeStrategy.Scalp)
                 {
-                    await Scalp(ta.Preference);
+                    await Scalp(ta.Preference, ta.Id);
                 }
                 if (ta.Preference.TradeStrategy.Day)
                 {
-                    await Day(ta.Preference);
+                    await Day(ta.Preference, ta.Id);
                 }
                 if (ta.Preference.TradeStrategy.Swing)
                 {
-                    await Swing(ta.Preference);
+                    await Swing(ta.Preference, ta.Id);
                 }
                 if (ta.Preference.TradeStrategy.BlueChip)
                 {
-                    await BlueChip(ta.Preference);
+                    await BlueChip(ta.Preference, ta.Id);
                 }
                 if (ta.Preference.TradeStrategy.LongTerm)
                 {
-                    await LongTerm(ta.Preference);
+                    await LongTerm(ta.Preference, ta.Id);
                 }
+                else
+                {
+                    await Sample(ta.Id);
+                } 
             }
 
             // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
-            await Sample();
+            //await Sample();
         }
         // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
-        private async Task Sample()
+        private async Task Sample(int? tradeAccountId)
         {
             try 
             {
@@ -155,13 +165,13 @@ namespace smart_stock.AlpacaServices
                 }
                 
                 // buy example - buy 1 share of SPY at market price
-                await SubmitOrder("SPY", 1, 0, OrderSide.Buy);
+                await SubmitOrder("SPY", 1, 0, OrderSide.Buy, tradeAccountId);
 
                 // Wait 20 seconds
                 Thread.Sleep(20000);
 
                 // sell example - sell 1 share of SPY at market price
-                await SubmitOrder("SPY", 1, 0, OrderSide.Sell);
+                await SubmitOrder("SPY", 1, 0, OrderSide.Sell, tradeAccountId);
             } catch (WebException ex) when (ex.Response is HttpWebResponse response)
             {
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
@@ -171,7 +181,7 @@ namespace smart_stock.AlpacaServices
             }
         }
 
-        private async Task BlueChip(Preference p)
+        private async Task BlueChip(Preference p, int? tradeAccountId)
         {
             try
             {
@@ -186,7 +196,7 @@ namespace smart_stock.AlpacaServices
             }            
         }
 
-        private async Task LongTerm(Preference p)
+        private async Task LongTerm(Preference p, int? tradeAccountId)
         {
             try
             {
@@ -201,7 +211,7 @@ namespace smart_stock.AlpacaServices
             }                 
         }
 
-        private async Task Day(Preference p)
+        private async Task Day(Preference p, int? tradeAccountId)
         {
             try
             {
@@ -216,7 +226,7 @@ namespace smart_stock.AlpacaServices
             }            
         }
 
-        private async Task Scalp(Preference p)
+        private async Task Scalp(Preference p, int? tradeAccountId)
         {
             try
             {
@@ -231,7 +241,7 @@ namespace smart_stock.AlpacaServices
             }            
         }
 
-        private async Task Swing(Preference p)
+        private async Task Swing(Preference p, int? tradeAccountId)
         {
             try
             {
@@ -255,7 +265,7 @@ namespace smart_stock.AlpacaServices
             );
             return bars;
         }
-        private async Task SubmitOrder(string symbol, Int64 quantity, Decimal price, OrderSide orderType)
+        private async Task SubmitOrder(string symbol, Int64 quantity, Decimal price, OrderSide orderType, int? tradeAccountId)
         {
             if (quantity == 0)
             {
@@ -275,7 +285,26 @@ namespace smart_stock.AlpacaServices
             );
             Console.WriteLine($"Submitting {symbol} {orderType} limit order for {quantity} shares at ${price}.");
 
-            // TODO - find a way to log trade and update all users tradeaccount and portfolio information. I don't think we will be able to inject a provider here.
+            Trade trade = new Trade 
+            {
+                Type = orderType == OrderSide.Buy ? true : false,
+                Ticker = symbol,
+                //Unsure of what this can be used for
+                Amount = 0,
+                Price = Decimal.ToDouble(price),
+                Quantity = quantity,
+                Date = DateTime.Now
+            };
+            trade.Id = await _tradeProvider.RecordTrade(trade);
+            var accountAmount = await alpacaTradingClient.GetAccountAsync();
+            Log log = new Log
+            {
+                TradeAccount = new TradeAccount {Id = tradeAccountId},
+                Trade = trade,
+                Date = DateTime.Now,
+                TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower)
+                //Doesn't make sense to calculate the portfolio amount here.
+            };
         }
         public void Dispose()
         {
