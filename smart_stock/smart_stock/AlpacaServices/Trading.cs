@@ -277,6 +277,74 @@ namespace smart_stock.AlpacaServices
 
             // TODO - find a way to log trade and update all users tradeaccount and portfolio information. I don't think we will be able to inject a provider here.
         }
+
+        /* Calculates the RSI of a stock
+            @param symbol - Stock ticker to calculate RSI  for
+            @param timeFrame - Amount and precision of calculations to make
+            @param periods - how many periods to use in calculation (standard is 14)
+            @param limit - how many data points with RSI are returned
+            @returns array of tuples representing DateTime and historical RSI data
+            @example - await GetRsi("SPY", TimeFrame.Minute, 14, 100) */
+        private async Task<IEnumerable<(DateTime?, decimal)>> GetRsi(
+            string symbol, TimeFrame timeFrame, int periods, int limit
+        )
+        {
+            // Init array of tuples to store RSI data
+            List<(DateTime?, decimal)> rsiData = new List<(DateTime?, decimal)>();
+
+            // Get market data on symbol given timeframe
+            var bars = await GetMarketData(symbol, timeFrame, periods+limit);
+            
+            // Calculate gain and loss for first period bars
+            decimal gainAvg = 0, lossAvg= 0;
+            foreach (var b in bars[symbol].Take(periods+1))
+            {
+                if (b.Close - b.Open > 0) 
+                    gainAvg += (b.Close - b.Open);
+                else if (b.Open - b.Close > 0)
+                    lossAvg += (b.Open - b.Close);
+            }
+            gainAvg /= periods;
+            lossAvg /= periods;
+
+            // Calculate the first RS and RSI
+            decimal currRS = gainAvg/lossAvg;
+            decimal currRSI = 0;
+            if (currRS == 0) currRSI = 100;
+            else if (currRS > 0) currRSI = 100-(100/(1+currRS));
+            else currRSI = 0;
+
+            // Add to array
+            rsiData.Add((bars[symbol][periods].TimeUtc, currRSI));
+
+            // Loop bars for symbol to get rsi for each point. Skip period bars
+            foreach (var b in bars[symbol].Skip(periods+1))
+            {
+                // Calculate gain/loss
+                decimal gain = 0, loss = 0;
+                if (b.Close - b.Open > 0) 
+                    gain = (b.Close - b.Open);
+                else if (b.Open - b.Close > 0)
+                    loss = (b.Open - b.Close);
+                gainAvg = ((gainAvg*(periods-1))+gain)/periods;
+                lossAvg = ((lossAvg*(periods-1))+loss)/periods;
+
+                // Calculate RS
+                var rs = gainAvg / lossAvg;                
+
+                // Calculate RSI
+                decimal rsi = 0;
+                if (rs == 0) rsi = 100;
+                else if (rs > 0) rsi = 100-(100/(1+rs));
+                else rsi = 0;
+
+                // Add to array 
+                rsiData.Add((b.TimeUtc, rsi));
+            }
+
+            return rsiData;
+        }
+
         public void Dispose()
         {
             alpacaTradingClient?.Dispose();
