@@ -279,7 +279,7 @@ namespace smart_stock.AlpacaServices
         }
 
         /* Calculates the RSI of a stock
-            @param symbol - Stock ticker to calculate RSI  for
+            @param symbol - Stock ticker to calculate RSI for
             @param timeFrame - Amount and precision of calculations to make
             @param periods - how many periods to use in calculation (standard is 14)
             @param limit - how many data points with RSI are returned
@@ -343,6 +343,36 @@ namespace smart_stock.AlpacaServices
             }
 
             return rsiData;
+        }
+
+        /* Calculates the RSI of a stock
+            @param symbol - Stock ticker to calculate SMA for
+            @param timeFrame - Amount and precision of calculations to make
+            @param periods - how many periods to use in calculation
+            @param limit - how many data points with SMA are returned
+            @returns array of tuples representing DateTime and historical SMA data
+            @example - await GetRsi("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180SMA data */
+        private async Task<IEnumerable<(DateTime?, decimal)>> GetSma(
+            string symbol, TimeFrame timeFrame, int periods, int limit
+        )
+        {
+            // Init array of tuples to store SMA data
+            List<(DateTime?, decimal)> smaData = new List<(DateTime?, decimal)>();
+
+            // Get market data on symbol given timeframe
+            var bars = await GetMarketData(symbol, timeFrame, periods+limit);
+
+            // Calculate SMA data
+            for (int i = 0; i < limit; i++)
+            {
+                decimal sma = 0;
+                foreach (var b in bars[symbol].Skip(i).Take(periods+1))
+                    sma += b.Close;
+                sma /= periods;
+                smaData.Add((bars[symbol][periods+i].TimeUtc, sma));
+            }
+
+            return smaData;
         }
 
         public void Dispose()
