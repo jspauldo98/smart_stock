@@ -345,7 +345,7 @@ namespace smart_stock.AlpacaServices
             return rsiData;
         }
 
-        /* Calculates the RSI of a stock
+        /* Calculates the SMA of a stock
             @param symbol - Stock ticker to calculate SMA for
             @param timeFrame - Amount and precision of calculations to make
             @param periods - how many periods to use in calculation
@@ -398,6 +398,45 @@ namespace smart_stock.AlpacaServices
             }
 
             return vData;
+        }
+
+        /* Calculates the EMA of a stock (this uses multiplier smoothing of 2)
+            @param symbol - Stock ticker to calculate EMA for
+            @param timeFrame - Amount and precision of calculations to make
+            @param periods - how many periods to use in calculation
+            @param limit - how many data points with EMA are returned
+            @returns array of tuples representing DateTime and historical EMA data
+            @example - await GetEma("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180EMA data */
+        private async Task<IEnumerable<(DateTime?, decimal)>> GetEma(
+            string symbol, TimeFrame timeFrame, int periods, int limit
+        )
+        {
+            // Init array of tuples to store EMA data
+            List<(DateTime?, decimal)> emaData = new List<(DateTime?, decimal)>();
+
+            // Get market data on symbol given timeFrame
+            var bars = await GetMarketData(symbol, timeFrame, periods+limit+1);
+
+            // Calculate EMA data for the first period bars
+            // Note this first ema is for peiods +1 bar not period bar
+            decimal ema = 0;
+            foreach (var b in bars[symbol].Take(periods))
+                ema += b.Close;
+            ema /= periods;
+            
+            // Add to array (again note that this is for periods +1 bar)
+            emaData.Add((bars[symbol][periods+2].TimeUtc, ema));
+
+            // Loop bars for symbol to get ema for the rest of the points
+            int index = periods +1;
+            foreach (var b in bars[symbol].Skip(periods).Take(limit-1))
+            {
+                ema = ((b.Close - ema)*(2m/(periods+1))) + ema;
+                if (index != periods+1)
+                    emaData.Add((bars[symbol][index+1].TimeUtc, ema));
+                index++;
+            }
+            return emaData;
         }
 
         public void Dispose()
