@@ -146,9 +146,6 @@ namespace smart_stock.AlpacaServices
 
             // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
            // await Sample();
-
-            //had to put this here because the tradeaccounts were not showing up correctly for me  
-            await LongTerm();
         }
         // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
         private async Task Sample()
@@ -205,7 +202,7 @@ namespace smart_stock.AlpacaServices
                 var count = 0;
                 //Loops through every asset on alpaca.
                 //Not a good or efficient way to do this
-                //this could use some more inddicators and it 
+                //this could use some more indicators and it 
                 //would be helpful if alpaca would finish the 
                 // data api v2 to be able to get more data
                 foreach (var items in assets)
@@ -215,7 +212,7 @@ namespace smart_stock.AlpacaServices
                     //alpaca would send the error for anything greater than 120 requests a minute
                     //Also seems to get weird when you are running things for more than one account
                     //with one account running at once I could get close to 200 with more than one
-                    //it stope a littly above 120 requests even if you use two different programs to
+                    //it stope a little above 120 requests even if you use two different programs to
                     //run each key. I would assume it has something to do with the number of requests
                     //coming from the same computer in one minute
                     if(count > 120)
