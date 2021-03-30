@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Alpaca.Markets;
 using smart_stock.Models;
 using smart_stock.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace smart_stock.AlpacaServices
 {
@@ -15,17 +17,32 @@ namespace smart_stock.AlpacaServices
         private IAlpacaTradingClient alpacaTradingClient;
         private IAlpacaDataClient alpacaDataClient;
         private IReadOnlyList<IAsset> assets;
+        private readonly IUserProvider _userProvider;
         private readonly ITradeProvider _tradeProvider;
         private readonly ILogProvider _logProvider;
-
-        public Trading(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts, ITradeProvider tradeProvider, ILogProvider logProvider) {
-            Console.WriteLine($"started trading");
+        public Trading(IUserProvider userProvider, ITradeProvider tradeProvider, ILogProvider logProvider) 
+        {
+            _userProvider = userProvider;
             _tradeProvider = tradeProvider;
             _logProvider = logProvider;
-            Start(secret, tradeAccounts);
         }
+
+        public async Task GetUserData()
+        {
+            // First get users alpaca data and trade accounts assigned to a tuple to run in parallel later
+            List<(AlpacaSecret, TradeAccount[])> users = await _userProvider.GetUserData();
+            // Now execute trading for all users in parallel
+            // TODO FOR NOW BREAK AFTER TWO!!!! OTHERWISE PREPARE FOR ANAL ABLITERATION
+            Parallel.For(0, users.Count, i => 
+            {
+                if (i > 1) return;
+                Start(users[i].Item1, users[i].Item2);
+            });
+        }
+
         public async void Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
         {
+            Console.WriteLine($"started trading");
             // First assign trading client and data client
             alpacaTradingClient = Environments.Paper.GetAlpacaTradingClient(
                 new SecretKey(
@@ -303,8 +320,9 @@ namespace smart_stock.AlpacaServices
                 Trade = trade,
                 Date = DateTime.Now,
                 TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower)
-                //Doesn't make sense to calculate the portfolio amount here.
+                //Doesn't make sense to calculate the portfolio amount here, can do this later?
             };
+            await _logProvider.RecordTradeInLog(log); 
         }
         public void Dispose()
         {

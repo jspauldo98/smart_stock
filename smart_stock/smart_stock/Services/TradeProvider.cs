@@ -27,6 +27,7 @@ namespace smart_stock.Services
 
         public async Task<int> RecordTrade(Trade trade)
         {
+            Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 

@@ -31,6 +31,10 @@ namespace smart_stock.Services
             Exclusively used for alpaca API key retrieval based on user ID        
         */
         Task<AlpacaSecret> GetUserAlpacaKeys(int userId);
+
+
+        /*Used for alpaca trading files*/
+        Task<List<(AlpacaSecret, TradeAccount[])>> GetUserData();
         
     }
 }
