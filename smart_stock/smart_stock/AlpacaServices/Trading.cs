@@ -23,7 +23,6 @@ namespace smart_stock.AlpacaServices
         }
         public async void Start(AlpacaSecret secret, IEnumerable<TradeAccount> tradeAccounts)
         {
-          //  Thread.Sleep(120000);
             // First assign trading client and data client
             alpacaTradingClient = Environments.Paper.GetAlpacaTradingClient(
                 new SecretKey(
@@ -45,6 +44,12 @@ namespace smart_stock.AlpacaServices
             // Figure out when the market will close so we only send orders during market hours and close orders tha have no filled
             var closingTime = await GetMarketClose();
 
+            var macd = await GetMacD("SPY",TimeFrame.Day, 100);
+            foreach (var m in macd)
+            {
+                Console.WriteLine($"{m.Item1} \t\t {m.Item2} \t\t {m.Item3}");
+            }
+
             Console.WriteLine("Waiting for market open...");
             await AwaitMarketOpen();
             Console.WriteLine("Market opened.");
@@ -53,7 +58,6 @@ namespace smart_stock.AlpacaServices
             TimeSpan timeUntilClose = closingTime - DateTime.UtcNow;
             while (timeUntilClose.TotalMinutes > 5)
             {
-               
                 await CheckPreferences(tradeAccounts);
                 Thread.Sleep(60000);
                 timeUntilClose = closingTime - DateTime.UtcNow;
@@ -68,16 +72,10 @@ namespace smart_stock.AlpacaServices
             var assets = await alpacaTradingClient.ListAssetsAsync(
                 new AssetsRequest
                 {
-                    //AssetStatus = AssetStatus.Active,
-                    //AssetClass = AssetClass.UsEquity
+                    AssetStatus = AssetStatus.Active,
+                    AssetClass = AssetClass.UsEquity
                 }
             );
-
-            // TODO - Print out all assets found on alpaca (this seems like there are lots of stocks missing?)
-            /* foreach (var a in assets)
-             {
-                 Console.WriteLine($"Ticker: {a.Symbol} \t Exchange: {a.Exchange}");
-             }*/
 
             return assets;
         }
@@ -141,40 +139,6 @@ namespace smart_stock.AlpacaServices
                 if (ta.Preference.TradeStrategy.LongTerm)
                 {
                     await LongTerm();
-                }
-            }
-
-            // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
-           // await Sample();
-        }
-        // TODO - EXAMPLE STRATEGY ------- REMOVE THIS WHEN FINISHED ------
-        private async Task Sample()
-        {
-            try
-            {
-                // Market data example - Get daily price data for SPY over the last 2 trading days.
-                var bars = await GetMarketData("SPY", TimeFrame.Day, 2);
-
-                // print data collected
-                foreach (var b in bars["SPY"])
-                {
-                    Console.WriteLine($"$SPY: \n\t time: {b.TimeUtc} \n\t open: {b.Open} \n\t high: {b.High} \n\t low: {b.Low} \n\t close: {b.Close} \n\t volume: {b.Volume}");
-                }
-
-                // buy example - buy 1 share of SPY at market price
-                await SubmitOrder("SPY", 1, 0, OrderSide.Buy);
-
-                // Wait 20 seconds
-                Thread.Sleep(20000);
-
-                // sell example - sell 1 share of SPY at market price
-                await SubmitOrder("SPY", 1, 0, OrderSide.Sell);
-            }
-            catch (WebException ex) when (ex.Response is HttpWebResponse response)
-            {
-                if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    await AwaitRequestRedemption();
                 }
             }
         }
@@ -260,7 +224,7 @@ namespace smart_stock.AlpacaServices
                     //the 50 day ema and the 9 day moves above the 13 day than it should buy. Not exactly working right yet but it 
                     //sort of works. Also needs more indicators than just ema most likely.
                     else if ((ema9[index - 1] > ema13[index - 1] && ema9[index - 2] < ema13[index - 2]) && (ema13[index - 1] > ema50[index - 1] && ema13[index - 2] < ema50[index - 2])
-                             && (ema9[index - 1] > ema50[index - 1] && ema9[index - 2] < ema50[index - 2]))
+                            && (ema9[index - 1] > ema50[index - 1] && ema9[index - 2] < ema50[index - 2]))
                     {
                         //this is here because I was having issues getting the most current price using getLastQuoteAsync
                         //This could be changed because it only gives us the price from 1 minute ago(at least I think it does) could possibly use getLastTradeAsync
