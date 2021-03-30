@@ -41,18 +41,19 @@ import { PersonalInformationComponent } from '../app/register/personal-informati
 import { CredentialsComponent } from '../app/register/credentials.component';
 import { InvestmentPreferencesComponent } from '../app/register/investment-preferences.component';
 import { UserDialogComponent } from '../app/mat-dialog-views/user-dialog.component';
+import { AlpacaAccountSetupComponent } from '../app/register/alpaca-account-setup.component';
 
 import { LoginService } from './services/login.service';
 import { UserService } from './services/user.service';
 import { DashboardComponent } from './home/dashboard/dashboard.component';
 import { PortfolioComponent } from './home/portfolio/portfolio.component';
 import { PreferenceService } from './services/preference.service';
+import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
 import { TradeAccountListComponent } from './home/portfolio/trade-account-list/trade-account-list.component';
 import { HomeAboutComponent } from './home/home-about/home-about.component';
 import { appInitializer } from './services/app-initializer';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UnauthorizedInterceptor } from './interceptors/unauthorized.interceptor';
-import { TradeAccountComponent } from './home/portfolio/trade-account/trade-account.component';
 import { TradeAccountCreateComponent } from './home/portfolio/trade-account-create/trade-account-create.component';
 import { CosmeticsTabComponent } from './home/portfolio/trade-account-create/cosmetics-tab/cosmetics-tab.component';
 import { StrategyTabComponent } from './home/portfolio/trade-account-create/strategy-tab/strategy-tab.component';
@@ -75,6 +76,7 @@ import { TransferComponent } from './home/portfolio/transfer/transfer.component'
     TradeAccountListComponent,
     HomeAboutComponent,
     UserDialogComponent,
+    AlpacaAccountSetupComponent,
     TradeAccountComponent,
     TradeAccountCreateComponent,
     CosmeticsTabComponent,

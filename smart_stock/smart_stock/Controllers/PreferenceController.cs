@@ -6,6 +6,7 @@ using smart_stock.Models;
 using smart_stock.Services;
 using System.Collections.Generic;
 using System.Linq;
+using smart_stock.AlpacaServices;
 
 namespace smart_stock.Controllers
 {
@@ -39,11 +40,11 @@ namespace smart_stock.Controllers
         {
             if (ModelState.IsValid)
             {
-                string result = await _preferenceProvider.InsertPreference(preference);
+                List<string> result = await _preferenceProvider.InsertPreference(preference);
                 
-                if (result == null)
-                {
-                    return Ok();
+                if (result != null)
+                {                    
+                    return Ok(result);
                 }
                 else {
                     return BadRequest(result);

@@ -11,6 +11,10 @@ using System;
 using System.Text;
 using smart_stock.Services;
 using smart_stock.JwtManagement;
+using smart_stock.AlpacaServices;
+using Hangfire;
+using Hangfire.MySql;
+
 
 namespace smart_stock
 {
@@ -26,6 +30,24 @@ namespace smart_stock
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseStorage(new MySqlStorage (Configuration.GetConnectionString("HangfireConnection"), new MySqlStorageOptions
+            {
+                TablesPrefix = "SmartStock",
+                QueuePollInterval = TimeSpan.FromSeconds(15),
+                JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                DashboardJobListLimit = 50000,
+                TransactionTimeout = TimeSpan.FromMinutes(1),
+            })));
+            
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -56,11 +78,15 @@ namespace smart_stock
                 };
             });
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
+            services.AddSingleton<ITrading, Trading>();
             services.AddHostedService<JwtRefreshTokenCache>();
             services.AddTransient<IUserProvider, UserProvider>();
             services.AddTransient<IPreferenceProvider, PreferenceProvider>();
             services.AddTransient<IPortfolioProvider, PortfolioProvider>();
             services.AddTransient<ILogProvider, LogProvider>();
+            services.AddTransient<ITradeProvider, TradeProvider>();
+            
+
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
@@ -69,7 +95,7 @@ namespace smart_stock
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs)
         {
             if (env.IsDevelopment())
             {
@@ -96,7 +122,9 @@ namespace smart_stock
             {
                 app.UseSpaStaticFiles();
             }
-
+            
+            app.UseHangfireDashboard();
+            backgroundJobs.Enqueue<Trading>(x => x.GetUserData());
             app.UseRouting();
 
             app.UseCors(options => options.WithOrigins(Configuration.GetSection("BaseUris").GetSection("DevUri").Value)

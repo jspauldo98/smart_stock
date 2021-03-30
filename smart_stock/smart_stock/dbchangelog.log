@@ -161,6 +161,10 @@ ALTER TABLE Sectors DROP DateAdded;
 ALTER TABLE Preference DROP DateModified;
 ALTER TABLE TradeAccount ADD Description TEXT;
 
+3/2/2021 CHANGES
+alter table User add column AlpacaKeyId varchar(200);
+alter table User add column AlpacaKey varchar(200);
+
 3/8/2021 CHANGES:
 ALTER TABLE Log DROP Constraint FK_Portfolio;
 ALTER TABLE Log DROP Portfolio;

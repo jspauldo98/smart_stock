@@ -4,10 +4,8 @@ using smart_stock.Models;
 
 namespace smart_stock.Services
 {
-    public interface ILogProvider
+    public interface ITradeProvider
     {
-        Task<bool> RecordTradeInLog(Log log);
-        
-        Task<IEnumerable<Log>> GetLog(int tId);
+        Task<int> RecordTrade(Trade trade);
     }
 }

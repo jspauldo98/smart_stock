@@ -13,8 +13,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   constructor(private readonly userService: UserService, private toastr : ToastrService) { }
   public tabIndex: number = 0;
-  public tabCount: number = 3;
+  public tabCount: number = 4;
   public canViewCredentials: boolean = false;
+  public canViewSetup: boolean = false;
   public canViewPreferences: boolean = false;
   public user: IUser;
   public pii: IPii;
@@ -32,7 +33,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
       dateAdded: new Date(),
       dateConfirmed: new Date(),
       pii: null,
-      credential: null
+      credential: null,
+      alpacaKey: null,
+      alpacaKeyId: null
     };
   }
 
@@ -40,7 +43,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if (this.createUserSub) this.createUserSub.unsubscribe();
   }
 
-  public updatePii(event: any) {
+  public createPii(event: any) {
     this.tabIndex = (this.tabIndex + 1) % this.tabCount;
     this.pii = {
       id: null,
@@ -53,7 +56,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.user.pii = this.pii;
   }
 
-  public updateCredentials(event: any) {
+  public createCredentials(event: any) {
     this.tabIndex = (this.tabIndex + 1) % this.tabCount;
     this.credential = {
       id: null,
@@ -62,15 +65,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
       loginResultUserId: null
     };
     this.user.credential = this.credential;
+  }
+
+  public createAlpacaAccount(event: any) {
+    this.tabIndex = (this.tabIndex + 1) % this.tabCount;
+    this.user.alpacaKeyId = event.alpacaKeyId;
+    this.user.alpacaKey = event.alpacaKey;
+
     this.createUserSub = this.userService.createNewUser(this.user).subscribe(x => {
-      console.log(x);
       this.user.credential.password = null;
-      this.toastr.success('Registration successful', 'Welcome ' + this.user.pii.fName);
+      this.user.alpacaKeyId = null;
+      this.user.alpacaKey = null;
+      this.toastr.success('Registration and setup successful', 'Welcome ' + this.user.pii.fName);
+      console.log(JSON.stringify(x));
     });
   }
 
   public unlockCredentialsView(event: any) {
     this.canViewCredentials = event;
+  }
+
+  public unlockSetupView(event: any) {
+    this.canViewSetup = event;
   }
 
   public unlockPreferencesView(event: any) {

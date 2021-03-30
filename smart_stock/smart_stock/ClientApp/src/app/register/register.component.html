@@ -10,7 +10,7 @@
                 <mat-icon style="margin-right: 10px;" class="form-colors">person_pin</mat-icon>
                 <span class="form-colors">Personal Information</span>
             </ng-template>
-            <app-personal-information (onSaveEvent)="updatePii($event)" (onNextTabChange)="unlockCredentialsView($event)"></app-personal-information>
+            <app-personal-information (onSaveEvent)="createPii($event)" (onNextTabChange)="unlockCredentialsView($event)"></app-personal-information>
         </mat-tab>
         <mat-tab disabled *ngIf="!canViewCredentials">
             <ng-template mat-tab-label>
@@ -23,7 +23,20 @@
                 <mat-icon style="margin-right: 10px;" class="form-colors">vpn_lock</mat-icon>
                 <span class="form-colors">Credentials</span>
             </ng-template>
-            <app-credentials (onSaveEvent)="updateCredentials($event)" (onNextTabChange)="unlockPreferencesView($event)"></app-credentials>
+            <app-credentials (onSaveEvent)="createCredentials($event)" (onNextTabChange)="unlockSetupView($event)"></app-credentials>
+        </mat-tab>
+        <mat-tab disabled *ngIf="!canViewSetup">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;">supervisor_account</mat-icon>
+                Trading Account Setup
+            </ng-template>
+        </mat-tab>
+        <mat-tab *ngIf="canViewSetup">
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 10px;" class="form-colors">supervisor_account</mat-icon>
+                <span class="form-colors">Trading Account Setup</span>
+            </ng-template>
+            <app-alpaca-account-setup (onSaveEvent)="createAlpacaAccount($event)" (onNextTabChange)="unlockPreferencesView($event)"></app-alpaca-account-setup>
         </mat-tab>
         <mat-tab disabled *ngIf="!canViewPreferences">
             <ng-template mat-tab-label>

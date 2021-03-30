@@ -27,6 +27,26 @@ namespace smart_stock.Services
             }
         }
 
+        public async Task<bool> RecordTradeInLog(Log log)
+        {
+            try 
+            {
+                using(MySqlConnection connection = Connection)
+                {
+                    string insertQuery = "INSERT INTO Log (TradeAccount, Trade, Date, TradeAccountAmount) VALUES (@tradeAccountId, @tradeId, @Date, TradeAccountAmount)";
+                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, tradeId = log.Trade.Id, Date = log.Date, TradeAccountAmount = log.TradeAccountAmount};
+                    connection.Open();
+                    await connection.ExecuteAsync(insertQuery, insertParams);
+                    return true;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(TAG + e);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<Log>> GetLog(int tId)
         {
             try
