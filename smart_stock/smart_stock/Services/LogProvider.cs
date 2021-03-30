@@ -13,7 +13,7 @@ namespace smart_stock.Services
     {
         private readonly IConfiguration _config;
         private readonly string TAG = "LogProvider";
-        private int _accountId;
+
         public LogProvider(IConfiguration config)
         {
             _config = config;
@@ -27,16 +27,16 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<bool> RecordTradeInLog(int tradeId)
+        public async Task<bool> RecordTradeInLog(Log log)
         {
             try 
             {
                 using(MySqlConnection connection = Connection)
                 {
-                    string updateQuery = "INSERT INTO Log (Trade) VALUES (@TradeId) WHERE TradeAccount = @TradeAccount";
-                    var @updateParams = new {TradeId = tradeId, TradeAccount = _accountId};
+                    string insertQuery = "INSERT INTO Log (TradeAccount, Trade, Date, TradeAccountAmount) VALUES (@tradeAccountId, @tradeId, @Date, TradeAccountAmount)";
+                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, tradeId = log.Trade.Id, Date = log.Date, TradeAccountAmount = log.TradeAccountAmount};
                     connection.Open();
-                    await connection.ExecuteAsync(updateQuery, updateParams);
+                    await connection.ExecuteAsync(insertQuery, insertParams);
                     return true;
                 }
             }
@@ -47,10 +47,6 @@ namespace smart_stock.Services
             }
         }
 
-        public void setGlobalAccountId(int accountId)
-        {
-            _accountId = accountId;
-        }
         public async Task<IEnumerable<Log>> GetLog(int tId)
         {
             try

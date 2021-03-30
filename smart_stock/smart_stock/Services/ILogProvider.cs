@@ -6,7 +6,7 @@ namespace smart_stock.Services
 {
     public interface ILogProvider
     {
-        Task<bool> RecordTradeInLog(int tradeId);
+        Task<bool> RecordTradeInLog(Log log);
         
         Task<IEnumerable<Log>> GetLog(int tId);
     }
