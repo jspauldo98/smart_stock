@@ -439,6 +439,57 @@ namespace smart_stock.AlpacaServices
             return emaData;
         }
 
+        /* Calculates the MACD of a stock
+            @param symbol - Stock ticker to calculate MACD for
+            @param timeFrame - Amount and precision of calculations to make
+            @param limit - how many data points with MACD are returned
+            @returns array of tuples representing DateTime and historical MACD data where Item2 is the MACD line and Item3 is the signal line
+            @example - await GetMacD("SPY", TimeFrame.Day, 100) // this would get the last 100 days MACD data */
+        private async Task<IEnumerable<(DateTime?, decimal, decimal)>> GetMacD(
+            string symbol, TimeFrame timeFrame, int limit
+        )
+        {
+            // Init array of tuples to store MACD data
+            List<(DateTime?, decimal, decimal)> macdData = new List<(DateTime?, decimal, decimal)>();
+
+            // Init EMAs needed
+            var lowerEMA = await GetEma(symbol, timeFrame, 12, limit);
+            var upperEMA = await GetEma(symbol, timeFrame, 26, limit);
+
+            // Combine lower and upper EMAs to more easily loop through later
+            var emas = lowerEMA.Zip(upperEMA, (l, h) => new {
+                Lower = l, 
+                Upper = h
+            });
+
+            // Subtract to get MACD line
+            List<(DateTime?, decimal)> macd =  new List<(DateTime?, decimal)>();
+            foreach (var lnh in emas)
+            {
+                macd.Add((lnh.Lower.Item1, lnh.Upper.Item2 - lnh.Lower.Item2));
+            }
+
+            // Calculate signal line from MACD line, want 9EMA
+            // Calculate ema data dor the first data point
+            decimal ema = 0;
+            foreach (var s in macd.Take(9))
+                ema += s.Item2;
+            ema /= 9;
+            // Add First to data
+            macdData.Add((macd[11].Item1, macd[11].Item2, ema));
+            // Loop the rest to get rest of ema
+            int index = 10;
+            foreach (var s in macd.Skip(9).Take(limit-1))
+            {
+                ema = ((s.Item2 - ema)*(2m/(10))) + ema;
+                if (index != 10)
+                    macdData.Add((s.Item1, s.Item2, ema));
+                index++;
+            }
+
+            return macdData;
+        }
+
         public void Dispose()
         {
             alpacaTradingClient?.Dispose();
