@@ -351,7 +351,7 @@ namespace smart_stock.AlpacaServices
             @param periods - how many periods to use in calculation
             @param limit - how many data points with SMA are returned
             @returns array of tuples representing DateTime and historical SMA data
-            @example - await GetRsi("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180SMA data */
+            @example - await GetSma("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180SMA data */
         private async Task<IEnumerable<(DateTime?, decimal)>> GetSma(
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
@@ -373,6 +373,31 @@ namespace smart_stock.AlpacaServices
             }
 
             return smaData;
+        }
+
+        /* Retrieves multiple volume points a stock
+            @param symbol - Stock ticker to get volumes for
+            @param timeFrame - Amount and precision of volume to retrieve
+            @param periods - how many data points to use in the retrival 
+            @returns array of tuples representing DateTime and historical volume data
+            @example - await Getvolume("SPY", TimeFrame.Day, 180) // this would get the last 180 days of volume */
+        private async Task<IEnumerable<(DateTime?, decimal)>> GetVolume(
+            string symbol, TimeFrame timeFrame, int periods
+        )
+        {
+            // Init array of tuples to store volume data
+            List<(DateTime?, decimal)> vData = new List<(DateTime?, decimal)>();
+
+            // Get market data on symbol given timeFrame
+            var bars = await GetMarketData(symbol, timeFrame, periods);
+
+            // Build array from market volume collected
+            foreach (var b in bars[symbol])
+            {
+                vData.Add((b.TimeUtc, b.Volume));
+            }
+
+            return vData;
         }
 
         public void Dispose()
