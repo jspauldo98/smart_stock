@@ -17,13 +17,14 @@
 - Wrote robust functions that get market data, buy, and sell: Jared
 - Wrote the logic to retrieve user trade strategies and templated those strategies: Jared
 - Wrote robust functions that retrieve indicator data for RSI, SMA, EMA, Volume, and MACD: Jared
+- Created a standardized testing form approved by Jared and Stefan: Spencer
 
 ### Metrics
 
 The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
 
 - Bryce : 
-- Spencer :
+- Spencer : 2
 - Stefan : 9.6
 - Jared : 26.5
 - Zach : 
@@ -49,7 +50,7 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 
 ## Completion Confidence (Per Member)
 - Stefan: 5, I know the team and I will be able to gather some data on beta stage trading, but the overall product will very much be a “first launch” attempt at the end of the semester. We just do not have enough time/manpower to create the polished original vision. That being said, we’ll still be able to present something very unique and interesting.
-- Spencer:
+- Spencer: 5. From what I've seen, everyone appears to be making some significant progress, and since a lot of trading strategies are being implemented, and I can finally start testing properly, I'm looking forward to things in the future.
 - Bryce:
 - Zach:  
 - Jared: 5, We achieved big milestones this iteration and Smart Stock is beginning to resemble what we had planned in the Fall.
