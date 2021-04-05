@@ -1,7 +1,7 @@
 # Status #3 - Mar. 31 2021
 
 ## Video Link
-- 
+- https://youtu.be/yXgZmo8OUSo
 
 ## Last 3 Weeks Plan
 
