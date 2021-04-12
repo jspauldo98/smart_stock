@@ -386,7 +386,7 @@ namespace smart_stock.AlpacaServices
             @param limit - how many data points with RSI are returned
             @returns array of tuples representing DateTime and historical RSI data
             @example - await GetRsi("SPY", TimeFrame.Minute, 14, 100) */
-        private async Task<IEnumerable<(DateTime?, decimal)>> GetRsi(
+        private async Task<List<(DateTime?, decimal)>> GetRsi(
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
@@ -453,7 +453,7 @@ namespace smart_stock.AlpacaServices
             @param limit - how many data points with SMA are returned
             @returns array of tuples representing DateTime and historical SMA data
             @example - await GetSma("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180SMA data */
-        private async Task<IEnumerable<(DateTime?, decimal)>> GetSma(
+        private async Task<List<(DateTime?, decimal)>> GetSma(
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
@@ -482,7 +482,7 @@ namespace smart_stock.AlpacaServices
             @param periods - how many data points to use in the retrival 
             @returns array of tuples representing DateTime and historical volume data
             @example - await Getvolume("SPY", TimeFrame.Day, 180) // this would get the last 180 days of volume */
-        private async Task<IEnumerable<(DateTime?, decimal)>> GetVolume(
+        private async Task<List<(DateTime?, decimal)>> GetVolume(
             string symbol, TimeFrame timeFrame, int periods
         )
         {
@@ -508,7 +508,7 @@ namespace smart_stock.AlpacaServices
             @param limit - how many data points with EMA are returned
             @returns array of tuples representing DateTime and historical EMA data
             @example - await GetEma("SPY", TimeFrame.Day, 180, 500) // this would get the last 500 days of 180EMA data */
-        private async Task<IEnumerable<(DateTime?, decimal)>> GetEma(
+        private async Task<List<(DateTime?, decimal)>> GetEma(
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
@@ -546,7 +546,7 @@ namespace smart_stock.AlpacaServices
             @param limit - how many data points with MACD are returned
             @returns array of tuples representing DateTime and historical MACD data where Item2 is the MACD line and Item3 is the signal line
             @example - await GetMacD("SPY", TimeFrame.Day, 100) // this would get the last 100 days MACD data */
-        private async Task<IEnumerable<(DateTime?, decimal, decimal)>> GetMacD(
+        private async Task<List<(DateTime?, decimal, decimal)>> GetMacD(
             string symbol, TimeFrame timeFrame, int limit
         )
         {
