@@ -1,3 +1,5 @@
+using System.Runtime;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
 using System;
@@ -348,35 +350,49 @@ namespace smart_stock.AlpacaServices
                 var order = await alpacaTradingClient.PostOrderAsync(
                     orderType.Market(symbol, quantity)
                 );
-                Console.WriteLine($"Submitting {symbol} {orderType} market order for {quantity} shares at market value.");
+                Console.WriteLine($"Submitting {symbol} {orderType} market order for {quantity} shares at market value."); 
+                var log = await logOrder(tradeAccountId, order);
+                await _logProvider.RecordTradeInLog(log); 
                 return;
             }
             var limitorder = await alpacaTradingClient.PostOrderAsync(
                 orderType.Limit(symbol, quantity, price)
             );
             Console.WriteLine($"Submitting {symbol} {orderType} limit order for {quantity} shares at ${price}.");
+            var limitlog = await logOrder(tradeAccountId, limitorder);
+            await _logProvider.RecordTradeInLog(limitlog); 
+        }
+        private async Task<Log> logOrder(int? tradeAccountId, IOrder order)
+        {
+            TradeAccount ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
+            var side = order.OrderSide;
 
+            // TODO UPDATE TRADE ACCOUNT AND PORTFOLIO       
+
+            // Create a new Trade Object that resembles the trade            
             Trade trade = new Trade 
-            {
-                Type = orderType == OrderSide.Buy ? true : false,
-                Ticker = symbol,
-                //Unsure of what this can be used for
-                Amount = 0,
-                Price = Decimal.ToDouble(price),
-                Quantity = quantity,
+            {                
+                Type = side == OrderSide.Buy ? true : false,
+                Ticker = order.Symbol,
+                Amount = order.Quantity*order.LimitPrice,
+                Price = order.LimitPrice,
+                Quantity = order.Quantity,
                 Date = DateTime.Now
             };
+
             trade.Id = await _tradeProvider.RecordTrade(trade);
-            var accountAmount = await alpacaTradingClient.GetAccountAsync();
+            var accountAmount = await alpacaTradingClient.GetAccountAsync();            
+
+            // Create a new Log Object that resembles outside trade details
             Log log = new Log
             {
-                TradeAccount = new TradeAccount {Id = tradeAccountId},
+                TradeAccount = ta,
                 Trade = trade,
                 Date = DateTime.Now,
-                TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower)
-                //Doesn't make sense to calculate the portfolio amount here, can do this later?
+                TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower),
+                PortfolioAmount = ta.Portfolio.Amount
             };
-            await _logProvider.RecordTradeInLog(log); 
+            return log;
         }
 
         /* Calculates the RSI of a stock

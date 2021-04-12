@@ -7,5 +7,7 @@ namespace smart_stock.Services
     public interface ITradeProvider
     {
         Task<int> RecordTrade(Trade trade);
+
+        Task<TradeAccount> GetTradeAccount (int? tId);
     }
 }
