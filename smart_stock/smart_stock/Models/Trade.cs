@@ -20,11 +20,11 @@ namespace smart_stock.Models
 
         [Required]
         [Column(TypeName = "decimal(13,2)")]
-        public double Amount { get; set;}
+        public decimal? Amount { get; set;}
 
         [Required]
         [Column(TypeName = "decimal(13,2)")]
-        public double Price { get; set;}
+        public decimal? Price { get; set;}
 
         [Required]
         [Column(TypeName = "decimal(13,2)")]

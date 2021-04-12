@@ -48,5 +48,61 @@ namespace smart_stock.Services
                 return 0;
             }
         }   
+
+        public async Task<TradeAccount> GetTradeAccount(int? tId)
+        {
+            try
+            {
+                using (MySqlConnection connection = Connection)
+                {
+                    string sQuery = "SELECT ID, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated, DateModified FROM TradeAccount ta WHERE ta.Id = @id";
+                    var @param = new {id = tId};
+                    connection.Open();
+                    TradeAccount ta = await connection.QueryFirstOrDefaultAsync<TradeAccount>(sQuery, @param);
+                    // get preference Id    
+                    var prefIdQ = "SELECT Preference FROM TradeAccount WHERE Id = @id";
+                    var @prefIdParam = new {id = tId};   
+                    int prefID = await connection.QueryFirstOrDefaultAsync<int>(prefIdQ, @prefIdParam);
+                    // get risk level id
+                    var riskIdQ = "SELECT RiskLevel FROM Preference WHERE Id = @pId";
+                    var @riskIdParam = new {pId = prefID};
+                    int riskId = await connection.QueryFirstOrDefaultAsync<int>(riskIdQ, @riskIdParam);
+                    // get risk level
+                    var riskQ = "SELECT Id, Risk, DateAdded FROM RiskLevels WHERE Id = @rId";
+                    var @riskParam = new {rId = riskId};
+                    RiskLevel riskLevel = await connection.QueryFirstOrDefaultAsync<RiskLevel>(riskQ, @riskParam);
+                    // get strat id
+                    var stratIdQ = "SELECT TradeStrategy FROM Preference WHERE Id = @pId";
+                    var @stratIdParam = new {pId = prefID};
+                    int stratId = await connection.QueryFirstOrDefaultAsync<int>(stratIdQ, @stratIdParam);
+                    // get trade strat
+                    var stratQ = "SELECT Id, BlueChip, LongTerm, Swing, Scalp, Day FROM TradeStrategies WHERE Id = @sId";
+                    var @stratParam = new {sId = stratId};
+                    TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>(stratQ, @stratParam);
+                    // get sector id
+                    var secIdQ = "SELECT Sector FROM Preference WHERE Id = @pId";
+                    var @secIdParam = new {pId = prefID};
+                    int secId = await connection.QueryFirstOrDefaultAsync<int>(secIdQ, @secIdParam);
+                    // get sector
+                    var secQ = "SELECT Id, InformationTechnology, HealthCare, Financials, ConsumerDiscretionary, Communication, Industrials, ConsumerStaples, Energy, Utilities, RealEstate, Materials FROM Sectors WHERE Id = @secId";
+                    var @secParam = new {secId = secId};
+                    Sector sector = await connection.QueryFirstOrDefaultAsync<Sector>(secQ, @secParam);
+                    // get preference
+                    var prefQ = "SELECT Id, CapitalToRisk FROM Preference WHERE Id = @pId";
+                    var @prefParam = new {pId = prefID};
+                    ta.Preference = await connection.QueryFirstOrDefaultAsync<Preference>(prefQ, @prefParam);
+                    ta.Preference.RiskLevel = riskLevel;
+                    ta.Preference.TradeStrategy = strategy;
+                    ta.Preference.Sector = sector;
+
+                    return ta;
+                }
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(TAG + err);
+                return null;
+            }
+        }
     }
 }
