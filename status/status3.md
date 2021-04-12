@@ -27,7 +27,7 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Spencer : 2
 - Stefan : 9.6
 - Jared : 27.5
-- Zach : 
+- Zach : 15
 
 ## Successes
 - Smart Stock can now recognize when the stock market is open/closed and finally make rudimentary trades to any Alpaca paper trading account.
@@ -52,5 +52,5 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Stefan: 5, I know the team and I will be able to gather some data on beta stage trading, but the overall product will very much be a “first launch” attempt at the end of the semester. We just do not have enough time/manpower to create the polished original vision. That being said, we’ll still be able to present something very unique and interesting.
 - Spencer: 5. From what I've seen, everyone appears to be making some significant progress, and since a lot of trading strategies are being implemented, and I can finally start testing properly, I'm looking forward to things in the future.
 - Bryce:
-- Zach:  
+- Zach: 5, It seems like eveything is going well. 
 - Jared: 5, We achieved big milestones this iteration and Smart Stock is beginning to resemble what we had planned in the Fall.
