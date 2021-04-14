@@ -30,7 +30,6 @@ namespace smart_stock.Services
 
         public async Task<int> RecordTrade(Trade trade, TradeAccount ta)
         {
-            Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 
@@ -133,7 +132,6 @@ namespace smart_stock.Services
 
         public async Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId)
         {
-            Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 
