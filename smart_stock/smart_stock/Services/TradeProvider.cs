@@ -45,11 +45,12 @@ namespace smart_stock.Services
 
                     if (trade.Type == true)
                     {
-                        string trackAssetQ = "INSERT INTO OwnedAssets (TradeAccount, Symbol, Quantity) VALUES (@ta, @symbol, @quantity)";
+                        string trackAssetQ = "INSERT INTO OwnedAssets (TradeAccount, Symbol, Quantity, Price) VALUES (@ta, @symbol, @quantity, @price)";
                         var @trackAssetP = new {
                             ta = ta,
                             symbol = trade.Ticker,
-                            quantity = trade.Quantity
+                            quantity = trade.Quantity,
+                            price = trade.Price
                         };
                         await connection.ExecuteAsync(trackAssetQ, trackAssetP);
                         return result;
@@ -130,19 +131,19 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<IEnumerable<(int, string, decimal)>> RetrieveOwnedAssets(int? tId)
+        public async Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId)
         {
             Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 
                 {
-                    string query = "SELECT Id, Symbol, Quantity FROM OwnedAssets WHERE TradeAccount=@tId";
+                    string query = "SELECT Id, Symbol, Quantity, Price FROM OwnedAssets WHERE TradeAccount=@tId";
                     var @params = new {
                         tId = tId
                     };
                     connection.Open();
-                    IEnumerable<(int, string, decimal)> queryable = await connection.QueryAsync<(int, string, decimal)>(query, @params);
+                    IEnumerable<(int, string, decimal, decimal)> queryable = await connection.QueryAsync<(int, string, decimal, decimal)>(query, @params);
         
                     return queryable;
                 }
