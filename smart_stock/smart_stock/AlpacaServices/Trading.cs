@@ -380,7 +380,7 @@ namespace smart_stock.AlpacaServices
                 Date = DateTime.Now
             };
 
-            trade.Id = await _tradeProvider.RecordTrade(trade);
+            trade.Id = await _tradeProvider.RecordTrade(trade, ta);
             var accountAmount = await alpacaTradingClient.GetAccountAsync();            
 
             // Create a new Log Object that resembles outside trade details

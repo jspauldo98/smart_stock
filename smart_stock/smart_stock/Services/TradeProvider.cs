@@ -1,3 +1,6 @@
+using System.Numerics;
+using System.Linq;
+using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +28,7 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<int> RecordTrade(Trade trade)
+        public async Task<int> RecordTrade(Trade trade, TradeAccount ta)
         {
             Console.WriteLine("In provider for insert");
             try
@@ -39,6 +42,29 @@ namespace smart_stock.Services
                     string idQuery = "SELECT Id FROM Trade WHERE Ticker = @Ticker AND Amount = @Amount";
                     var @idParams = new {Ticker = trade.Ticker, Amount = trade.Amount };
                     int result = await connection.QueryFirstOrDefaultAsync<int>(idQuery, idParams);
+
+                    if (trade.Type == true)
+                    {
+                        string trackAssetQ = "INSERT INTO OwnedAssets (TradeAccount, Symbol, Quantity, Price) VALUES (@ta, @symbol, @quantity, @price)";
+                        var @trackAssetP = new {
+                            ta = ta,
+                            symbol = trade.Ticker,
+                            quantity = trade.Quantity,
+                            price = trade.Price
+                        };
+                        await connection.ExecuteAsync(trackAssetQ, trackAssetP);
+                        return result;
+                    }
+
+                    // Remove from owned assets if sold
+                    string query = "DELETE FROM OwnedAssets WHERE TradeAccount=@tId AND Symbol=@symbol AND Quantity=@quantity";
+                    var @params = new {
+                        tId = ta.Id,
+                        symbol = trade.Ticker,
+                        quantity = trade.Quantity
+                    };
+                    await connection.ExecuteAsync(query, @params);
+                    
                     return result;
                 }
             }
@@ -101,6 +127,30 @@ namespace smart_stock.Services
             catch (Exception err)
             {
                 Console.WriteLine(TAG + err);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId)
+        {
+            Console.WriteLine("In provider for insert");
+            try
+            {
+                using(MySqlConnection connection = Connection) 
+                {
+                    string query = "SELECT Id, Symbol, Quantity, Price FROM OwnedAssets WHERE TradeAccount=@tId";
+                    var @params = new {
+                        tId = tId
+                    };
+                    connection.Open();
+                    IEnumerable<(int, string, decimal, decimal)> queryable = await connection.QueryAsync<(int, string, decimal, decimal)>(query, @params);
+        
+                    return queryable;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(TAG + e);
                 return null;
             }
         }
