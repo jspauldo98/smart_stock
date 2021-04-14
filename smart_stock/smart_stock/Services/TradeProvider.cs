@@ -35,7 +35,7 @@ namespace smart_stock.Services
             {
                 using(MySqlConnection connection = Connection) 
                 {
-                    string storeQuery = "INSERT INTO Trade (Ticker, Type, Amount, Price, Quantity, Date) values (@Id, @Ticker, @Type, @Amount, @Price, @Quantity, @Date)";
+                    string storeQuery = "INSERT INTO Trade (Ticker, Type, Amount, Price, Quantity, Date) values (@Ticker, @Type, @Amount, @Price, @Quantity, @Date)";
                     var @storeParams = new { Ticker = trade.Ticker, Type = trade.Type, Amount = trade.Amount, Price = trade.Price, Quantity = trade.Quantity, DateTime = trade.Date};
                     connection.Open();
                     await connection.ExecuteAsync(storeQuery, storeParams);
