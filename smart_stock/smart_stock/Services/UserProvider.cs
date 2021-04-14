@@ -292,6 +292,12 @@ namespace smart_stock.Services
                         var @sectorIdParam = new {id = preferenceId};
                         int sectorId = await connection.QueryFirstOrDefaultAsync<int>(sectorIdQuery, sectorIdParam);
 
+                        string riskIdQuery = "SELECT RiskLevel FROM Preference WHERE Id = @id";
+                        var @riskIdParm = new {id = preferenceId};
+                        int riskId = await connection.QueryFirstOrDefaultAsync<int>(riskIdQuery, riskIdParm);
+
+                        RiskLevel risk = await connection.QueryFirstOrDefaultAsync<RiskLevel>("SELECT Risk FROM RiskLevels WHERE Id = @id", new {id = riskId});
+
                         Sector sector = await connection.QueryFirstOrDefaultAsync<Sector>("SELECT * FROM Sectors WHERE Id = @id", new {id = sectorId});
 
                         TradeStrategy strategy = await connection.QueryFirstOrDefaultAsync<TradeStrategy>("SELECT * FROM TradeStrategies WHERE Id = @id", new {id = tradeStrategyId});
@@ -303,6 +309,8 @@ namespace smart_stock.Services
                         preference.TradeStrategy = strategy;
 
                         tradeAccount.Preference = preference;
+
+                        tradeAccount.Preference.RiskLevel = risk;
 
                         //My code flow so good Buckner would cry. To bad the time complexity of this is kind of shit. 
                     }
