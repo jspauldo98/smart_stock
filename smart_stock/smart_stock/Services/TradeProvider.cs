@@ -130,7 +130,7 @@ namespace smart_stock.Services
             }
         }
 
-        public async Task<IEnumerable<(int, string, decimal)>> RetrieveOwnedAssets(int tId)
+        public async Task<IEnumerable<(int, string, decimal)>> RetrieveOwnedAssets(int? tId)
         {
             Console.WriteLine("In provider for insert");
             try
