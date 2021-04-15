@@ -285,7 +285,7 @@ namespace smart_stock.AlpacaServices
         private async Task Day(Preference p, int? tradeAccountId)
         {
             // TODO Because this function takes a LONG time to run need to check if less than five minutes to market close somewhere
-            bool logAlgoInfo = true; const string ALGO_TAG = "*DAY TRADE*";
+            bool logAlgoInfo = false; const string ALGO_TAG = "*DAY TRADE*";
 
             //* Selling Algorithm *//
             // TODO MAKE SURE THE 'OWNED ASSET' ALSO EXISTS IN ALPACA (OTHERWISE IT WAS NEVER FILLED AND WILL SHORT THE STOCK)
