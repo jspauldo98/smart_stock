@@ -30,13 +30,12 @@ namespace smart_stock.Services
 
         public async Task<int> RecordTrade(Trade trade, TradeAccount ta)
         {
-            Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 
                 {
-                    string storeQuery = "INSERT INTO Trade (Ticker, Type, Amount, Price, Quantity, Date) values (@Id, @Ticker, @Type, @Amount, @Price, @Quantity, @Date)";
-                    var @storeParams = new { Ticker = trade.Ticker, Type = trade.Type, Amount = trade.Amount, Price = trade.Price, Quantity = trade.Quantity, DateTime = trade.Date};
+                    string storeQuery = "INSERT INTO Trade (Ticker, Type, Amount, Price, Quantity, Date) values (@Ticker, @Type, @Amount, @Price, @Quantity, @Date)";
+                    var @storeParams = new { Ticker = trade.Ticker, Type = trade.Type, Amount = trade.Amount, Price = trade.Price, Quantity = trade.Quantity, Date = trade.Date};
                     connection.Open();
                     await connection.ExecuteAsync(storeQuery, storeParams);
                     string idQuery = "SELECT Id FROM Trade WHERE Ticker = @Ticker AND Amount = @Amount";
@@ -47,7 +46,7 @@ namespace smart_stock.Services
                     {
                         string trackAssetQ = "INSERT INTO OwnedAssets (TradeAccount, Symbol, Quantity, Price) VALUES (@ta, @symbol, @quantity, @price)";
                         var @trackAssetP = new {
-                            ta = ta,
+                            ta = ta.Id,
                             symbol = trade.Ticker,
                             quantity = trade.Quantity,
                             price = trade.Price
@@ -133,7 +132,6 @@ namespace smart_stock.Services
 
         public async Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId)
         {
-            Console.WriteLine("In provider for insert");
             try
             {
                 using(MySqlConnection connection = Connection) 

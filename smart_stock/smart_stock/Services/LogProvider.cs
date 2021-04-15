@@ -33,8 +33,8 @@ namespace smart_stock.Services
             {
                 using(MySqlConnection connection = Connection)
                 {
-                    string insertQuery = "INSERT INTO Log (TradeAccount, Trade, Date, TradeAccountAmount) VALUES (@tradeAccountId, @tradeId, @Date, TradeAccountAmount)";
-                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, tradeId = log.Trade.Id, Date = log.Date, TradeAccountAmount = log.TradeAccountAmount};
+                    string insertQuery = "INSERT INTO Log (TradeAccount, Trade, Date, TradeAccountAmount, PortfolioAmount) VALUES (@tradeAccountId, @tradeId, @date, @tradeAccountAmount, @portfolio)";
+                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, tradeId = log.Trade.Id, date = log.Date, tradeAccountAmount = log.TradeAccountAmount, portfolio=log.PortfolioAmount};
                     connection.Open();
                     await connection.ExecuteAsync(insertQuery, insertParams);
                     return true;
