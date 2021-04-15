@@ -81,6 +81,7 @@ namespace smart_stock.AlpacaServices
 
             Console.WriteLine("Market Nearing close, no more order requests");
             await CancelExistingOrders();
+            // TODO IF Trade account preference is day trading liquidate all assets five minutes prior to market close
             Dispose();
         }
 
@@ -283,9 +284,12 @@ namespace smart_stock.AlpacaServices
 
         private async Task Day(Preference p, int? tradeAccountId)
         {
+            // TODO Because this function takes a LONG time to run need to check if less than five minutes to market close somewhere
             bool logAlgoInfo = true; const string ALGO_TAG = "*DAY TRADE*";
 
             //* Selling Algorithm *//
+            // TODO MAKE SURE THE 'OWNED ASSET' ALSO EXISTS IN ALPACA (OTHERWISE IT WAS NEVER FILLED AND WILL SHORT THE STOCK)
+            // TODO Might want to do market orders instead of limit orders so they get filled better (asset tracking cums itself if you do market order though)
             Console.WriteLine("Checking SELL Algorithm");
             // Retrieve owned assets
             var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
@@ -294,6 +298,10 @@ namespace smart_stock.AlpacaServices
             {
                 try
                 {
+                    // Get bar 
+                    var barsell = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
+                    decimal price = barsell[ownedAsset.Item2].LastOrDefault().Close -.02m;
+
                     // Check profitability, use stop loss on varying risk levels
                     var bar = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
                     decimal profit = (
@@ -312,28 +320,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (profit < -1 || profit > 5)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (profit < -5 || profit > 7)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (profit < -15 || profit > 10)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (profit < -20 || profit > 50)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }                                  
                         break;
@@ -370,28 +378,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (i < 45)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (i < 30)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (i < 15)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (i < 5) 
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
@@ -404,6 +412,8 @@ namespace smart_stock.AlpacaServices
             }
             
             //* Buying Algorithm *//
+            // TODO Make sure to check if the order has filled.
+            // TODO The buy algo takes ~40 minutes to run through the entire thing. Maybe every 100 stocks it checks run the sell algo
             Console.WriteLine("Checking BUY Algorithm");
             // First, scan for assets with possible setups
             foreach(var asset in assets)
@@ -503,7 +513,7 @@ namespace smart_stock.AlpacaServices
                     var ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
                     decimal amount = (decimal)ta.Cash * (decimal)(p.CapitalToRisk/100);
                     var bar = await GetMarketData(asset.Symbol, TimeFrame.Minute, 1);
-                    decimal price = bar[asset.Symbol].LastOrDefault().Close;
+                    decimal price = bar[asset.Symbol].LastOrDefault().Close+.02m;
                     decimal quantity = amount / price;
 
                     // Make sure trade account has available cash 
@@ -589,7 +599,7 @@ namespace smart_stock.AlpacaServices
             var limitlog = await logOrder(tradeAccountId, limitorder);
             await _logProvider.RecordTradeInLog(limitlog); 
         }
-        private async Task<Log> logOrder(int? tradeAccountId, IOrder order)
+        private async Task<smart_stock.Models.Log> logOrder(int? tradeAccountId, IOrder order)
         {
             TradeAccount ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
             var side = order.OrderSide;
@@ -608,16 +618,15 @@ namespace smart_stock.AlpacaServices
             };
 
             trade.Id = await _tradeProvider.RecordTrade(trade, ta);
-            var accountAmount = await alpacaTradingClient.GetAccountAsync();            
 
             // Create a new Log Object that resembles outside trade details
-            Log log = new Log
-            {
+            smart_stock.Models.Log log = new smart_stock.Models.Log
+            {          
                 TradeAccount = ta,
-                Trade = trade,
+                Trade = trade,      
                 Date = DateTime.Now,
-                TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower),
-                PortfolioAmount = ta.Portfolio.Amount
+                TradeAccountAmount = ta.Amount,
+                PortfolioAmount = 100000, //TODO For no because portfolio amount is null here for some reason
             };
             return log;
         }
