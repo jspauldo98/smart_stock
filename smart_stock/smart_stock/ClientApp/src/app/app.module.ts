@@ -61,6 +61,7 @@ import { SectorsTabComponent } from './home/portfolio/trade-account-create/secto
 import { RiskTabComponent } from './home/portfolio/trade-account-create/risk-tab/risk-tab.component';
 import { HistoryComponent } from './home/portfolio/trade-account/history/history.component';
 import { TransferComponent } from './home/portfolio/transfer/transfer.component';
+import { GoogleChartsModule } from 'angular-google-charts';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -118,7 +119,8 @@ import { TransferComponent } from './home/portfolio/transfer/transfer.component'
     MatTooltipModule,
     MatSliderModule,
     MatRadioModule,
-    MatDialogModule
+    MatDialogModule,
+    GoogleChartsModule
   ],
   providers:[
     DatePipe,
