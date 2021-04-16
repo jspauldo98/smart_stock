@@ -37,7 +37,7 @@ namespace smart_stock.AlpacaServices
             // TODO FOR NOW BREAK AFTER TWO!!!! OTHERWISE PREPARE FOR ANAL ABLITERATION
             Parallel.For(0, users.Count, i => 
             {
-                if (i > 1) return;
+                if (i > 0) return;
                 Start(users[i].Item1, users[i].Item2);
             });
         }
@@ -81,6 +81,8 @@ namespace smart_stock.AlpacaServices
 
             Console.WriteLine("Market Nearing close, no more order requests");
             await CancelExistingOrders();
+            // TODO IF Trade account preference is day trading liquidate all assets five minutes prior to market close
+            Dispose();
         }
 
         private async Task<IReadOnlyList<IAsset>> GetTradableTickerList()
@@ -133,7 +135,6 @@ namespace smart_stock.AlpacaServices
             // Loop all trade accounts
             foreach (var ta in tradeAccounts)
             {
-                Console.WriteLine(ta.Preference);
                 // Check strategies
                 // I need that MF UHHHHH trade account ID for each strategy being used to effectively log
                 Console.WriteLine($"Checking strategies for: {ta.Title}");
@@ -283,18 +284,254 @@ namespace smart_stock.AlpacaServices
 
         private async Task Day(Preference p, int? tradeAccountId)
         {
-            try
+            // TODO Because this function takes a LONG time to run need to check if less than five minutes to market close somewhere
+            bool logAlgoInfo = false; const string ALGO_TAG = "*DAY TRADE*";
+
+            //* Selling Algorithm *//
+            // TODO MAKE SURE THE 'OWNED ASSET' ALSO EXISTS IN ALPACA (OTHERWISE IT WAS NEVER FILLED AND WILL SHORT THE STOCK)
+            // TODO Might want to do market orders instead of limit orders so they get filled better (asset tracking cums itself if you do market order though)
+            Console.WriteLine("Checking SELL Algorithm");
+            // Retrieve owned assets
+            var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+            // Loop sell algorithm for each owned asset
+            foreach(var ownedAsset in ownedAssets)
             {
-                // TODO - Run day selling algorithm to see if owned assets need sold.
-                // TODO - Run day algorithm to acquire new assets if possible.
-            }
-            catch (WebException ex) when (ex.Response is HttpWebResponse response)
-            {
-                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                try
+                {
+                    // Get bar 
+                    var barsell = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
+                    decimal price = barsell[ownedAsset.Item2].LastOrDefault().Close -.02m;
+
+                    // Check profitability, use stop loss on varying risk levels
+                    var bar = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
+                    decimal profit = (
+                        (
+                            (bar[ownedAsset.Item2].FirstOrDefault().Close * ownedAsset.Item3) - (ownedAsset.Item3 * ownedAsset.Item4)
+                        ) 
+                        / 
+                        (
+                            ownedAsset.Item3 * ownedAsset.Item4
+                        )
+                        ) * 100;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} SELL: {ownedAsset.Item2} profitability: {profit}");
+                    switch(p.RiskLevel.Risk)
+                    {
+                        case "Low":
+                            if (profit < -1 || profit > 5)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Moderate":
+                            if (profit < -5 || profit > 7)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "High":
+                            if (profit < -15 || profit > 10)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Aggressive":
+                            if (profit < -20 || profit > 50)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }                                  
+                        break;
+                    }
+
+                    // 5 minute price action has a negative crossover below the 15 hour EMA for a 60 min lookback
+                    var ema15 = await GetEma(ownedAsset.Item2, TimeFrame.Minute, 20, 60);
+                    if (ema15 == null) continue;
+                    var bars = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 60);
+                    var firstClose = bars[ownedAsset.Item2].FirstOrDefault().Close;
+                    var lastClose = bars[ownedAsset.Item2].LastOrDefault().Close;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} SELL: {ownedAsset.Item2}: First close {firstClose} last close: {lastClose}, 20M EMA start: {ema15.FirstOrDefault().Item2}, 20M EMA end: {ema15.LastOrDefault().Item2}");
+                    bool startIsAboveEma = false, endIsBelowEma = false;
+                    int i = 0;
+                    foreach (var b in bars[ownedAsset.Item2])
+                    {
+                        if (i >= ema15.Count-1) break;
+                        if (logAlgoInfo)
+                            Console.WriteLine($"\t\t Bar Close: {b.Close} \t\t EMA: {ema15[i].Item2} \t\t Bar#: {i} \t\tStart: {startIsAboveEma}\t\t End: {endIsBelowEma}");
+                        if (!startIsAboveEma && b.Close > ema15[i].Item2)
+                            startIsAboveEma = true;
+                        if (startIsAboveEma && !endIsBelowEma && b.Close < ema15[i].Item2)
+                        {
+                            endIsBelowEma = true;
+                            break;
+                        }                                
+                        i++;
+                    }
+                    if (!startIsAboveEma) continue;
+                    if (!endIsBelowEma) continue;
+                    switch(p.RiskLevel.Risk)
+                    {
+                        case "Low":
+                            if (i < 45)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Moderate":
+                            if (i < 30)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "High":
+                            if (i < 15)
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Aggressive":
+                            if (i < 5) 
+                            {
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                    }
+                    
+                } catch (Alpaca.Markets.RestClientErrorException)
                 {
                     await AwaitRequestRedemption();
                 }
             }
+            
+            //* Buying Algorithm *//
+            // TODO Make sure to check if the order has filled.
+            // TODO The buy algo takes ~40 minutes to run through the entire thing. Maybe every 100 stocks it checks run the sell algo
+            Console.WriteLine("Checking BUY Algorithm");
+            // First, scan for assets with possible setups
+            foreach(var asset in assets)
+            {
+                try
+                {
+                    // Average daily trading volume must be greater that 1M for a 30 day lookback
+                    var vol = await GetVolume(asset.Symbol, TimeFrame.Day, 30);
+                    if (vol == null) continue;
+                    decimal vAvg = 0;
+                    foreach(var v in vol)
+                        vAvg += v.Item2;
+                    vAvg /= vol.Count;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking 30D avg vol: {vAvg}");
+                    if (vAvg < 10000)
+                        continue;
+
+                    // 180 SMA must show a positive uptrend for 180 period with 30hr lookback (long term uptrend)
+                    var sma180 = await GetSma(asset.Symbol, TimeFrame.FiveMinutes, 180, 365);
+                    if (sma180 == null) continue;
+                    var sma180Trend = sma180[sma180.Count-1].Item2 - sma180[0].Item2;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking 180 SMA Trend: {sma180Trend}");
+                    if (sma180Trend < 0)
+                        continue;
+
+                    // 20 sma must show a positive uptrend for a 60 min lookback (short term)
+                    var sma20 = await GetSma(asset.Symbol, TimeFrame.Minute, 20, 60);
+                    if (sma20 == null) continue;
+                    var sma20Trend = sma20[sma20.Count-1].Item2 - sma20[0].Item2;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} BUY:: \t Checking 20 SMA Trend: {sma20Trend}");
+                    if (sma20Trend < 0)
+                        continue;
+
+                    // 5 minute price action must have a positive crossover above the 15 hour EMA for a 60 min lookback
+                    var ema15 = await GetEma(asset.Symbol, TimeFrame.Minute, 20, 60);
+                    if (ema15 == null) continue;
+                    var bars = await GetMarketData(asset.Symbol, TimeFrame.Minute, 60);
+                    var firstClose = bars[asset.Symbol].FirstOrDefault().Close;
+                    var lastClose = bars[asset.Symbol].LastOrDefault().Close;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking price action - First close {firstClose} last close: {lastClose}, 20M EMA start: {ema15.FirstOrDefault().Item2}, 20M EMA end: {ema15.LastOrDefault().Item2}");
+                    bool startIsBelowEma = false, endIsAboveEma = false;
+                    int i = 0;
+                    foreach (var b in bars[asset.Symbol])
+                    {
+                        if (i >= ema15.Count-1) break;
+                        if (logAlgoInfo)
+                            Console.WriteLine($"\t\t Bar Close: {b.Close} \t\t EMA: {ema15[i].Item2} \t\t Bar#: {i} \t\tStart: {startIsBelowEma}\t\t End: {endIsAboveEma}");
+                        if (!startIsBelowEma && b.Close < ema15[i].Item2)
+                            startIsBelowEma = true;
+                        if (startIsBelowEma && !endIsAboveEma && b.Close > ema15[i].Item2)
+                        {
+                            endIsAboveEma = true;
+                            break;
+                        }                                
+                        i++;
+                    }
+                    if (!startIsBelowEma) continue;
+                    if (!endIsAboveEma) continue;
+                    switch(p.RiskLevel.Risk)
+                    {
+                        case "Low":
+                            if (i < 45) continue;
+                        break;
+                        case "Moderate":
+                            if (i < 30) continue;
+                        break;
+                        case "High":
+                            if (i < 15) continue;
+                        break;
+                        case "Aggressive":
+                            if (i < 5) continue;
+                        break;
+                    }                        
+                    
+
+                    // RSI must not be > 75 for 5 minute timeframe with a ~100 min lookback
+                    var rsi5 = await GetRsi(asset.Symbol, TimeFrame.Minute, 14, 60);
+                    if (rsi5 == null) continue;
+                    var currentRsi = rsi5.LastOrDefault().Item2;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking RSI Val: \t {currentRsi}");
+                    if (currentRsi > 75)
+                        continue;
+
+                    // RSI must be uptrending 
+                    var rsiTrend = rsi5[rsi5.Count-1].Item2 - rsi5[0].Item2;
+                    if (logAlgoInfo)
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking RSI Trend: \t {rsiTrend}");
+                    if (rsiTrend < 0)
+                        continue;
+
+                    // Retrieve trade account info and buy
+                    var ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
+                    decimal amount = (decimal)ta.Cash * (decimal)(p.CapitalToRisk/100);
+                    var bar = await GetMarketData(asset.Symbol, TimeFrame.Minute, 1);
+                    decimal price = bar[asset.Symbol].LastOrDefault().Close+.02m;
+                    decimal quantity = amount / price;
+
+                    // Make sure trade account has available cash 
+                    if (ta.Cash-(double)(quantity*price) < 0)
+                    {
+                        Console.WriteLine($"{ALGO_TAG} \t {ta.Title} \t does not have sufficient cash for purchasing");
+                        continue;
+                    }  
+                    
+                    Console.WriteLine($"******************************************************************************************BUY {quantity} of {asset.Symbol} @ $ {price}******************************************************************************************");
+                    await SubmitOrder(asset.Symbol, (long)quantity, price, OrderSide.Buy, tradeAccountId);
+
+                } catch (Alpaca.Markets.RestClientErrorException)
+                {
+                    await AwaitRequestRedemption();
+                }
+            }
+            
         }
 
         private async Task Scalp(Preference p, int? tradeAccountId)
@@ -362,7 +599,7 @@ namespace smart_stock.AlpacaServices
             var limitlog = await logOrder(tradeAccountId, limitorder);
             await _logProvider.RecordTradeInLog(limitlog); 
         }
-        private async Task<Log> logOrder(int? tradeAccountId, IOrder order)
+        private async Task<smart_stock.Models.Log> logOrder(int? tradeAccountId, IOrder order)
         {
             TradeAccount ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
             var side = order.OrderSide;
@@ -381,16 +618,15 @@ namespace smart_stock.AlpacaServices
             };
 
             trade.Id = await _tradeProvider.RecordTrade(trade, ta);
-            var accountAmount = await alpacaTradingClient.GetAccountAsync();            
 
             // Create a new Log Object that resembles outside trade details
-            Log log = new Log
-            {
+            smart_stock.Models.Log log = new smart_stock.Models.Log
+            {          
                 TradeAccount = ta,
-                Trade = trade,
+                Trade = trade,      
                 Date = DateTime.Now,
-                TradeAccountAmount = Decimal.ToDouble(accountAmount.BuyingPower),
-                PortfolioAmount = ta.Portfolio.Amount
+                TradeAccountAmount = ta.Amount,
+                PortfolioAmount = 100000, //TODO For no because portfolio amount is null here for some reason
             };
             return log;
         }
@@ -406,60 +642,68 @@ namespace smart_stock.AlpacaServices
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
-            // Init array of tuples to store RSI data
-            List<(DateTime?, decimal)> rsiData = new List<(DateTime?, decimal)>();
-
-            // Get market data on symbol given timeframe
-            var bars = await GetMarketData(symbol, timeFrame, periods+limit);
-            
-            // Calculate gain and loss for first period bars
-            decimal gainAvg = 0, lossAvg= 0;
-            foreach (var b in bars[symbol].Take(periods+1))
+            try
             {
-                if (b.Close - b.Open > 0) 
-                    gainAvg += (b.Close - b.Open);
-                else if (b.Open - b.Close > 0)
-                    lossAvg += (b.Open - b.Close);
-            }
-            gainAvg /= periods;
-            lossAvg /= periods;
+                // Init array of tuples to store RSI data
+                List<(DateTime?, decimal)> rsiData = new List<(DateTime?, decimal)>();
 
-            // Calculate the first RS and RSI
-            decimal currRS = gainAvg/lossAvg;
-            decimal currRSI = 0;
-            if (currRS == 0) currRSI = 100;
-            else if (currRS > 0) currRSI = 100-(100/(1+currRS));
-            else currRSI = 0;
+                // Get market data on symbol given timeframe
+                var bars = await GetMarketData(symbol, timeFrame, periods+limit);
 
-            // Add to array
-            rsiData.Add((bars[symbol][periods].TimeUtc, currRSI));
+                if (bars[symbol].Count < periods+limit-1) return null;
+                
+                // Calculate gain and loss for first period bars
+                decimal gainAvg = 0, lossAvg= 0;
+                foreach (var b in bars[symbol].Take(periods+1))
+                {
+                    if (b.Close - b.Open > 0) 
+                        gainAvg += (b.Close - b.Open);
+                    else if (b.Open - b.Close > 0)
+                        lossAvg += (b.Open - b.Close);
+                }
+                gainAvg /= periods;
+                lossAvg /= periods;
 
-            // Loop bars for symbol to get rsi for each point. Skip period bars
-            foreach (var b in bars[symbol].Skip(periods+1))
+                // Calculate the first RS and RSI
+                decimal currRS = gainAvg/lossAvg;
+                decimal currRSI = 0;
+                if (currRS == 0) currRSI = 100;
+                else if (currRS > 0) currRSI = 100-(100/(1+currRS));
+                else currRSI = 0;
+
+                // Add to array
+                rsiData.Add((bars[symbol][periods].TimeUtc, currRSI));
+
+                // Loop bars for symbol to get rsi for each point. Skip period bars
+                foreach (var b in bars[symbol].Skip(periods+1))
+                {
+                    // Calculate gain/loss
+                    decimal gain = 0, loss = 0;
+                    if (b.Close - b.Open > 0) 
+                        gain = (b.Close - b.Open);
+                    else if (b.Open - b.Close > 0)
+                        loss = (b.Open - b.Close);
+                    gainAvg = ((gainAvg*(periods-1))+gain)/periods;
+                    lossAvg = ((lossAvg*(periods-1))+loss)/periods;
+
+                    // Calculate RS
+                    var rs = gainAvg / lossAvg;                
+
+                    // Calculate RSI
+                    decimal rsi = 0;
+                    if (rs == 0) rsi = 100;
+                    else if (rs > 0) rsi = 100-(100/(1+rs));
+                    else rsi = 0;
+
+                    // Add to array 
+                    rsiData.Add((b.TimeUtc, rsi));
+                }
+
+                return rsiData;
+            } catch
             {
-                // Calculate gain/loss
-                decimal gain = 0, loss = 0;
-                if (b.Close - b.Open > 0) 
-                    gain = (b.Close - b.Open);
-                else if (b.Open - b.Close > 0)
-                    loss = (b.Open - b.Close);
-                gainAvg = ((gainAvg*(periods-1))+gain)/periods;
-                lossAvg = ((lossAvg*(periods-1))+loss)/periods;
-
-                // Calculate RS
-                var rs = gainAvg / lossAvg;                
-
-                // Calculate RSI
-                decimal rsi = 0;
-                if (rs == 0) rsi = 100;
-                else if (rs > 0) rsi = 100-(100/(1+rs));
-                else rsi = 0;
-
-                // Add to array 
-                rsiData.Add((b.TimeUtc, rsi));
+                return null;
             }
-
-            return rsiData;
         }
 
         /* Calculates the SMA of a stock
@@ -473,23 +717,31 @@ namespace smart_stock.AlpacaServices
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
-            // Init array of tuples to store SMA data
-            List<(DateTime?, decimal)> smaData = new List<(DateTime?, decimal)>();
-
-            // Get market data on symbol given timeframe
-            var bars = await GetMarketData(symbol, timeFrame, periods+limit);
-
-            // Calculate SMA data
-            for (int i = 0; i < limit; i++)
+            try
             {
-                decimal sma = 0;
-                foreach (var b in bars[symbol].Skip(i).Take(periods+1))
-                    sma += b.Close;
-                sma /= periods;
-                smaData.Add((bars[symbol][periods+i].TimeUtc, sma));
-            }
+                // Init array of tuples to store SMA data
+                List<(DateTime?, decimal)> smaData = new List<(DateTime?, decimal)>();
 
-            return smaData;
+                // Get market data on symbol given timeframe
+                var bars = await GetMarketData(symbol, timeFrame, periods+limit);
+
+                if (bars[symbol].Count < periods+limit-1) return null;
+
+                // Calculate SMA data
+                for (int i = 0; i < limit; i++)
+                {
+                    decimal sma = 0;
+                    foreach (var b in bars[symbol].Skip(i).Take(periods+1))
+                        sma += b.Close;
+                    sma /= periods;
+                    smaData.Add((bars[symbol][periods+i].TimeUtc, sma));
+                }
+
+                return smaData;
+            } catch
+            {
+                return null;
+            }
         }
 
         /* Retrieves multiple volume points a stock
@@ -502,19 +754,26 @@ namespace smart_stock.AlpacaServices
             string symbol, TimeFrame timeFrame, int periods
         )
         {
-            // Init array of tuples to store volume data
-            List<(DateTime?, decimal)> vData = new List<(DateTime?, decimal)>();
-
-            // Get market data on symbol given timeFrame
-            var bars = await GetMarketData(symbol, timeFrame, periods);
-
-            // Build array from market volume collected
-            foreach (var b in bars[symbol])
+            try
             {
-                vData.Add((b.TimeUtc, b.Volume));
-            }
+                // Init array of tuples to store volume data
+                List<(DateTime?, decimal)> vData = new List<(DateTime?, decimal)>();
 
-            return vData;
+                // Get market data on symbol given timeFrame
+                var bars = await GetMarketData(symbol, timeFrame, periods);
+                if (bars[symbol].Count < periods-1) return null;
+
+                // Build array from market volume collected
+                foreach (var b in bars[symbol])
+                {
+                    vData.Add((b.TimeUtc, b.Volume));
+                }
+
+                return vData;
+            } catch 
+            {
+                return null;
+            }
         }
 
         /* Calculates the EMA of a stock (this uses multiplier smoothing of 2)
@@ -528,32 +787,40 @@ namespace smart_stock.AlpacaServices
             string symbol, TimeFrame timeFrame, int periods, int limit
         )
         {
-            // Init array of tuples to store EMA data
-            List<(DateTime?, decimal)> emaData = new List<(DateTime?, decimal)>();
-
-            // Get market data on symbol given timeFrame
-            var bars = await GetMarketData(symbol, timeFrame, periods+limit+1);
-
-            // Calculate EMA data for the first period bars
-            // Note this first ema is for peiods +1 bar not period bar
-            decimal ema = 0;
-            foreach (var b in bars[symbol].Take(periods))
-                ema += b.Close;
-            ema /= periods;
-            
-            // Add to array (again note that this is for periods +1 bar)
-            emaData.Add((bars[symbol][periods+2].TimeUtc, ema));
-
-            // Loop bars for symbol to get ema for the rest of the points
-            int index = periods +1;
-            foreach (var b in bars[symbol].Skip(periods).Take(limit-1))
+            try
             {
-                ema = ((b.Close - ema)*(2m/(periods+1))) + ema;
-                if (index != periods+1)
-                    emaData.Add((bars[symbol][index+1].TimeUtc, ema));
-                index++;
+                // Init array of tuples to store EMA data
+                List<(DateTime?, decimal)> emaData = new List<(DateTime?, decimal)>();
+
+                // Get market data on symbol given timeFrame
+                var bars = await GetMarketData(symbol, timeFrame, periods+limit+1);
+
+                if (bars[symbol].Count < periods+limit) return null;
+
+                // Calculate EMA data for the first period bars
+                // Note this first ema is for peiods +1 bar not period bar
+                decimal ema = 0;
+                foreach (var b in bars[symbol].Take(periods))
+                    ema += b.Close;
+                ema /= periods;
+                
+                // Add to array (again note that this is for periods +1 bar)
+                emaData.Add((bars[symbol][periods+2].TimeUtc, ema));
+
+                // Loop bars for symbol to get ema for the rest of the points
+                int index = periods +1;
+                foreach (var b in bars[symbol].Skip(periods).Take(limit-1))
+                {
+                    ema = ((b.Close - ema)*(2m/(periods+1))) + ema;
+                    if (index != periods+1)
+                        emaData.Add((bars[symbol][index+1].TimeUtc, ema));
+                    index++;
+                }
+                return emaData;
+            } catch 
+            {
+                return null;
             }
-            return emaData;
         }
 
         /* Calculates the MACD of a stock
@@ -566,45 +833,53 @@ namespace smart_stock.AlpacaServices
             string symbol, TimeFrame timeFrame, int limit
         )
         {
-            // Init array of tuples to store MACD data
-            List<(DateTime?, decimal, decimal)> macdData = new List<(DateTime?, decimal, decimal)>();
-
-            // Init EMAs needed
-            var lowerEMA = await GetEma(symbol, timeFrame, 12, limit);
-            var upperEMA = await GetEma(symbol, timeFrame, 26, limit);
-
-            // Combine lower and upper EMAs to more easily loop through later
-            var emas = lowerEMA.Zip(upperEMA, (l, h) => new {
-                Lower = l, 
-                Upper = h
-            });
-
-            // Subtract to get MACD line
-            List<(DateTime?, decimal)> macd =  new List<(DateTime?, decimal)>();
-            foreach (var lnh in emas)
+            try
             {
-                macd.Add((lnh.Lower.Item1, lnh.Upper.Item2 - lnh.Lower.Item2));
-            }
+                // Init array of tuples to store MACD data
+                List<(DateTime?, decimal, decimal)> macdData = new List<(DateTime?, decimal, decimal)>();
 
-            // Calculate signal line from MACD line, want 9EMA
-            // Calculate ema data dor the first data point
-            decimal ema = 0;
-            foreach (var s in macd.Take(9))
-                ema += s.Item2;
-            ema /= 9;
-            // Add First to data
-            macdData.Add((macd[11].Item1, macd[11].Item2, ema));
-            // Loop the rest to get rest of ema
-            int index = 10;
-            foreach (var s in macd.Skip(9).Take(limit-1))
+                // Init EMAs needed
+                var lowerEMA = await GetEma(symbol, timeFrame, 12, limit);
+                var upperEMA = await GetEma(symbol, timeFrame, 26, limit);
+
+                if (lowerEMA == null || upperEMA == null) return null;
+
+                // Combine lower and upper EMAs to more easily loop through later
+                var emas = lowerEMA.Zip(upperEMA, (l, h) => new {
+                    Lower = l, 
+                    Upper = h
+                });
+
+                // Subtract to get MACD line
+                List<(DateTime?, decimal)> macd =  new List<(DateTime?, decimal)>();
+                foreach (var lnh in emas)
+                {
+                    macd.Add((lnh.Lower.Item1, lnh.Upper.Item2 - lnh.Lower.Item2));
+                }
+
+                // Calculate signal line from MACD line, want 9EMA
+                // Calculate ema data dor the first data point
+                decimal ema = 0;
+                foreach (var s in macd.Take(9))
+                    ema += s.Item2;
+                ema /= 9;
+                // Add First to data
+                macdData.Add((macd[11].Item1, macd[11].Item2, ema));
+                // Loop the rest to get rest of ema
+                int index = 10;
+                foreach (var s in macd.Skip(9).Take(limit-1))
+                {
+                    ema = ((s.Item2 - ema)*(2m/(10))) + ema;
+                    if (index != 10)
+                        macdData.Add((s.Item1, s.Item2, ema));
+                    index++;
+                }
+
+                return macdData;
+            } catch 
             {
-                ema = ((s.Item2 - ema)*(2m/(10))) + ema;
-                if (index != 10)
-                    macdData.Add((s.Item1, s.Item2, ema));
-                index++;
+                return null;
             }
-
-            return macdData;
         }
 
         public void Dispose()
