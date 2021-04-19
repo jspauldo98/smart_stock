@@ -49,7 +49,14 @@
          </div>
       </div>                       
       <div style="background: grey; height: 300px;">
-         <h3>Graph?</h3>
+         <google-chart #chart
+            [title]= this.tradeAccount.title.concat(title)
+            [type]="type"
+            [data]="data"
+            [options]="options"
+            [width]="width"
+            [height]="height">
+         </google-chart>
       </div><br>
       <div class="container text-left">
          <div class="row">

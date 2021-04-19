@@ -39,7 +39,14 @@
             </div>
             <div class="col-lg" align="right">
                <mat-card style="background: grey; height: 200px;">
-                  <mat-card-title>Graph?</mat-card-title>
+                  <google-chart #chart
+                     [title]= ta.title.concat(title)
+                     [type]="type"
+                     [data]="data"
+                     [options]="options"
+                     [width]="width"
+                     [height]="height">
+                  </google-chart>
                </mat-card>
             </div>
          </div>
