@@ -339,28 +339,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (profit < -1 || profit > 5)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (profit < -5 || profit > 7)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (profit < -15 || profit > 10)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (profit < -20 || profit > 50)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }                                  
                         break;
@@ -397,28 +397,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (i < 45)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (i < 30)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (i < 15)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (i < 5) 
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Buy, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
@@ -552,7 +552,7 @@ namespace smart_stock.AlpacaServices
                     }  
                     
                     Console.WriteLine($"******************************************************************************************BUY {quantity} of {asset.Symbol} @ $ {price}******************************************************************************************");
-                    await SubmitOrder(asset.Symbol, (long)quantity, price, OrderSide.Sell, tradeAccountId);
+                    await SubmitOrder(asset.Symbol, (long)quantity, price, OrderSide.Buy, tradeAccountId);
 
                 } catch (Alpaca.Markets.RestClientErrorException)
                 {
