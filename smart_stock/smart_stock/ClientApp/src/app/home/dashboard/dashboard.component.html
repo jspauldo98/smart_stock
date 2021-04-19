@@ -1,5 +1,6 @@
 <p>dashboard works!</p>
-<p>This page should contain a broad view of the user's total investing experience.
+<p>
+   This page should contain a broad view of the user's total investing experience.
 
    - Lots of graphical representations but simple previews. Leave the intense data representations for the Analytics page.
    - Users total value overtime.
@@ -8,3 +9,12 @@
    - Total value gain/loss.
    - Some recent trades?
    - Diversity Pie?</p>
+
+   <google-chart #chart
+   [title]="title"
+   [type]="type"
+   [data]="data"
+   [options]="options"
+   [width]="width"
+   [height]="height">
+</google-chart>
