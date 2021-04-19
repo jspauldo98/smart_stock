@@ -310,7 +310,6 @@ namespace smart_stock.AlpacaServices
                 bool flag = false;
                 foreach(var pos in alpacaPositions)
                 {
-                    Console.WriteLine($"OwnedAsset: {ownedAsset.Item2} \t {ownedAsset.Item3} \n\t ComparedAsset: {pos.Symbol} \t {pos.Quantity} ");
                     if (pos.Symbol == ownedAsset.Item2 && pos.Quantity == (int)ownedAsset.Item3)
                         flag = true;
                 }
@@ -437,14 +436,27 @@ namespace smart_stock.AlpacaServices
             
             //* Buying Algorithm 
             // TODO Make sure to check if the order has filled.
-            // TODO Make sure we don't own the asset already
             // TODO Randomize asset list so doesnt favor any stock
             int assetCounter = 0;
             // First, scan for assets with possible setups
             foreach(var asset in assets)
             {
+                // Make sure we don't already own the asset
+                var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+                bool skipFlag = false;
+                foreach (var x in ownedAssets)
+                    if (x.Item2 == asset.Symbol) skipFlag = true;
+                if (skipFlag) continue;
+
                 // Every 100 stocks check to see if should sell positions
-                if (assetCounter % 100 == 0) await DaySell(p, tradeAccountId, logAlgoInfo);
+                if (assetCounter % 100 == 0) 
+                {
+                    await DaySell(p, tradeAccountId, logAlgoInfo);
+                    // Check market close
+                    var closingTime = await GetMarketClose();
+                    TimeSpan timeUntilClose = closingTime - DateTime.UtcNow;
+                    if (timeUntilClose.TotalMinutes > 5) break;
+                } 
                 assetCounter++;
                 try
                 {
