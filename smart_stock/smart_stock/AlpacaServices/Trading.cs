@@ -75,7 +75,6 @@ namespace smart_stock.AlpacaServices
             while (timeUntilClose.TotalMinutes > 5)
             {
                 await CheckPreferences(tradeAccounts);
-                Thread.Sleep(60000);
                 timeUntilClose = closingTime - DateTime.UtcNow;
             }
 
@@ -284,18 +283,37 @@ namespace smart_stock.AlpacaServices
 
         private async Task Day(Preference p, int? tradeAccountId)
         {
-            // TODO Because this function takes a LONG time to run need to check if less than five minutes to market close somewhere
-            bool logAlgoInfo = true; const string ALGO_TAG = "*DAY TRADE*";
+            bool logAlgoInfo = true;
 
-            //* Selling Algorithm *//
-            // TODO MAKE SURE THE 'OWNED ASSET' ALSO EXISTS IN ALPACA (OTHERWISE IT WAS NEVER FILLED AND WILL SHORT THE STOCK)
+            //* Selling Algorithm
+            await DaySell(p, tradeAccountId, logAlgoInfo);     
+
+            //* Buying Algorithm
+            await DayBuy(p, tradeAccountId, logAlgoInfo);
+        }
+
+        private async Task DaySell(Preference p, int? tradeAccountId, bool logAlgoInfo)
+        {
+            const string ALGO_TAG = "*DAY TRADE: SELL ALGO*";
+
+            //* Selling Algorithm 
             // TODO Might want to do market orders instead of limit orders so they get filled better (asset tracking cums itself if you do market order though)
-            Console.WriteLine("Checking SELL Algorithm");
             // Retrieve owned assets
+            // Probably need to make a model for this, but I am being lazy. Item 1 is Id. Item 2, symbol. item3, quantity. item4, price
             var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+            var alpacaPositions = await alpacaTradingClient.ListPositionsAsync();
             // Loop sell algorithm for each owned asset
             foreach(var ownedAsset in ownedAssets)
             {
+                // Check to make sure backend asset maches client position
+                bool flag = false;
+                foreach(var pos in alpacaPositions)
+                {
+                    Console.WriteLine($"OwnedAsset: {ownedAsset.Item2} \t {ownedAsset.Item3} \n\t ComparedAsset: {pos.Symbol} \t {pos.Quantity} ");
+                    if (pos.Symbol == ownedAsset.Item2 && pos.Quantity == (int)ownedAsset.Item3)
+                        flag = true;
+                }
+                if (!flag) continue;
                 try
                 {
                     // Get bar 
@@ -410,14 +428,21 @@ namespace smart_stock.AlpacaServices
                     await AwaitRequestRedemption();
                 }
             }
+        }
+
+        private async Task DayBuy(Preference p, int? tradeAccountId, bool logAlgoInfo)
+        {
+            const string ALGO_TAG = "*DAY TRADE: BUY ALGO*";
             
-            //* Buying Algorithm *//
+            //* Buying Algorithm 
             // TODO Make sure to check if the order has filled.
-            // TODO The buy algo takes ~40 minutes to run through the entire thing. Maybe every 100 stocks it checks run the sell algo
-            Console.WriteLine("Checking BUY Algorithm");
+            int assetCounter = 0;
             // First, scan for assets with possible setups
             foreach(var asset in assets)
             {
+                // Every 100 stocks check to see if should sell positions
+                if (assetCounter % 100 == 0) await DaySell(p, tradeAccountId, logAlgoInfo);
+                assetCounter++;
                 try
                 {
                     // Average daily trading volume must be greater that 1M for a 30 day lookback
@@ -531,7 +556,6 @@ namespace smart_stock.AlpacaServices
                     await AwaitRequestRedemption();
                 }
             }
-            
         }
 
         private async Task Scalp(Preference p, int? tradeAccountId)
