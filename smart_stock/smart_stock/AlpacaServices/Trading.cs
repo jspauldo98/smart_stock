@@ -336,28 +336,28 @@ namespace smart_stock.AlpacaServices
                     switch(p.RiskLevel.Risk)
                     {
                         case "Low":
-                            if (profit < -1 || profit > 5)
+                            if (profit < -0.1m || profit > 0.1m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
-                            if (profit < -5 || profit > 7)
+                            if (profit < -0.25m || profit > 0.25m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
-                            if (profit < -15 || profit > 10)
+                            if (profit < -0.5m || profit > 0.5m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
-                            if (profit < -20 || profit > 50)
+                            if (profit < -1.0m || profit > 1.0m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
                                 continue;
