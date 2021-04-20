@@ -11,6 +11,7 @@ using smart_stock.Models;
 using smart_stock.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using smart_stock.Common;
 
 namespace smart_stock.AlpacaServices
 {
@@ -18,7 +19,7 @@ namespace smart_stock.AlpacaServices
     {
         private IAlpacaTradingClient alpacaTradingClient;
         private IAlpacaDataClient alpacaDataClient;
-        private IReadOnlyList<IAsset> assets;
+        private List<IAsset> assets;
         private readonly IUserProvider _userProvider;
         private readonly ITradeProvider _tradeProvider;
         private readonly ILogProvider _logProvider;
@@ -85,7 +86,7 @@ namespace smart_stock.AlpacaServices
             Dispose();
         }
 
-        private async Task<IReadOnlyList<IAsset>> GetTradableTickerList()
+        private async Task<List<IAsset>> GetTradableTickerList()
         {
             var assets = await alpacaTradingClient.ListAssetsAsync(
                 new AssetsRequest
@@ -94,8 +95,8 @@ namespace smart_stock.AlpacaServices
                     AssetClass = AssetClass.UsEquity
                 }
             );
-
-            return assets;
+            List<IAsset> writeableCollection = new List<IAsset>(assets);
+            return writeableCollection;
         }
         private async Task CancelExistingOrders()
         {
@@ -554,8 +555,22 @@ namespace smart_stock.AlpacaServices
         {
             try
             {
-                // TODO - Run swing selling algorithm to see if owned assets need sold.
-                // TODO - Run swing algorithm to acquire new assets if possible.
+                /*Begin by determing whether we have a swing high or swing low on a given ticker
+                  if swing high, consider short trade (Buy high, sell when low).
+                  if swing low, consider long trade (Buy low, sell high).
+                  Use 5-50 term EMAS for short term preference, favor short term crossover. for 
+                  example, get current EMA, then, get 20 day EMA. If current EMA is the same as or higher than
+                  20 day, we have a bullish high swing. If current EMA is slightly lower or a lot lower than 20 day
+                  we have a bearish swing.
+                  Get the volume for the past 20 days, and then the volume for the last three hours. If greater than 20
+                  day volume, bullish swing. If volume less than 20 day, bearish swing.
+                  Finally, check 14 period RSI. If over 70, ticker is overbought, and should open a bearish
+                  short position. If beneath 30, the ticker is oversold, and should open a long bullish position
+
+                */
+                bool detailedLogging = true;
+                await SwingBuy(p, tradeAccountId, detailedLogging);
+                await SwingSell(p, tradeAccountId, detailedLogging);
             }
             catch (WebException ex) when (ex.Response is HttpWebResponse response)
             {
@@ -564,6 +579,74 @@ namespace smart_stock.AlpacaServices
                     await AwaitRequestRedemption();
                 }
             }
+        }
+
+        private async Task SwingBuy(Preference preference, int? tradeAccountId, bool detailedLogging)
+        {
+            //Experiment with market orders here, as we want orders to get filled faster with swings, regardless if asset
+            //tracking has a stroke, may turn that off for now.
+            //We really only want like, 200 symbols, compute the difference between actual size and desired size.
+            
+            //We will first need to compile lists of owned assets in our DB, before running 
+            //through a list of tradeable tickers. Make a dictionary with ticker key, and quantity values for each.
+            //If we have an symbol already in our account, throw out the current ticker about to be traded, and go for another.
+
+            var tradeableSymbols = await GetTradableTickerList();
+            Dictionary<string, decimal?> dbAssets = new Dictionary<string, decimal?>();
+
+            var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+
+            foreach(var asset in ownedAssets)
+            {
+                dbAssets.Add(asset.Item2, asset.Item3);
+            }
+            var deltaSize = tradeableSymbols.Count - 200;
+            if (deltaSize < 0)
+            {
+                //If the list is smaller than the target size, something is wrong. This will never be the
+                //case on a normal trading day, and we need to shut the function down.
+                return;
+            }
+            else 
+            {
+                //cut list down to 200 symbols, and randomize, then compare with current items in our owned
+                //asset dictionary. Throw out values that are alread in DB.
+                tradeableSymbols.ShuffleList<IAsset>();
+                tradeableSymbols.RemoveRange(200, deltaSize);
+                for (int s = 0; s < tradeableSymbols.Count - 1; s++)
+                {
+                    if (dbAssets.ContainsKey(tradeableSymbols[s].Symbol))
+                    {
+                        if (detailedLogging)
+                        {
+                            Console.WriteLine("We already have " + tradeableSymbols[s].Symbol + " in our owned assets, removing now");
+                        }
+                        tradeableSymbols.RemoveAt(s);
+                    }
+                }
+            }
+
+            //Create a new timer with an event handler that will automatically handle a timed event
+            //for selling current assets. Event is called every hour. 
+            //TODO Still need to check for market close conditions.
+            
+            var sellTimer = new System.Timers.Timer();
+            sellTimer.Interval = 3600000;
+            sellTimer.Elapsed += async (sender, e) => await ElapsedSellMethod(sender, e, preference, tradeAccountId, detailedLogging);
+            GC.KeepAlive(sellTimer);
+            sellTimer.Enabled = true;
+            foreach(var ticker in tradeableSymbols)
+            {
+                try
+                {
+                    
+                }
+            }
+        }
+
+        private async Task SwingSell(Preference preference, int? tradeAccountId, bool detailedLogging)
+        {
+            return;
         }
 
         private async Task<IReadOnlyDictionary<string, IReadOnlyList<IAgg>>> GetMarketData(
@@ -886,6 +969,12 @@ namespace smart_stock.AlpacaServices
         {
             alpacaTradingClient?.Dispose();
             alpacaDataClient?.Dispose();
+        }
+
+        public async Task ElapsedSellMethod(object sender, System.Timers.ElapsedEventArgs e, Preference preference, int? tradeAccountId, bool detailedLogging)
+        {
+            await SwingSell(preference, tradeAccountId, detailedLogging);
+            return;
         }
     }
 }
