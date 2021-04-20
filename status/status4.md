@@ -1,7 +1,7 @@
 # Status #4 - Apr. 21 2021
 
 ## Video Link
-- 
+- https://youtu.be/hAaw08ZxywU
 
 ## Last 3 Weeks Plan
 - Develop day trading and swing trading buy/sell algorithms that utilize last weeks indicators.
