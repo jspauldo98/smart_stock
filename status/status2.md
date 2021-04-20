@@ -46,6 +46,6 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 ## Completion Confidence (Per Member)
 - Stefan: 5, Extremely confident with any changes that need to be made for the UI, very confident and happy with the progress made on the API, would like to see several files working in unison after debugging alpaca data client troubles. 
 - Spencer:
-- Bryce:
+- Bryce: 4
 - Zach: 5 
 - Jared: 4, Awesome progress with the UI and API. Great progress getting the Alpaca SDK to interface with dotnet, however we did not meet our goal of getting a simple paper trade working. Granted there has been some issues with trade implementation. The main reason I give a four for completion confidence and not a five because a significantly larger amount of hours were logged this status update than last update without a whole lot to show for the time spent.
