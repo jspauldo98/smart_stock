@@ -23,7 +23,7 @@
 
 The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
 
-- Bryce : 
+- Bryce : 0
 - Spencer : 2
 - Stefan : 9.6
 - Jared : 27.5
@@ -51,6 +51,6 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 ## Completion Confidence (Per Member)
 - Stefan: 5, I know the team and I will be able to gather some data on beta stage trading, but the overall product will very much be a “first launch” attempt at the end of the semester. We just do not have enough time/manpower to create the polished original vision. That being said, we’ll still be able to present something very unique and interesting.
 - Spencer: 5. From what I've seen, everyone appears to be making some significant progress, and since a lot of trading strategies are being implemented, and I can finally start testing properly, I'm looking forward to things in the future.
-- Bryce:
+- Bryce: 5, midterms were rough. getting back on track: outlook good.
 - Zach: 5, It seems like eveything is going well. 
 - Jared: 5, We achieved big milestones this iteration and Smart Stock is beginning to resemble what we had planned in the Fall.
