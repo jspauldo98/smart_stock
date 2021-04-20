@@ -1,3 +1,4 @@
+using System.Diagnostics.SymbolStore;
 using System.Runtime;
 using System.Collections.Concurrent;
 using System.Net;
@@ -62,7 +63,7 @@ namespace smart_stock.AlpacaServices
             assets = await GetTradableTickerList();
 
             // Now, cancel any existing orders
-            await CancelExistingOrders();
+            await CancelExistingOrders();           
 
             // Figure out when the market will close so we only send orders during market hours and close orders tha have no filled
             var closingTime = await GetMarketClose();
@@ -338,28 +339,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (profit < -0.1m || profit > 0.1m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (profit < -0.25m || profit > 0.25m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (profit < -0.5m || profit > 0.5m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (profit < -1.0m || profit > 1.0m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }                                  
                         break;
@@ -396,28 +397,28 @@ namespace smart_stock.AlpacaServices
                         case "Low":
                             if (i < 45)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (i < 30)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (i < 15)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (i < 5) 
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, price,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
@@ -453,9 +454,9 @@ namespace smart_stock.AlpacaServices
                 {
                     await DaySell(p, tradeAccountId, logAlgoInfo);
                     // Check market close
-                    var closingTime = await GetMarketClose();
-                    TimeSpan timeUntilClose = closingTime - DateTime.UtcNow;
-                    if (timeUntilClose.TotalMinutes > 5) break;
+                    // var closingTime = await GetMarketClose();
+                    // TimeSpan timeUntilClose = closingTime - DateTime.UtcNow;
+                    // if (timeUntilClose.TotalMinutes > 5) break;
                 } 
                 assetCounter++;
                 try
@@ -469,8 +470,11 @@ namespace smart_stock.AlpacaServices
                     vAvg /= vol.Count;
                     if (logAlgoInfo)
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking 30D avg vol: {vAvg}");
-                    if (vAvg < 10000)
+                    if (vAvg < 100000)
+                    {
+                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Rejecting due to volume");
                         continue;
+                    }                        
 
                     // 180 SMA must show a positive uptrend for 180 period with 30hr lookback (long term uptrend)
                     var sma180 = await GetSma(asset.Symbol, TimeFrame.FiveMinutes, 180, 365);
@@ -564,7 +568,7 @@ namespace smart_stock.AlpacaServices
                     }  
                     
                     Console.WriteLine($"******************************************************************************************BUY {quantity} of {asset.Symbol} @ $ {price}******************************************************************************************");
-                    await SubmitOrder(asset.Symbol, (long)quantity, price, OrderSide.Buy, tradeAccountId);
+                    await SubmitOrder(asset.Symbol, (long)quantity, 0, OrderSide.Buy, tradeAccountId);
 
                 } catch (Alpaca.Markets.RestClientErrorException)
                 {
@@ -628,16 +632,48 @@ namespace smart_stock.AlpacaServices
                     orderType.Market(symbol, quantity)
                 );
                 Console.WriteLine($"Submitting {symbol} {orderType} market order for {quantity} shares at market value."); 
-                var log = await logOrder(tradeAccountId, order);
-                await _logProvider.RecordTradeInLog(log); 
+                // wait for the order to be filled before logging
+                if (await checkOrderStatus(order))
+                {
+                    var log = await logOrder(tradeAccountId, await alpacaTradingClient.GetOrderAsync(order.OrderId));
+                    await _logProvider.RecordTradeInLog(log);
+                }  
                 return;
             }
             var limitorder = await alpacaTradingClient.PostOrderAsync(
                 orderType.Limit(symbol, quantity, price)
             );
             Console.WriteLine($"Submitting {symbol} {orderType} limit order for {quantity} shares at ${price}.");
-            var limitlog = await logOrder(tradeAccountId, limitorder);
-            await _logProvider.RecordTradeInLog(limitlog); 
+            // wait for the order to be filled before logging
+            if (await checkOrderStatus(limitorder))
+            {
+                var limitlog = await logOrder(tradeAccountId, await alpacaTradingClient.GetOrderAsync(limitorder.OrderId));
+                await _logProvider.RecordTradeInLog(limitlog);
+            } 
+        }
+
+        /* 
+            Checks every second for an order to be filled. Returns true if filled. returns false if no
+            fill after a minute and cancels the order.
+        */
+        private async Task<bool> checkOrderStatus(IOrder order)
+        {
+            Console.WriteLine("Waiting for order to be filled...");
+            int i = 0;
+            var updateorder = await alpacaTradingClient.GetOrderAsync(order.OrderId);
+            while (updateorder.OrderStatus != OrderStatus.Filled)
+            {
+                if (i==60)
+                {
+                    Console.WriteLine("Canelling order...");
+                    return false;
+                }
+                Thread.Sleep(1000);
+                i++;
+                updateorder = await alpacaTradingClient.GetOrderAsync(order.OrderId);
+            }
+            Console.WriteLine("Order filled");
+            return true;
         }
         private async Task<smart_stock.Models.Log> logOrder(int? tradeAccountId, IOrder order)
         {
@@ -651,8 +687,8 @@ namespace smart_stock.AlpacaServices
             {                
                 Type = side == OrderSide.Buy ? true : false,
                 Ticker = order.Symbol,
-                Amount = order.Quantity*order.LimitPrice,
-                Price = order.LimitPrice,
+                Amount = order.Quantity*order.AverageFillPrice,
+                Price = order.AverageFillPrice,
                 Quantity = order.Quantity,
                 Date = DateTime.Now
             };
