@@ -319,19 +319,10 @@ namespace smart_stock.AlpacaServices
                 {
                     // Get bar 
                     var barsell = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
-                    decimal price = barsell[ownedAsset.Item2].LastOrDefault().Close -.02m;
+                    var aPos = await alpacaTradingClient.GetPositionAsync(ownedAsset.Item2);                    
 
                     // Check profitability, use stop loss on varying risk levels
-                    var bar = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 1);
-                    decimal profit = (
-                        (
-                            (bar[ownedAsset.Item2].FirstOrDefault().Close * ownedAsset.Item3) - (ownedAsset.Item3 * ownedAsset.Item4)
-                        ) 
-                        / 
-                        (
-                            ownedAsset.Item3 * ownedAsset.Item4
-                        )
-                        ) * 100;
+                    decimal profit = aPos.UnrealizedProfitLossPercent *100;
                     if (logAlgoInfo)
                         Console.WriteLine($"{ALGO_TAG} SELL: {ownedAsset.Item2} profitability: {profit}");
                     switch(p.RiskLevel.Risk)
