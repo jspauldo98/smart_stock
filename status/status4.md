@@ -24,7 +24,7 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Bryce : 
 - Spencer : 
 - Stefan : 
-- Jared : 
+- Jared : 21
 - Zach : 
 
 ## Successes
@@ -48,4 +48,4 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Spencer: 
 - Bryce:
 - Zach:
-- Jared: 
+- Jared: 5
