@@ -22,7 +22,7 @@
 
 The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
 
-- Bryce : 
+- Bryce : 15
 - Spencer : 
 - Stefan : 10.20
 - Jared : 21
@@ -48,6 +48,6 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 ## Completion Confidence (Per Member)
 - Stefan: 5
 - Spencer: 
-- Bryce:
+- Bryce: 5
 - Zach:
 - Jared: 5
