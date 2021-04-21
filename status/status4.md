@@ -16,20 +16,22 @@
 
 ## Last 3 Weeks Completions (By Whom)
 - Day trading buy and sell algorithm (Jared)
+- Swing trading buy and sell algorithm (Stefan)
 
 ### Metrics
 
 The following metrics are in terms of hours recorded on a shared spreadsheet by each member for project contributions.
 
 - Bryce : 
-- Spencer : 3
-- Stefan : 
+- Spencer : 
+- Stefan : 10.20
 - Jared : 21
 - Zach : 
 
 ## Successes
 - A day trading buy/sell algorithm was written and picks decent short term assets to trade.
 - When a trading algorithm reaches its maximum number of requests for an Alpaca account it waits to recover before continuing.
+- A swing trading buy/sell algorithm was written, scrapped, and then rewritten. Needs further market testing.
 
 ## Roadblocks/Challenges
 - It has been difficult to test and develop portions of trading algorithms given that development and testing can only occur during market hours so for most members balancing other classes and senior design while the market is open has been difficult.
@@ -44,8 +46,8 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Final touches and tweaks to the trading algorithms and UI.
 
 ## Completion Confidence (Per Member)
-- Stefan:
-- Spencer: 5
+- Stefan: 5
+- Spencer: 
 - Bryce:
 - Zach:
 - Jared: 5
