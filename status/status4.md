@@ -17,6 +17,7 @@
 ## Last 3 Weeks Completions (By Whom)
 - Day trading buy and sell algorithm (Jared)
 - Swing trading buy and sell algorithm (Stefan)
+- Scalping buy and sell algorithm (Zach)
 
 ### Metrics
 
@@ -26,7 +27,7 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Spencer : 3
 - Stefan : 10.20
 - Jared : 21
-- Zach : 
+- Zach : 14
 
 ## Successes
 - A day trading buy/sell algorithm was written and picks decent short term assets to trade.
@@ -46,8 +47,8 @@ The following metrics are in terms of hours recorded on a shared spreadsheet by 
 - Final touches and tweaks to the trading algorithms and UI.
 
 ## Completion Confidence (Per Member)
-- Stefan: 5
+- Stefan:  5
 - Spencer: 5
-- Bryce: 5
-- Zach:
-- Jared: 5
+- Bryce:   5
+- Zach:    5
+- Jared:   5
