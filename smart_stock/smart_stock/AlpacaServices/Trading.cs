@@ -328,28 +328,28 @@ namespace smart_stock.AlpacaServices
                     switch(p.RiskLevel.Risk)
                     {
                         case "Low":
-                            if (profit < -0.1m || profit > 0.1m)
+                            if (profit < -0.1m || profit > 0.07m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
-                            if (profit < -0.25m || profit > 0.25m)
+                            if (profit < -0.25m || profit > 0.35m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
-                            if (profit < -0.5m || profit > 0.5m)
+                            if (profit < -0.5m || profit > 0.75m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
-                            if (profit < -1.0m || profit > 1.0m)
+                            if (profit < -1.0m || profit > 2.0m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
@@ -360,59 +360,9 @@ namespace smart_stock.AlpacaServices
                     // 5 minute price action has a negative crossover below the 15 hour EMA for a 60 min lookback
                     var ema15 = await GetEma(ownedAsset.Item2, TimeFrame.Minute, 20, 60);
                     if (ema15 == null) continue;
-                    var bars = await GetMarketData(ownedAsset.Item2, TimeFrame.Minute, 60);
-                    var firstClose = bars[ownedAsset.Item2].FirstOrDefault().Close;
-                    var lastClose = bars[ownedAsset.Item2].LastOrDefault().Close;
-                    if (logAlgoInfo)
-                        Console.WriteLine($"{ALGO_TAG} SELL: {ownedAsset.Item2}: First close {firstClose} last close: {lastClose}, 20M EMA start: {ema15.FirstOrDefault().Item2}, 20M EMA end: {ema15.LastOrDefault().Item2}");
-                    bool startIsAboveEma = false, endIsBelowEma = false;
-                    int i = 0;
-                    foreach (var b in bars[ownedAsset.Item2])
+                    if(aPos.AssetCurrentPrice < ema15.LastOrDefault().Item2)
                     {
-                        if (i >= ema15.Count-1) break;
-                        if (logAlgoInfo)
-                            Console.WriteLine($"\t\t Bar Close: {b.Close} \t\t EMA: {ema15[i].Item2} \t\t Bar#: {i} \t\tStart: {startIsAboveEma}\t\t End: {endIsBelowEma}");
-                        if (!startIsAboveEma && b.Close > ema15[i].Item2)
-                            startIsAboveEma = true;
-                        if (startIsAboveEma && !endIsBelowEma && b.Close < ema15[i].Item2)
-                        {
-                            endIsBelowEma = true;
-                            break;
-                        }                                
-                        i++;
-                    }
-                    if (!startIsAboveEma) continue;
-                    if (!endIsBelowEma) continue;
-                    switch(p.RiskLevel.Risk)
-                    {
-                        case "Low":
-                            if (i < 45)
-                            {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
-                                continue;
-                            }
-                        break;
-                        case "Moderate":
-                            if (i < 30)
-                            {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
-                                continue;
-                            }
-                        break;
-                        case "High":
-                            if (i < 15)
-                            {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
-                                continue;
-                            }
-                        break;
-                        case "Aggressive":
-                            if (i < 5) 
-                            {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
-                                continue;
-                            }
-                        break;
+                        await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                     }
                     
                 } catch (Alpaca.Markets.RestClientErrorException)
@@ -427,7 +377,6 @@ namespace smart_stock.AlpacaServices
             const string ALGO_TAG = "*DAY TRADE: BUY ALGO*";
             
             //* Buying Algorithm 
-            // TODO Make sure to check if the order has filled.
             // TODO Randomize asset list so doesnt favor any stock
             int assetCounter = 0;
             // First, scan for assets with possible setups
@@ -441,14 +390,9 @@ namespace smart_stock.AlpacaServices
                 if (skipFlag) continue;
 
                 // Every 100 stocks check to see if should sell positions
+                // TODO Won't need this when narrowing and randomizing list, Just run sell algo first
                 if (assetCounter % 100 == 0) 
-                {
-                    await DaySell(p, tradeAccountId, logAlgoInfo);
-                    // Check market close
-                    // var closingTime = await GetMarketClose();
-                    // TimeSpan timeUntilClose = closingTime - DateTime.UtcNow;
-                    // if (timeUntilClose.TotalMinutes > 5) break;
-                } 
+                    await DaySell(p, tradeAccountId, logAlgoInfo); 
                 assetCounter++;
                 try
                 {
@@ -461,7 +405,7 @@ namespace smart_stock.AlpacaServices
                     vAvg /= vol.Count;
                     if (logAlgoInfo)
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Checking 30D avg vol: {vAvg}");
-                    if (vAvg < 100000)
+                    if (vAvg < 10000)
                     {
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t BUY:: Rejecting due to volume");
                         continue;
