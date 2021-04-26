@@ -616,10 +616,10 @@ namespace smart_stock.AlpacaServices
             sellTimer.Enabled = true;
             foreach(var ticker in tradeableSymbols)
             {
-                try
-                {
+                // try
+                // {
                     
-                }
+                // }
             }
         }
 
