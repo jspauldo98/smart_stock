@@ -26,11 +26,13 @@ namespace smart_stock.AlpacaServices
         private readonly IUserProvider _userProvider;
         private readonly ITradeProvider _tradeProvider;
         private readonly ILogProvider _logProvider;
-        public Trading(IUserProvider userProvider, ITradeProvider tradeProvider, ILogProvider logProvider) 
+        private readonly IPortfolioProvider _portfolioProvider;
+        public Trading(IUserProvider userProvider, ITradeProvider tradeProvider, ILogProvider logProvider, IPortfolioProvider portfolioProvider) 
         {
             _userProvider = userProvider;
             _tradeProvider = tradeProvider;
             _logProvider = logProvider;
+            _portfolioProvider = portfolioProvider;
         }
 
         public async Task GetUserData()
@@ -805,7 +807,52 @@ namespace smart_stock.AlpacaServices
             TradeAccount ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
             var side = order.OrderSide;
 
-            // TODO UPDATE TRADE ACCOUNT AND PORTFOLIO       
+            // Update cash/invested for trade account and portfolio
+            if (side == OrderSide.Buy)
+            {
+                ta.Cash -= (double)order.AverageFillPrice;
+                ta.Invested += (double)order.AverageFillPrice;
+                ta.Portfolio.Cash -= (double)order.AverageFillPrice;
+                ta.Portfolio.Invested += (double)order.AverageFillPrice;
+            }
+            else
+            {
+                ta.Cash += (double)order.AverageFillPrice;
+                ta.Invested -= (double)order.AverageFillPrice;
+                ta.Portfolio.Cash += (double)order.AverageFillPrice;
+                ta.Portfolio.Invested -= (double)order.AverageFillPrice;
+
+                // Calculate profit/losses and successful/failed trades for trade account
+                var owned = await _tradeProvider.RetrieveOwnedAsset(ta.Id, order.Symbol);
+                double difference = (double)((order.Quantity * order.AverageFillPrice)-(owned.Item1 * owned.Item2));
+                if (difference > 0)
+                {
+                    ta.Profit += difference;
+                    ta.Amount += difference;
+                    ta.Portfolio.Profit += difference;
+                    ta.Portfolio.Amount += difference;
+                    ta.NumSTrades++;
+                }
+                else
+                {
+                    ta.Profit -= difference;
+                    ta.Amount -= difference;
+                    ta.Portfolio.Profit -= difference;
+                    ta.Portfolio.Amount -= difference;
+                    ta.NumFTrades++;
+                }
+                
+                // update net values
+                ta.Net = ta.Profit - ta.Loss;
+                ta.Portfolio.Net = ta.Portfolio.Profit - ta.Portfolio.Loss;
+            }
+
+            // Increment number of trades for trade account
+            ta.NumTrades++;
+
+            // Update db with account and portfolio updates
+            await _portfolioProvider.UpdatePortfolio(ta.Portfolio, ta.Portfolio.Id);
+            await _portfolioProvider.UpdateTradeAccount(ta, (int)ta.Id);
 
             // Create a new Trade Object that resembles the trade            
             Trade trade = new Trade 
@@ -827,7 +874,7 @@ namespace smart_stock.AlpacaServices
                 Trade = trade,      
                 Date = DateTime.Now,
                 TradeAccountAmount = ta.Amount,
-                PortfolioAmount = 100000, //TODO For no because portfolio amount is null here for some reason
+                PortfolioAmount = ta.Portfolio.Amount
             };
             return log;
         }

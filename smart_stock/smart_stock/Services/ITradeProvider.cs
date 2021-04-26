@@ -10,6 +10,8 @@ namespace smart_stock.Services
 
         Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId);
 
+        Task<(decimal, decimal)> RetrieveOwnedAsset(int? tId, string symbol);
+
         Task<TradeAccount> GetTradeAccount (int? tId);
     }
 }
