@@ -27,16 +27,16 @@
          </div> 
          <div class="row w-25">
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-${{this.tradeAccount.net}}</h6>
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">${{this.tradeAccount.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+${{this.tradeAccount.net}}</h6>
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">${{this.tradeAccount.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-{{(this.tradeAccount.loss / this.tradeAccount.amount)*100}}%</h6>
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
             </div>
          </div>
          <div class="row">            

@@ -80,7 +80,7 @@ namespace smart_stock.Services
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    string sQuery = "SELECT ID, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated, DateModified FROM TradeAccount ta WHERE ta.Id = @id";
+                    string sQuery = "SELECT Id, Title, Description, Amount, Profit, Loss, Net, NumTrades, NumSTrades, NumFTrades, Invested, Cash, DateCreated, DateModified FROM TradeAccount ta WHERE ta.Id = @id";
                     var @param = new {id = tId};
                     connection.Open();
                     TradeAccount ta = await connection.QueryFirstOrDefaultAsync<TradeAccount>(sQuery, @param);
@@ -119,6 +119,15 @@ namespace smart_stock.Services
                     ta.Preference.RiskLevel = riskLevel;
                     ta.Preference.TradeStrategy = strategy;
                     ta.Preference.Sector = sector;
+                    // get portfolio id
+                    var portIdQ = "SELECT Portfolio FROM TradeAccount WHERE Id = @tId";
+                    var @portIdParam = new {tId = ta.Id};
+                    int portId = await connection.QueryFirstOrDefaultAsync<int>(portIdQ, @portIdParam);
+                    // get portfolio
+                    var portQ = "SELECT Id, Amount, Profit, Loss, Net, Invested, Cash FROM Portfolio WHERE Id = @portId";
+                    var @portParam = new {portId = prefID};
+                    Portfolio port = await connection.QueryFirstOrDefaultAsync<Portfolio>(portQ, @portParam);
+                    ta.Portfolio = port;
 
                     return ta;
                 }
@@ -150,6 +159,30 @@ namespace smart_stock.Services
             {
                 Console.WriteLine(TAG + e);
                 return null;
+            }
+        }
+
+        public async Task<(decimal, decimal)> RetrieveOwnedAsset(int? tId, string symbol)
+        {
+            try
+            {
+                using(MySqlConnection connection = Connection) 
+                {
+                    string query = "SELECT Quantity, Price FROM OwnedAssets WHERE TradeAccount=@tId AND Symbol=@sym";
+                    var @params = new {
+                        tId = tId,
+                        sym = symbol
+                    };
+                    connection.Open();
+                    var queryable = await connection.QueryFirstOrDefaultAsync<(decimal, decimal)>(query, @params);
+        
+                    return queryable;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(TAG + e);
+                return (-1, -1);
             }
         }
     }
