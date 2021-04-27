@@ -362,28 +362,28 @@ namespace smart_stock.AlpacaServices
                     switch(p.RiskLevel.Risk)
                     {
                         case "Low":
-                            if (profit < -2.0m || profit > 0.5m)
+                            if (profit < -2.0m || profit > 0.1m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
-                            if (profit < -3.0m || profit > 0.75m)
+                            if (profit < -3.0m || profit > 0.2m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
-                            if (profit < -3.0m || profit > 1.5m)
+                            if (profit < -3.0m || profit > 5m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
-                            if (profit < -5.0m || profit > 5.0m)
+                            if (profit < -5.0m || profit > 1m)
                             {
                                 await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                                 continue;
@@ -810,45 +810,40 @@ namespace smart_stock.AlpacaServices
             // Update cash/invested for trade account and portfolio
             if (side == OrderSide.Buy)
             {
-                ta.Cash -= (double)order.AverageFillPrice;
-                ta.Invested += (double)order.AverageFillPrice;
-                ta.Portfolio.Cash -= (double)order.AverageFillPrice;
-                ta.Portfolio.Invested += (double)order.AverageFillPrice;
+                ta.Cash -= (double)order.AverageFillPrice * (double)order.Quantity;
+                ta.Invested += (double)order.AverageFillPrice * (double)order.Quantity;
+                ta.Portfolio.Invested += (double)order.AverageFillPrice * (double)order.Quantity;
             }
             else
             {
-                ta.Cash += (double)order.AverageFillPrice;
-                ta.Invested -= (double)order.AverageFillPrice;
-                ta.Portfolio.Cash += (double)order.AverageFillPrice;
-                ta.Portfolio.Invested -= (double)order.AverageFillPrice;
+                var owned = await _tradeProvider.RetrieveOwnedAsset(ta.Id, order.Symbol);
+
+                ta.Cash += (double)order.AverageFillPrice * (double)order.Quantity;
+                ta.Invested -= (double)owned.Item1 * (double)owned.Item2;
+                ta.Portfolio.Invested -= (double)owned.Item1 * (double)owned.Item2;
 
                 // Calculate profit/losses and successful/failed trades for trade account
-                var owned = await _tradeProvider.RetrieveOwnedAsset(ta.Id, order.Symbol);
                 double difference = (double)((order.Quantity * order.AverageFillPrice)-(owned.Item1 * owned.Item2));
                 if (difference > 0)
-                {
-                    ta.Profit += difference;
-                    ta.Amount += difference;
-                    ta.Portfolio.Profit += difference;
-                    ta.Portfolio.Amount += difference;
+                {                    
                     ta.NumSTrades++;
                 }
                 else
                 {
-                    ta.Profit -= difference;
-                    ta.Amount -= difference;
-                    ta.Portfolio.Profit -= difference;
-                    ta.Portfolio.Amount -= difference;
                     ta.NumFTrades++;
                 }
+                ta.Profit += difference;
+                ta.Amount += difference;
+                ta.Portfolio.Profit += difference;
+                ta.Portfolio.Amount += difference;
                 
                 // update net values
                 ta.Net = ta.Profit - ta.Loss;
                 ta.Portfolio.Net = ta.Portfolio.Profit - ta.Portfolio.Loss;
-            }
 
-            // Increment number of trades for trade account
-            ta.NumTrades++;
+                // Increment number of trades for trade account
+                ta.NumTrades++;
+            }
 
             // Update db with account and portfolio updates
             await _portfolioProvider.UpdatePortfolio(ta.Portfolio, ta.Portfolio.Id);
