@@ -855,7 +855,9 @@ namespace smart_stock.AlpacaServices
                 dbAssets.Add(asset.Item2, asset.Item3);
             }
             
-            for (int s = 0; s < alpacaAssets.Count; s++)
+            //Do we really need this? All stored assets should be in our DB, and if alpaca doesn't
+            //have it, catch the exception and move on for now.
+            /*for (int s = 0; s < alpacaAssets.Count; s++)
             {
                 if (!dbAssets.ContainsKey(alpacaAssets[s].Symbol))
                 {
@@ -863,9 +865,8 @@ namespace smart_stock.AlpacaServices
                     {
                         Console.WriteLine(alpacaAssets[s].Symbol + " does not exist in user portfolio, removing now");
                     }
-                    dbAssets.Remove(alpacaAssets[s].Symbol);
                 }
-            }
+            }*/
 
             foreach(var asset in dbAssets)
             {
