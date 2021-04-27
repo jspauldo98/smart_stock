@@ -530,42 +530,7 @@ namespace smart_stock.AlpacaServices
                         if (detailedLogging)
                             Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
                         continue;
-                    }
-                    // switch(p.RiskLevel.Risk)
-                    // {
-                    //     case "Low":
-                    //         if (i < 45)
-                    //         {
-                    //             if (detailedLogging)
-                    //                 Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                    //             continue;
-                    //         }
-                    //     break;
-                    //     case "Moderate":
-                    //         if (i < 30)
-                    //         {
-                    //             if (detailedLogging)
-                    //                 Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                    //             continue;
-                    //         } 
-                    //     break;
-                    //     case "High":
-                    //         if (i < 15)
-                    //         {
-                    //             if (detailedLogging)
-                    //                 Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                    //             continue;
-                    //         }
-                    //     break;
-                    //     case "Aggressive":
-                    //         if (i < 5)
-                    //         {
-                    //             if (detailedLogging)
-                    //                 Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                    //             continue;
-                    //         } 
-                    //     break;
-                    // }                        
+                    }                    
                     
                     if (detailedLogging)
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t Accepting EMA Crossover \t First close: {firstClose} \t Last close: {lastClose} \t 20M EMA start: {ema15.FirstOrDefault().Item2} \t 20M EMA end: {ema15.LastOrDefault().Item2}");
