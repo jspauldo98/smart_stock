@@ -11,16 +11,16 @@
          </div>
          <div class="row w-25">
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-${{this.portfolio.net}}</h6>
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">${{this.portfolio.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+${{this.portfolio.net}}</h6>
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">${{this.portfolio.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-{{(this.portfolio.loss / this.portfolio.amount)*100}}%</h6>
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
             </div>
          </div>
          <div class="row">            
