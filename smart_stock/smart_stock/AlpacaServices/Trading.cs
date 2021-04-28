@@ -88,27 +88,27 @@ namespace smart_stock.AlpacaServices
             Console.WriteLine("Market Nearing close, no more order requests");
             await CancelExistingOrders();
 
-            // Liquidate at the end of market day if day trade
-            foreach (var ta in tradeAccounts)
-            {
-                if (ta.Preference.TradeStrategy.Day)
-                {
-                    Console.WriteLine($"Liquidating {ta.Title}...");
-                    var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(ta.Id);
-                    var alpacaPositions = await alpacaTradingClient.ListPositionsAsync();
-                    foreach (var oAsset in ownedAssets)
-                    {
-                        foreach (var aAsset in alpacaPositions)
-                        {
-                            if (oAsset.Item2 == aAsset.Symbol)
-                            {
-                                var assetPos = await alpacaTradingClient.GetPositionAsync(aAsset.Symbol);
-                                await SubmitOrder(assetPos.Symbol, assetPos.Quantity, 0, OrderSide.Sell, ta.Id);
-                            }
-                        }
-                    }
-                }
-            }
+            // TODO Liquidate at the end of market day if day trade???
+            // foreach (var ta in tradeAccounts)
+            // {
+            //     if (ta.Preference.TradeStrategy.Day)
+            //     {
+            //         Console.WriteLine($"Liquidating {ta.Title}...");
+            //         var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(ta.Id);
+            //         var alpacaPositions = await alpacaTradingClient.ListPositionsAsync();
+            //         foreach (var oAsset in ownedAssets)
+            //         {
+            //             foreach (var aAsset in alpacaPositions)
+            //             {
+            //                 if (oAsset.Item2 == aAsset.Symbol)
+            //                 {
+            //                     var assetPos = await alpacaTradingClient.GetPositionAsync(aAsset.Symbol);
+            //                     await SubmitOrder(assetPos.Symbol, assetPos.Quantity, 0, OrderSide.Sell, ta.Id);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             Dispose();
         }
 
@@ -362,43 +362,33 @@ namespace smart_stock.AlpacaServices
                     switch(p.RiskLevel.Risk)
                     {
                         case "Low":
-                            if (profit < -2.0m || profit > 0.1m)
+                            if (profit < -1.0m || profit > 0.1m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, aPos.AssetCurrentPrice-.01m,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Moderate":
                             if (profit < -3.0m || profit > 0.2m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, aPos.AssetCurrentPrice-.01m,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "High":
                             if (profit < -3.0m || profit > 5m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, aPos.AssetCurrentPrice-.01m,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }
                         break;
                         case "Aggressive":
                             if (profit < -5.0m || profit > 1m)
                             {
-                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
+                                await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, aPos.AssetCurrentPrice-.01m,  OrderSide.Sell, tradeAccountId);
                                 continue;
                             }                                  
                         break;
-                    }
-
-                    // 5 minute price action has a negative crossover below the 15 hour EMA for a 60 min lookback
-                    var ema15 = await GetEma(ownedAsset.Item2, TimeFrame.Minute, 20, 60);
-                    if (ema15 == null) continue;
-                    if (detailedLogging)
-                        Console.WriteLine($"{ALGO_TAG} \t {ownedAsset.Item2} \t ema: {ema15.LastOrDefault().Item2} \t price action: {aPos.AssetCurrentPrice}");
-                    if(aPos.AssetCurrentPrice < ema15.LastOrDefault().Item2)
-                    {
-                        await SubmitOrder(ownedAsset.Item2, (long)ownedAsset.Item3, 0,  OrderSide.Sell, tradeAccountId);
                     }
                     
                 } catch (Alpaca.Markets.RestClientErrorException)
@@ -447,7 +437,7 @@ namespace smart_stock.AlpacaServices
                     foreach(var v in vol)
                         vAvg += v.Item2;
                     vAvg /= vol.Count;                    
-                    if (vAvg < 10000)
+                    if (vAvg < 1000000)
                         continue;
                     if (detailedLogging)
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t Accepting 30D avg vol: {vAvg}");
@@ -488,53 +478,6 @@ namespace smart_stock.AlpacaServices
                     if (detailedLogging)
                         Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t Accepting 20 SMA Trend: {sma20Trend}");
 
-                    // 5 minute price action must have a positive crossover above the 15 hour EMA for a 60 min lookback
-                    var ema15 = await GetEma(asset.Symbol, TimeFrame.Minute, 20, 60);
-                    if (ema15 == null)
-                    {
-                        if (detailedLogging)
-                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                        continue;
-                    }
-                    var bars = await GetMarketData(asset.Symbol, TimeFrame.Minute, 60);
-                    var firstClose = bars[asset.Symbol].FirstOrDefault().Close;
-                    var lastClose = bars[asset.Symbol].LastOrDefault().Close;
-                    bool startIsBelowEma = false, endIsAboveEma = false;
-                    int i = 0;
-                    foreach (var b in bars[asset.Symbol])
-                    {
-                        if (i >= ema15.Count-1) break;
-                        if (!startIsBelowEma && b.Close < ema15[i].Item2)
-                            startIsBelowEma = true;
-                        if (startIsBelowEma && !endIsAboveEma && b.Close > ema15[i].Item2)
-                        {
-                            endIsAboveEma = true;
-                            break;
-                        }                                
-                        i++;
-                    }
-                    if (!startIsBelowEma)
-                    {
-                        if (detailedLogging)
-                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                        continue;
-                    }
-                    if (!endIsAboveEma)
-                    {
-                        if (detailedLogging)
-                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                        continue;
-                    }
-                    if (i < 45)
-                    {
-                        if (detailedLogging)
-                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {asset.Symbol}...");
-                        continue;
-                    }                    
-                    
-                    if (detailedLogging)
-                        Console.WriteLine($"{ALGO_TAG} \t {asset.Symbol} \t Accepting EMA Crossover \t First close: {firstClose} \t Last close: {lastClose} \t 20M EMA start: {ema15.FirstOrDefault().Item2} \t 20M EMA end: {ema15.LastOrDefault().Item2}");
-
                     // RSI must not be > 75 for 5 minute timeframe with a ~100 min lookback
                     var rsi5 = await GetRsi(asset.Symbol, TimeFrame.Minute, 14, 60);
                     if (rsi5 == null)
@@ -566,7 +509,7 @@ namespace smart_stock.AlpacaServices
 
                     // Retrieve trade account info and buy
                     var ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
-                    decimal amount = (decimal)ta.Cash * (decimal)(p.CapitalToRisk/100);
+                    decimal amount = (decimal)ta.Amount * (decimal)(p.CapitalToRisk/100);
                     var bar = await GetMarketData(asset.Symbol, TimeFrame.Minute, 1);
                     decimal price = bar[asset.Symbol].LastOrDefault().Close+.02m;
                     decimal quantity = amount / price;
@@ -578,7 +521,7 @@ namespace smart_stock.AlpacaServices
                         continue;
                     }  
                     
-                    await SubmitOrder(asset.Symbol, (long)quantity, 0, OrderSide.Buy, tradeAccountId);
+                    await SubmitOrder(asset.Symbol, (long)quantity, price, OrderSide.Buy, tradeAccountId);
 
                 } catch (Alpaca.Markets.RestClientErrorException)
                 {
@@ -755,9 +698,9 @@ namespace smart_stock.AlpacaServices
             var updateorder = await alpacaTradingClient.GetOrderAsync(order.OrderId);
             while (updateorder.OrderStatus != OrderStatus.Filled)
             {
-                if (i==60)
+                if (i==20)
                 {
-                    Console.WriteLine("Canelling order...");
+                    await CancelExistingOrders();
                     return false;
                 }
                 Thread.Sleep(1000);
