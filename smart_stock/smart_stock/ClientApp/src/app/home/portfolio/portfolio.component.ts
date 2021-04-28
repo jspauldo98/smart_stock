@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IPortfolio, ITradeAccount, IUser, ICredential } from '../../interfaces';
+import { IPortfolio, ITradeAccount, IUser, ICredential, ILog } from '../../interfaces';
 import { LoginService } from '../../services/login.service';
 import { UserService } from '../../services/user.service';
 import { PortfolioService } from '../../services/portfolio.service';
+import { HistoryService } from 'src/app/services/history.service';
 import { first } from 'rxjs/operators';
 import { SubSink } from 'subsink';
 
@@ -19,6 +20,8 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   public tradeAccount : ITradeAccount;
   public user: IUser;
   public content : number;
+  public log : ILog[];
+
    title = '\'s Total History';
    type = 'LineChart';
    data = [
@@ -50,7 +53,8 @@ export class PortfolioComponent implements OnInit, OnDestroy {
 
   constructor(private readonly loginService : LoginService, 
     private readonly portfolioService : PortfolioService,
-    private readonly userService: UserService) { }
+    private readonly userService: UserService,
+    private readonly historyService : HistoryService) { }
 
   ngOnInit(): void {
     this.getData();
@@ -68,6 +72,10 @@ export class PortfolioComponent implements OnInit, OnDestroy {
       this.portfolioService.getPortfolio(this.userCredentials).subscribe(res => {
         this.portfolio = res;
         console.log(res);
+      }),
+      this.historyService.getLog(this.tradeAccount.id).subscribe(res => {
+        console.log(res);
+        this.log = res as ILog[];
       })
     );
   }
