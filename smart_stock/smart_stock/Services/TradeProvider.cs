@@ -125,7 +125,7 @@ namespace smart_stock.Services
                     int portId = await connection.QueryFirstOrDefaultAsync<int>(portIdQ, @portIdParam);
                     // get portfolio
                     var portQ = "SELECT Id, Amount, Profit, Loss, Net, Invested, Cash FROM Portfolio WHERE Id = @portId";
-                    var @portParam = new {portId = prefID};
+                    var @portParam = new {portId = portId};
                     Portfolio port = await connection.QueryFirstOrDefaultAsync<Portfolio>(portQ, @portParam);
                     ta.Portfolio = port;
 
