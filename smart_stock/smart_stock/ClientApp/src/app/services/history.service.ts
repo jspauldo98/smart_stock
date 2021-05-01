@@ -15,4 +15,28 @@ export class HistoryService {
   public getLog(tradeAccountId : number) {
     return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/" + tradeAccountId);
   }
+
+  public getMinuteData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/minute/" + tradeAccountId);
+  }
+
+  public getHourData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/hour/" + tradeAccountId);
+  }
+
+  public getDayData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/day/" + tradeAccountId);
+  }
+
+  public getWeekData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/week/" + tradeAccountId);
+  }
+
+  public getMonthData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/month/" + tradeAccountId);
+  }
+
+  public getYearData(tradeAccountId : number) {
+    return this.httpClient.get<ILog[]>(`${this.apiPath}` + "/year/" + tradeAccountId);
+  }
 }

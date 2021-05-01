@@ -47,17 +47,18 @@
                <h5 style="color: cornsilk;">${{this.tradeAccount.cash}} Cash</h5>
             </div>
          </div>
-      </div>                       
+      </div>   
+      
       <div style="background: grey; height: 300px;">
-         <google-chart #chart
-            [title]= this.tradeAccount.title.concat(title)
-            [type]="type"
-            [data]="data"
-            [options]="options"
-            [width]="width"
-            [height]="height">
-         </google-chart>
-      </div><br>
+         <div [chart]="chart"></div>
+         <button (click)="minute()">MIN</button>
+         <button (click)="hour()">HR</button>
+         <button (click)="day()">D</button>
+         <button (click)="week()">W</button>
+         <button (click)="month()">M</button>
+         <button (click)="year()">Y</button>
+      </div><br><br><br><br><br><br><br>
+      
       <div class="container text-left">
          <div class="row">
             <div class="col-lg">

@@ -202,3 +202,7 @@ ALTER TABLE Log CHANGE Date Date DATETIME NOT NULL;
 ALTER TABLE Trade CHANGE Date Date DATETIME NOT NULL;
 ALTER TABLE TradeAccount CHANGE DateCreated DateCreated DATETIME NOT NULL;
 ALTER TABLE TradeAccount CHANGE DateModified DateModified DATETIME;
+
+5/1/2021 CHANGES
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+// Restart mysql client
