@@ -113,6 +113,13 @@ export class TradeAccountComponent implements OnInit {
         },
         categories : this.minuteHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -150,6 +157,13 @@ export class TradeAccountComponent implements OnInit {
           text : 'Date/Time'
         },
         categories : this.hourHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {
@@ -189,6 +203,13 @@ export class TradeAccountComponent implements OnInit {
         },
         categories : this.dayHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -226,6 +247,13 @@ export class TradeAccountComponent implements OnInit {
           text : 'Date/Time'
         },
         categories : this.weekHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {
@@ -265,6 +293,13 @@ export class TradeAccountComponent implements OnInit {
         },
         categories : this.monthHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -302,6 +337,13 @@ export class TradeAccountComponent implements OnInit {
           text : 'Date/Time'
         },
         categories : this.yearHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {

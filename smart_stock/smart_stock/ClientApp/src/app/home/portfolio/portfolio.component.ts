@@ -128,6 +128,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
         },
         categories : this.minuteHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -165,6 +172,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
           text : 'Date/Time'
         },
         categories : this.hourHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {
@@ -204,6 +218,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
         },
         categories : this.dayHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -241,6 +262,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
           text : 'Date/Time'
         },
         categories : this.weekHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {
@@ -280,6 +308,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
         },
         categories : this.monthHeaders
       },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
       series: [
         {
           name: 'Equity',
@@ -317,6 +352,13 @@ export class PortfolioComponent implements OnInit, OnDestroy {
           text : 'Date/Time'
         },
         categories : this.yearHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
       },
       series: [
         {
