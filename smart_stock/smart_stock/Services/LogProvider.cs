@@ -33,8 +33,8 @@ namespace smart_stock.Services
             {
                 using(MySqlConnection connection = Connection)
                 {
-                    string insertQuery = "INSERT INTO Log (TradeAccount, Trade, Date, TradeAccountAmount, PortfolioAmount) VALUES (@tradeAccountId, @tradeId, @date, @tradeAccountAmount, @portfolio)";
-                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, tradeId = log.Trade.Id, date = log.Date, tradeAccountAmount = log.TradeAccountAmount, portfolio=log.PortfolioAmount};
+                    string insertQuery = "INSERT INTO Log (TradeAccount, Portfolio, Trade, Date, TradeAccountAmount, PortfolioAmount) VALUES (@tradeAccountId, @portfolioId, @tradeId, @date, @tradeAccountAmount, @portfolio)";
+                    var @insertParams = new {tradeAccountId = log.TradeAccount.Id, portfolioId = log.TradeAccount.Portfolio.Id, tradeId = log.Trade.Id, date = log.Date, tradeAccountAmount = log.TradeAccountAmount, portfolio=log.PortfolioAmount};
                     connection.Open();
                     await connection.ExecuteAsync(insertQuery, insertParams);
                     return true;
@@ -85,47 +85,83 @@ namespace smart_stock.Services
 
         public async Task<IEnumerable<Log>> GetMinuteLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:%i') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:%i')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:%i') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:%i')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
         public async Task<IEnumerable<Log>> GetHourLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:00') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:00')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:00') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:00')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
         public async Task<IEnumerable<Log>> GetDayLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
         public async Task<IEnumerable<Log>> GetWeekLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%u') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%u')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%u') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%u')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
         public async Task<IEnumerable<Log>> GetMonthLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-%m') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
         public async Task<IEnumerable<Log>> GetYearLog(int tId)
         {
-            string sQuery = "SELECT Id, date_format(Date, '%Y-01-01') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-01-01')) ORDER BY Id DESC LIMIT 100;";
+            string sQuery = "SELECT Id, date_format(Date, '%Y-01-01') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE TradeAccount=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-01-01')) ORDER BY Id DESC LIMIT 100";
             return await GetTimeData(tId, sQuery);
         }
 
-        private async Task<IEnumerable<Log>> GetTimeData(int tId, string query)
+        public async Task<IEnumerable<Log>> GetMinuteLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:%i') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:%i')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        public async Task<IEnumerable<Log>> GetHourLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d %H:00') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d %H:00')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        public async Task<IEnumerable<Log>> GetDayLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%d') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%d')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        public async Task<IEnumerable<Log>> GetWeekLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m-%u') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m-%u')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        public async Task<IEnumerable<Log>> GetMonthLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-%m') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-%m')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        public async Task<IEnumerable<Log>> GetYearLogByPortfolio(int pId)
+        {
+            string sQuery = "SELECT Id, date_format(Date, '%Y-01-01') Date, TradeAccountAmount, PortfolioAmount FROM Log WHERE Portfolio=@id AND Id IN (SELECT MAX(Id) FROM Log GROUP BY date_format(Date, '%Y-01-01')) ORDER BY Id DESC LIMIT 100";
+            return await GetTimeData(pId, sQuery);
+        }
+
+        private async Task<IEnumerable<Log>> GetTimeData(int id, string query)
         {
             try
             {
                 using (MySqlConnection connection = Connection)
                 {
-                    var @param = new {id = tId};
+                    var @param = new {id = id};
                     connection.Open();
                     var logs = await connection.QueryAsync<Log>(query, @param);
                     logs=logs.Reverse();

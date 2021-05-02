@@ -20,5 +20,16 @@ namespace smart_stock.Services
         Task<IEnumerable<Log>> GetMonthLog(int tId);
 
         Task<IEnumerable<Log>> GetYearLog(int tId);
+
+        Task<IEnumerable<Log>> GetMinuteLogByPortfolio(int pId);
+
+        Task<IEnumerable<Log>> GetHourLogByPortfolio(int pId);
+
+        Task<IEnumerable<Log>> GetDayLogByPortfolio(int pId);
+        Task<IEnumerable<Log>> GetWeekLogByPortfolio(int pId);
+
+        Task<IEnumerable<Log>> GetMonthLogByPortfolio(int pId);
+
+        Task<IEnumerable<Log>> GetYearLogByPortfolio(int pId);
     }
 }
