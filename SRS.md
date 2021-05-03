@@ -54,29 +54,35 @@ Anyone who is interested in trading the stock market and of State or regional ag
 
 This section will contain specific deliverable estimates of Smart Stock that are tracked using [this spreadsheet](https://github.com/jspauldo98/smart_stock/blob/master/Docs/SmartStock_Deliverables.csv).
 
-| Deadline Date | Module          | Description        | Date Completed |
-| :--           | :-:            | :--                | --:            |
-| 10-04-2020    | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc | 10-04-2020 |
-| 12-06-2020    | Project Presentation | Recorded presentation of research and planning from Fall 2020 | 12-06-2020 |
-| 12-06-2020    | Teaser | Video to tease target audiance | 12-06-2020 |
+| Deadline Date | Module                            | Description                                                   | Date Completed |
+| :--           | :-:                               | :--                                                           | --:            |
+| 10-04-2020    | Project Topic Summary Declaration | Summary of problem we are solving, scope, goals,...etc        | 10-04-2020     |
+| 12-06-2020    | Project Presentation              | Recorded presentation of research and planning from Fall 2020 | 12-06-2020     |
+| 12-06-2020    | Teaser                            | Video to tease target audience                                | 12-06-2020     |
+| 02-01-2021    | Milestone 1                       | Login and Registration                                        | 02-01-2021     |
+| 02-15-2021    | Milestone 2                       | Home, Dashboard, and Portfolio                                | 02-15-2021     |
+| 03-10-2021    | Milestone 3                       | Trading Accounts                                              | 03-10-2021     |
+| 04-06-2021    | Milestone 4                       | Alpaca API                                                    | 04-06-2021     |
+| 04-21-2021    | Milestone 5                       | More Alpaca API                                               | 04-21-2021     |
+| 05-07-2021    | Milestone 6                       | Analytics                                                     | 05-07-2021     |
 
 # 5. Development Responsibility
 This section will contain different aspects of the "Smart Stock" and who will be responsible for development of said aspects. This is subject to change.
 
-| Development Aspect       | Team Member(s)           | Progress           |
-| :--                      | :--                      | --:                |
-| Co-Project Manager       | Stefan Emmons <br/> Jared Spaulding | In Progress |
-| Documentation            | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/tree/master/Docs) |
-| C# API Controllers       | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C%23_API_Controllers.md) |
-| C# Middleware            | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C%23_Middleware.md) |
-| Database Management      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Data_Push_Services.md) |
-| Data Push Services       | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Database_Management.md) |
-| End-to-End Unit Testing  | Spencer Romberg | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/End-to-End_Testing.md) |
-| Front End Components     | Stefan Emmons <br/> Spencer Romberg | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Components.md) |
-| Front End Services       | Stefan Emmons <br/> Spencer Romberg | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Front-End_Services.md) |
-| Python Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Python_Script_Dev.md) |
-| Provider Classes      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/C#Respository_Classes.md) |
-| Shell Script Dev.        | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong | [In Progress](https://github.com/jspauldo98/smart_stock/blob/master/Docs/Progress/Shell_Script_Dev.md) |
+| Development Aspect      | Team Member(s)
+| :--                     | :--
+| Co-Project Manager      | Stefan Emmons <br/> Jared Spaulding
+| Documentation           | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
+| C# API Controllers      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong
+| C# Middleware           | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong
+| Database Management     | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
+| Data Push Services      | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong
+| End-to-End Unit Testing | Spencer Romberg
+| Front End Components    | Stefan Emmons <br/> Spencer Romberg
+| Front End Services      | Stefan Emmons <br/> Spencer Romberg
+| Python Script Dev.      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
+| Provider Classes        | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong
+| Shell Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong 
 
 # 6. Risk Management
 ## 6.1 Risk Identification
