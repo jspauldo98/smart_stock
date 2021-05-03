@@ -46,6 +46,8 @@ We now know that the careful development of our trading algorithms could take mo
 ### Statements of Work
 In addition to the following statements of work, our team kept track of work and metrics by utilization a google spreadsheet that can be viewed [in google sheets](https://docs.google.com/spreadsheets/d/1mLvM_nBxB_Ml8ZfsETkVwG1neVZg_guDkcrJSNe4y0U/edit?usp=sharing) or [in Github](https://github.com/jspauldo98/smart_stock/blob/master/Docs/SmartStock_Deliverables.csv).
 #### Bryce
+Overall hours spent: 49.25
+I could've put some more time and effort into this project, but balancing a multitude of responsibilities rendered it difficult to overcome the learning curve that this web-app required. All-in-all I'm satisfied with the progress that the project has seen since the start of the school year.
 #### Spencer
 #### Stefan
 Overall hours spent: 95.2  
