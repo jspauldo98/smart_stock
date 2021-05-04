@@ -725,6 +725,7 @@ namespace smart_stock.AlpacaServices
                 bool detailedLogging = true;
                 await SwingBuy(p, tradeAccountId, detailedLogging);
                 await SwingSell(p, tradeAccountId, detailedLogging);
+                //Swing sell is called periodically in swing buy
             }
             catch (WebException ex) when (ex.Response is HttpWebResponse response)
             {
@@ -754,7 +755,7 @@ namespace smart_stock.AlpacaServices
             {
                 dbAssets.Add(asset.Item2, asset.Item3);
             }
-            var deltaSize = tradeableSymbols.Count - 200;
+            var deltaSize = tradeableSymbols.Count - 75;
             if (deltaSize < 0)
             {
                 //If the list is smaller than the target size, something is wrong. This will never be the
@@ -766,7 +767,7 @@ namespace smart_stock.AlpacaServices
                 //cut list down to 200 symbols, and randomize, then compare with current items in our owned
                 //asset dictionary. Throw out values that are alread in DB.
                 tradeableSymbols.ShuffleList<IAsset>();
-                tradeableSymbols.RemoveRange(200, deltaSize);
+                tradeableSymbols.RemoveRange(75, deltaSize);
                 for (int s = 0; s < tradeableSymbols.Count - 1; s++)
                 {
                     if (dbAssets.ContainsKey(tradeableSymbols[s].Symbol))
@@ -784,23 +785,158 @@ namespace smart_stock.AlpacaServices
             //for selling current assets. Event is called every hour. 
             //TODO Still need to check for market close conditions.
             
-            var sellTimer = new System.Timers.Timer();
-            sellTimer.Interval = 3600000;
-            sellTimer.Elapsed += async (sender, e) => await ElapsedSellMethod(sender, e, preference, tradeAccountId, detailedLogging);
-            GC.KeepAlive(sellTimer);
-            sellTimer.Enabled = true;
             foreach(var ticker in tradeableSymbols)
             {
                 // try
                 // {
                     
-                // }
+                    var vol20Day = await GetVolume(ticker.Symbol, TimeFrame.Day, 20);
+                    var vol3Hour = await GetVolume(ticker.Symbol, TimeFrame.Day, 1);
+                    if(vol3Hour == null || vol20Day == null)
+                    {
+                        Console.WriteLine("Volume is null");
+                        continue;
+                    }
+                    //Get average volume for 20 day and 3 hour lookbacks. If three hour volume is greater than 
+                    //twenty day volume plus a factor of 200,000, this will signal a bullish swing
+                    double avg20Vol = 0;
+                    double avg3Vol = 0;
+                    for (int y = 0; y < vol20Day.Count; y++)
+                    {
+                        avg20Vol += (double) vol20Day[y].Item2;
+                    }
+                    for (int z = 0; z < vol3Hour.Count; z++)
+                    {
+                        avg3Vol += (double) vol3Hour[z].Item2;
+                    }
+                    avg20Vol /= vol20Day.Count;
+                    avg3Vol /= vol3Hour.Count;
+                    //TODO, set up a catch for bearish volume.
+                    if (avg3Vol < avg20Vol + 60000)
+                    {
+                        Console.WriteLine("Volume does not indicate a bullish swing for " + ticker.Symbol);
+                        continue;
+                    }
+                    Console.WriteLine("Volume for " + ticker.Symbol + " has been determined to be in an acceptable bullish range.");
+                    var rsi20Day = await GetRsi(ticker.Symbol, TimeFrame.Day, 70, 20);
+                    if (rsi20Day == null)
+                    {
+                        Console.WriteLine("RSI for " + ticker.Symbol + "is null");
+                        continue;
+                    }
+                    if (rsi20Day.LastOrDefault().Item2 > 70)
+                    {
+                        //overbought, open a short position
+                        //placeShortOrder(...)
+                        continue;
+                    }
+                    if (rsi20Day.LastOrDefault().Item2 <= 37)
+                    {
+                        //oversold, open a bullish position
+                        Console.WriteLine("20 day RSI is within oversold conditions. All conditions have been met, executing order for " + ticker.Symbol + " now.");
+                        var ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
+                        decimal amount = (decimal)ta.Cash * (decimal)(preference.CapitalToRisk/100);
+                        var bar = await GetMarketData(ticker.Symbol, TimeFrame.Minute, 1);
+                        decimal price = bar[ticker.Symbol].LastOrDefault().Close+.02m;
+                        decimal quantity = amount/price;
+                        
+                        if (ta.Cash-(double)(quantity*price) < 0)
+                        {
+                            Console.WriteLine("Unable to buy " + ticker.Symbol + " in Swing Buy, insufficient funds.");
+                            continue;
+                        }
+                        await SubmitOrder(ticker.Symbol, (long)quantity, 0, OrderSide.Buy, tradeAccountId);
+                    }
+                    Console.WriteLine("RSI conditions not met for " + ticker.Symbol);
+                }
+                catch (Alpaca.Markets.RestClientErrorException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    await AwaitRequestRedemption();
+                }
             }
         }
 
         private async Task SwingSell(Preference preference, int? tradeAccountId, bool detailedLogging)
         {
-            return;
+            Console.WriteLine("selling called for swing");
+            var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+            var alpacaAssets = await alpacaTradingClient.ListPositionsAsync();
+
+            Dictionary<string, decimal?> dbAssets = new Dictionary<string, decimal?>();
+
+            foreach(var asset in ownedAssets)
+            {
+                dbAssets.Add(asset.Item2, asset.Item3);
+            }
+            
+            //Do we really need this? All stored assets should be in our DB, and if alpaca doesn't
+            //have it, catch the exception and move on for now.
+            /*for (int s = 0; s < alpacaAssets.Count; s++)
+            {
+                if (!dbAssets.ContainsKey(alpacaAssets[s].Symbol))
+                {
+                    if (detailedLogging)
+                    {
+                        Console.WriteLine(alpacaAssets[s].Symbol + " does not exist in user portfolio, removing now");
+                    }
+                }
+            }*/
+
+            foreach(var asset in dbAssets)
+            {
+                Console.WriteLine(asset.Key);
+                try
+                {
+                    var bar = await GetMarketData(asset.Key, TimeFrame.Minute, 1);
+                    var pos = await alpacaTradingClient.GetPositionAsync(asset.Key);
+
+                    decimal profit = pos.UnrealizedProfitLossPercent*100;
+                    Console.WriteLine("Profitability for " + asset.Key + " is " + profit.ToString());
+                    if (asset.Key == "NAKD")
+                    {
+                        //I'm calling the shots with this one.
+                        continue;
+                    }
+
+                    switch(preference.RiskLevel.Risk)
+                    {
+                        case "Low":
+                            if (profit < -2.0m || profit > 0.5m)
+                            {
+                                await SubmitOrder(asset.Key, (long)asset.Value, 0,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Moderate":
+                            if (profit < -3.0m || profit > 0.75m)
+                            {
+                                await SubmitOrder(asset.Key, (long)asset.Value, 0,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "High":
+                            if (profit < -3.0m || profit > 1.5m)
+                            {
+                                await SubmitOrder(asset.Key, (long)asset.Value, 0,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }
+                        break;
+                        case "Aggressive":
+                            if (profit < -5.0m || profit > 5.0m)
+                            {
+                                await SubmitOrder(asset.Key, (long)asset.Value, 0,  OrderSide.Sell, tradeAccountId);
+                                continue;
+                            }                                  
+                        break;
+                    }
+                }
+                catch (Alpaca.Markets.RestClientErrorException e)
+                {
+                    Console.WriteLine(e.ToString());
+                    await AwaitRequestRedemption();
+                }
+            }
         }
 
         private async Task<IReadOnlyDictionary<string, IReadOnlyList<IAgg>>> GetMarketData(
@@ -879,6 +1015,7 @@ namespace smart_stock.AlpacaServices
                 ta.Cash -= (double)order.AverageFillPrice * (double)order.Quantity;
                 ta.Invested += (double)order.AverageFillPrice * (double)order.Quantity;
                 ta.Portfolio.Invested += (double)order.AverageFillPrice * (double)order.Quantity;
+                Console.WriteLine("Portfolio cash is " + ta.Portfolio.Cash + " with order fill price " + order.AverageFillPrice);
             }
             else
             {
