@@ -240,7 +240,7 @@ namespace smart_stock.AlpacaServices
 
                     decimal[] ema9 = new decimal[1000];
                     decimal[] ema13 = new decimal[1000];
-                    decimal[] ema50 = new decimal[1000];
+                    decimal[] Ema50 = new decimal[1000];
                     decimal emaY9 = 0;
                     decimal emaY13 = 0;
                     decimal emaY50 = 0;
@@ -254,10 +254,10 @@ namespace smart_stock.AlpacaServices
                         decimal pNow = item.Close;
                         ema9[index] = (pNow * (2m / 10m) + (emaY9 * (1 - (2m / (10m)))));
                         ema13[index] = (pNow * (2m / 14m) + (emaY13 * (1 - (2m / (14m)))));
-                        ema50[index] = (pNow * (2m / 51m) + (emaY50 * (1 - (2m / (51m)))));
+                        Ema50[index] = (pNow * (2m / 51m) + (emaY50 * (1 - (2m / (51m)))));
                         emaY9 = ema9[index];
                         emaY13 = ema13[index];
-                        emaY50 = ema50[index];
+                        emaY50 = Ema50[index];
                         index++;
                     }
 
@@ -268,8 +268,8 @@ namespace smart_stock.AlpacaServices
                     //This is checking to see if there is a positive crossover in the emas. So if the 13 day ema is higher than 
                     //the 50 day ema and the 9 day moves above the 13 day than it should buy. Not exactly working right yet but it 
                     //sort of works. Also needs more indicators than just ema most likely.
-                    else if ((ema9[index - 1] > ema13[index - 1] && ema9[index - 2] < ema13[index - 2]) && (ema13[index - 1] > ema50[index - 1] && ema13[index - 2] < ema50[index - 2])
-                            && (ema9[index - 1] > ema50[index - 1] && ema9[index - 2] < ema50[index - 2]))
+                    else if ((ema9[index - 1] > ema13[index - 1] && ema9[index - 2] < ema13[index - 2]) && (ema13[index - 1] > Ema50[index - 1] && ema13[index - 2] < Ema50[index - 2])
+                            && (ema9[index - 1] > Ema50[index - 1] && ema9[index - 2] < Ema50[index - 2]))
                     {
                         //this is here because I was having issues getting the most current price using getLastQuoteAsync
                         //This could be changed because it only gives us the price from 1 minute ago(at least I think it does) could possibly use getLastTradeAsync
@@ -281,12 +281,12 @@ namespace smart_stock.AlpacaServices
                         }
                         count++;
                         count++;
-                        Console.WriteLine("BUY    " + items.Symbol + "  " + ema9[index - 1] + "  " + ema9[index - 2] + "   " + index + "   " + price + "  " + ema13[index - 1] + "  " + ema13[index - 2] + "  " + ema13[index - 2] + "  " + ema50[index - 1] + "  " + ema50[index - 2]);
+                      //  Console.WriteLine("BUY    " + items.Symbol + "  " + ema9[index - 1] + "  " + ema9[index - 2] + "   " + index + "   " + price + "  " + ema13[index - 1] + "  " + ema13[index - 2] + "  " + ema13[index - 2] + "  " + Ema30[index - 1] + "  " + Ema30[index - 2]);
                         await SubmitOrder(items.Symbol, 15, price, OrderSide.Buy, tradeAccountId);
                     }
                     //Same as above just the opposite
-                    else if ((ema9[index - 1] < ema13[index - 1] && ema9[index - 2] > ema13[index - 2]) && (ema13[index - 1] < ema50[index - 1] && ema13[index - 2] > ema50[index - 2])
-                            && (ema9[index - 1] < ema50[index - 1] && ema9[index - 2] > ema50[index - 2]))
+                    else if ((ema9[index - 1] < ema13[index - 1] && ema9[index - 2] > ema13[index - 2]) && (ema13[index - 1] < Ema50[index - 1] && ema13[index - 2] > Ema50[index - 2])
+                            && (ema9[index - 1] < Ema50[index - 1] && ema9[index - 2] > Ema50[index - 2]))
                     {
                         var bars2 = await GetMarketData(items.Symbol, TimeFrame.Minute, 1);
                         foreach (var g in bars2[items.Symbol])
@@ -295,7 +295,7 @@ namespace smart_stock.AlpacaServices
                         }
                         count++;
                         count++;
-                        Console.WriteLine("SELL   " + items.Symbol + "  " + ema9[index - 1] + "  " + ema9[index - 2] + "   " + index + "   " + price + "  " + ema13[index - 1] + "  " + ema13[index - 2] + "  " + ema50[index - 1] + "  " + ema50[index - 2]);
+                       // Console.WriteLine("SELL   " + items.Symbol + "  " + ema9[index - 1] + "  " + ema9[index - 2] + "   " + index + "   " + price + "  " + ema13[index - 1] + "  " + ema13[index - 2] + "  " + Ema30[index - 1] + "  " + Ema30[index - 2]);
                         await SubmitOrder(items.Symbol, 15, price, OrderSide.Sell, tradeAccountId);
                     }
                 }
@@ -533,14 +533,172 @@ namespace smart_stock.AlpacaServices
 
         private async Task Scalp(Preference p, int? tradeAccountId)
         {
+             var detailedLogging = false;
+            const string ALGO_TAG = "*SCALPING: BUY AND SELL*";
+            var count = 0;
             try
             {
-                // TODO - Run scalp selling algorithm to see if owned assets need sold.
-                // TODO - Run scalp algorithm to acquire new assets if possible.
+                decimal priceBought = 0;
+                //Get list of all tradable symbols
+                var tradeableSymbols = await GetTradableTickerList();
+                tradeableSymbols.ShuffleList<IAsset>();
+                Dictionary<string, decimal?> dbAssets = new Dictionary<string, decimal?>();
+                var ownedAssets = await _tradeProvider.RetrieveOwnedAssets(tradeAccountId);
+                var deltaSize = tradeableSymbols.Count - 100;
+                tradeableSymbols.RemoveRange(100, deltaSize);
+
+                //If the asset is already owned it is removed from the list
+                foreach (var asset in ownedAssets)
+                   // dbAssets.Add(asset.Item2, asset.Item3);
+                for (int s = 0; s < tradeableSymbols.Count - 1; s++)
+                {
+                    if (dbAssets.ContainsKey(tradeableSymbols[s].Symbol))
+                    {
+                        if (detailedLogging)
+                            Console.WriteLine($"{ALGO_TAG} \t We already have " + tradeableSymbols[s].Symbol + " in our owned assets, removing now");
+                        tradeableSymbols.RemoveAt(s);
+                    }
+                }
+                if (detailedLogging)
+                    Console.WriteLine($"{ALGO_TAG} \t Starting Scalping Algorithm...");
+                
+                //Changes risk level depending on what the user has chosen
+                decimal stopBuy = 0;
+                decimal takeProfitBuy = 0;
+                decimal stopSell = 0;
+                decimal takeProfitSell = 0;
+                switch (p.RiskLevel.Risk)
+                {
+                    case "Low":
+                        stopBuy = 0.9995M;
+                        takeProfitBuy = 1.003M;
+                        stopSell = 1.0015M;
+                        takeProfitSell = 0.997M;
+                        break;
+                    case "Moderate":
+                        stopBuy = 0.9985M;
+                        takeProfitBuy = 1.006M;
+                        stopSell = 1.0025M;
+                        takeProfitSell = 0.994M;
+                        break;
+                    case "High":
+                        stopBuy = 0.99975M;
+                        takeProfitBuy = 1.009M;
+                        stopSell = 1.00035M;;
+                        takeProfitSell = 0.991M;
+                        break;
+                    case "Aggressive":
+                        stopBuy = 0.9965M;
+                        takeProfitBuy = 1.012M;
+                        stopSell = 1.00045M;;
+                        takeProfitSell = 0.988M;
+                        break;
+                }
+
+                foreach (var sym in tradeableSymbols)
+                {
+                    //Get the volume and dcheck if it is traded on average at least 500 times a minute
+                   // Console.WriteLine(sym.Symbol);
+                    var vol = await GetVolume(sym.Symbol, TimeFrame.Minute, 500);
+                    if (vol == null) continue;
+                    decimal vAvg = vol.Average(x => x.Item2);
+                    if (vAvg < 500)
+                        continue;
+                    //Get the 3 period EMA and 30 period EMA
+                    var Ema3 = await GetEma(sym.Symbol, TimeFrame.Minute, 3, 200);
+
+                    var Ema30 = await GetEma(sym.Symbol, TimeFrame.Minute, 30, 200);
+
+                    //If either EMA is null or Price to low continue to next symbol 
+                    if (Ema3 == null || Ema30 == null)
+                    {
+                        Console.WriteLine("EMA NULL ::::::::::::::::::::::::::::::::::::::::::::::::::: " );
+                        if (detailedLogging)
+                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {sym.Symbol}...EMA");
+                        continue;
+                    }
+
+                    //Get the RSI 
+                    var rsi = await GetRsi(sym.Symbol, TimeFrame.Minute, 20, 500);
+                    //If the RSI is null continue to next symbol
+                    if (rsi == null)
+                    {
+                        Console.WriteLine("RSI NULL :::::::::::::::::::::::::::::::::::::::::::::::::::");
+                        if (detailedLogging)
+                            Console.WriteLine($"\t\t\t\t\t\t Rejecting {sym.Symbol}...RSI");
+                        continue;
+                    }
+
+                    var ta = await _tradeProvider.GetTradeAccount(tradeAccountId);
+
+                    decimal amount = (decimal)ta.Amount * (decimal)(p.CapitalToRisk / 100);
+
+                    decimal quantity = 0;
+                    ILastTrade t = null;
+                    //Get last quote to try and get latest price                    
+                    t = await alpacaDataClient.GetLastTradeAsync(sym.Symbol);
+                    if(t == null)
+                    {
+                        continue;
+                    }
+                    priceBought = t.Price;
+                    if (priceBought == 0 || amount == 0 || priceBought < 5)
+                    {
+                        continue;
+                    }
+                    quantity = amount / priceBought;
+                    //check to make sure there is money available
+                    if (ta.Cash - (double)(quantity * priceBought) < 0)
+                    {
+                        Console.WriteLine($"{ALGO_TAG} \t {ta.Title} \t does not have sufficient cash for purchasing...");
+                        continue;
+                    }
+                    //Look for either a negative or positive EMA crossover and check RSI is above 25 or below 75  
+                    if (Ema3.Last().Item2 > Ema30.Last().Item2 && Ema3.ElementAt(197).Item2 < Ema30.ElementAt(197).Item2 && rsi.Last().Item2 < 75)
+                    {
+                        await SubmitOrder(sym.Symbol, (long)quantity, priceBought + 0.02M, OrderSide.Buy, tradeAccountId);
+                    }
+                    else if (Ema3.Last().Item2 < Ema30.Last().Item2 && Ema3.ElementAt(197).Item2 > Ema30.ElementAt(197).Item2 && rsi.Last().Item2 > 25)
+                    {
+                        await SubmitOrder(sym.Symbol, (long)quantity, priceBought -0.02M , OrderSide.Sell, tradeAccountId);
+                    }
+                    else if (detailedLogging)
+                    {
+                        Console.WriteLine($"\t\t\t\t\t\t Rejecting {sym.Symbol}...");
+                    }
+                }
+                //Was originally going to stream prices coming in but the streaming was inconsisten and difficult to make run correctly
+                //This just checks if the EMAs have crossed back over or if the price has gone above or below the takeProfitLimt * AverageEntry
+                //and above or below the stop * averageEntry
+                var owned = await alpacaTradingClient.ListPositionsAsync();
+                foreach(var asset in owned)
+                {
+                    var sma1 = await GetEma(asset.Symbol, TimeFrame.Minute, 3, 500);
+                    var sma2 = await GetEma(asset.Symbol, TimeFrame.Minute, 30, 500);
+                    var bar = await alpacaDataClient.GetLastTradeAsync(asset.Symbol);
+                    if(sma1 == null || sma2 == null || bar==null)
+                    {
+                        continue;
+                    }
+                    var price = bar.Price;
+                    if (((sma1.Last().Item2 < sma2.Last().Item2 && sma1.ElementAt(197).Item2 > sma2.ElementAt(197).Item2)
+                         || (asset.AverageEntryPrice * takeProfitBuy > price || asset.AverageEntryPrice * stopBuy < price))  && asset.Side == PositionSide.Long)
+                    {  
+                        var quan = asset.Quantity;
+                        await SubmitOrder(asset.Symbol, Math.Abs(quan), price, OrderSide.Sell, tradeAccountId);
+                    }
+                    else if (((sma1.Last().Item2 > sma2.Last().Item2 && sma1.ElementAt(197).Item2 < sma2.ElementAt(197).Item2)
+                         ||(asset.AverageEntryPrice * takeProfitSell < price || asset.AverageEntryPrice * stopSell > price)) && asset.Side == PositionSide.Short)
+                    {
+                        var quan = asset.Quantity;
+                        await SubmitOrder(asset.Symbol, Math.Abs(quan), price, OrderSide.Buy, tradeAccountId);
+                    }
+                }
             }
-            catch (WebException ex) when (ex.Response is HttpWebResponse response)
+            catch (RestClientErrorException ex)
             {
-                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                //Had to change this because the other way wasn't working for some reason
+                if (ex.ErrorCode == 429)
                 {
                     await AwaitRequestRedemption();
                 }
@@ -966,7 +1124,10 @@ namespace smart_stock.AlpacaServices
                     if (index != periods+1)
                         emaData.Add((bars[symbol][index+1].TimeUtc, ema));
                     index++;
+                  //  Console.WriteLine(ema);
                 }
+               // Console.WriteLine("\n\n\n");
+               // Thread.Sleep(1000000);
                 return emaData;
             } catch 
             {
