@@ -27,16 +27,16 @@
          </div> 
          <div class="row w-25">
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-${{this.tradeAccount.net}}</h6>
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">${{this.tradeAccount.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+${{this.tradeAccount.net}}</h6>
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">${{this.tradeAccount.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">-{{(this.tradeAccount.loss / this.tradeAccount.amount)*100}}%</h6>
+               <h6 *ngIf="this.tradeAccount.net < 0" style="color: red;">{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">+{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
+               <h6 *ngIf="this.tradeAccount.net >= 0" style="color: green;">{{(this.tradeAccount.profit / this.tradeAccount.amount)*100}}%</h6>
             </div>
          </div>
          <div class="row">            
@@ -47,10 +47,18 @@
                <h5 style="color: cornsilk;">${{this.tradeAccount.cash}} Cash</h5>
             </div>
          </div>
-      </div>                       
+      </div>   
+      
       <div style="background: grey; height: 300px;">
-         <h3>Graph?</h3>
-      </div><br>
+         <div [chart]="chart"></div>
+         <button (click)="minute()">MIN</button>
+         <button (click)="hour()">HR</button>
+         <button (click)="day()">D</button>
+         <button (click)="week()">W</button>
+         <button (click)="month()">M</button>
+         <button (click)="year()">Y</button>
+      </div><br><br><br><br><br><br><br>
+      
       <div class="container text-left">
          <div class="row">
             <div class="col-lg">

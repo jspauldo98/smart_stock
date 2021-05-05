@@ -20,6 +20,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatRadioModule} from '@angular/material/radio';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ChartModule } from 'angular-highcharts';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
@@ -61,6 +62,7 @@ import { SectorsTabComponent } from './home/portfolio/trade-account-create/secto
 import { RiskTabComponent } from './home/portfolio/trade-account-create/risk-tab/risk-tab.component';
 import { HistoryComponent } from './home/portfolio/trade-account/history/history.component';
 import { TransferComponent } from './home/portfolio/transfer/transfer.component';
+import { ChartType, GoogleChartsModule } from 'angular-google-charts';
 //Root module, everything needs to be imported here first
 @NgModule({
   declarations: [
@@ -118,7 +120,9 @@ import { TransferComponent } from './home/portfolio/transfer/transfer.component'
     MatTooltipModule,
     MatSliderModule,
     MatRadioModule,
-    MatDialogModule
+    MatDialogModule,
+    GoogleChartsModule,
+    ChartModule,
   ],
   providers:[
     DatePipe,

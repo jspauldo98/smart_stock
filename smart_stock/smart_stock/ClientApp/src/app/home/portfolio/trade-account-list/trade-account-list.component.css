@@ -7,3 +7,9 @@
    font-size: 64px;
    line-height: 64px;
 }
+#chart {
+   display: table-cell;
+   position: absolute;
+   width: 100%;
+   height: 130%;
+}

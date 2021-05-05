@@ -6,18 +6,25 @@ The purpose of this document is to lay out a development plan detailing the spec
 ## Algorithm (Momentum Trading):
 
 ### Fundamentals
-- N/A fundumentals should not matter in short term trading.
+- N/A fundamentals should not matter in short term trading.
 
 ### Technicals
-Buy Signal (must include all to excecute buy):
-- 180 day SMA must show a positive trend (4hr chart).
-- Average daily trading volumne must be greater than 20 million.
-- Price action must close above 15 day EMA (15min, 5min, or 1min chart).
-- MACD must show positive crossover (15min, 5min, or 1min chart).
+Buy Signal (must include all to execute buy):
+- Average trade volume over teh last 30 days must be greater than 10,000
+- 180 period SMA must show a positive trend where each period is a five minute bar given a 30hr lookback.
+- 20 period SMA must show a positive trend where each period is a minute bar given a 1hr lookback.
+- Price action must show a positive crossover a 15 period EMA where each period is a minute bar given a 1hr lookback. 
+- 15 period RSI much be less than 75 where each period is a minute bar given a 1hr lookback.
+- 15 period RSI where each period is a minute bar must show a positive trend given a 1hr lookback.
 
-Sell Signal (any can excecute sell):
-- MACD negative crossover.
-- Price action closes below 15day EMA (whiever time frame buy was initiated in).
+Sell Signal (any can execute sell):
+- Price action shows a negative crossover a 15 period EMA where each period is a minute bar given a 1hr lookback
+- Low Risk: -0.1% < profitability > 0.1%
+- Moderate Risk: -0.25% < profitability > 0.25%
+- High Risk: -0.5% < profitability > 0.5%
+- Aggressive Risk: -1% < profitability > 1%
+
+![DAy Trading Strategy](day_trading_flowchart.png)
 
 ## Author(s)
 Jared Spaulding

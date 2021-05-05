@@ -6,6 +6,12 @@ namespace smart_stock.Services
 {
     public interface ITradeProvider
     {
-        Task<int> RecordTrade(Trade trade);
+        Task<int> RecordTrade(Trade trade, TradeAccount ta);
+
+        Task<IEnumerable<(int, string, decimal, decimal)>> RetrieveOwnedAssets(int? tId);
+
+        Task<(decimal, decimal)> RetrieveOwnedAsset(int? tId, string symbol);
+
+        Task<TradeAccount> GetTradeAccount (int? tId);
     }
 }

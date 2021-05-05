@@ -18,12 +18,12 @@
                   <div class="container text-center">
                      <div class="row">
                         <div class="col-sm">
-                           <h6 *ngIf="ta.net < 0" style="color: red;">-${{ta.net}}</h6>
-                           <h6 *ngIf="ta.net >= 0" style="color: green;">+${{ta.net}}</h6>
+                           <h6 *ngIf="ta.net < 0" style="color: red;">${{ta.net}}</h6>
+                           <h6 *ngIf="ta.net >= 0" style="color: green;">${{ta.net}}</h6>
                         </div>
                         <div class="col-sm">
-                           <h6 *ngIf="ta.net < 0" style="color: red;">-{{(ta.loss / ta.amount) * 100}}%</h6>
-                           <h6 *ngIf="ta.net >= 0" style="color: green;">+{{(ta.profit / ta.amount) * 100}}%</h6>
+                           <h6 *ngIf="ta.net < 0" style="color: red;">{{(ta.profit / ta.amount) * 100}}%</h6>
+                           <h6 *ngIf="ta.net >= 0" style="color: green;">{{(ta.profit / ta.amount) * 100}}%</h6>
                         </div>
                      </div>
                      <div class="row">
@@ -38,9 +38,7 @@
                </mat-card-content>
             </div>
             <div class="col-lg" align="right">
-               <mat-card style="background: grey; height: 200px;">
-                  <mat-card-title>Graph?</mat-card-title>
-               </mat-card>
+               <div id="chart" [chart]="chart"></div>
             </div>
          </div>
       </div>

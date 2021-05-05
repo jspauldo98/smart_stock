@@ -11,16 +11,16 @@
          </div>
          <div class="row w-25">
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-${{this.portfolio.net}}</h6>
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">${{this.portfolio.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+${{this.portfolio.net}}</h6>
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">${{this.portfolio.net}}</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">-{{(this.portfolio.loss / this.portfolio.amount)*100}}%</h6>
+               <h6 *ngIf="this.portfolio.net < 0" style="color: red;">{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
             </div>
             <div class="col-lg">
-               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">+{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
+               <h6 *ngIf="this.portfolio.net >= 0" style="color: green;">{{(this.portfolio.profit / this.portfolio.amount)*100}}%</h6>
             </div>
          </div>
          <div class="row">            
@@ -32,9 +32,15 @@
             </div>
          </div>
       </div>                     
-   <div style="background: grey; height: 300px;">
-      <h3>Graph?</h3>
-   </div>
+      <div style="background: grey; height: 300px;">
+         <div [chart]="chart"></div>
+         <button (click)="minute()">MIN</button>
+         <button (click)="hour()">HR</button>
+         <button (click)="day()">D</button>
+         <button (click)="week()">W</button>
+         <button (click)="month()">M</button>
+         <button (click)="year()">Y</button>
+      </div><br><br><br><br><br><br><br>
       <app-trade-account-list></app-trade-account-list>
    </ng-container>
 </div>

@@ -5,6 +5,9 @@ import { LoginService } from 'src/app/services/login.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 import { SubSink } from 'subsink';
 import { PortfolioComponent } from '../portfolio.component';
+import { Chart } from 'angular-highcharts';
+import { DatePipe } from '@angular/common';
+import { HistoryService } from 'src/app/services/history.service';
 
 @Component({
   selector: 'app-trade-account-list',
@@ -14,11 +17,15 @@ import { PortfolioComponent } from '../portfolio.component';
 export class TradeAccountListComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
   public tradeAccounts : ITradeAccount[];
+  public chart : any;
+  public hourHeaders = new Array();
+  public hourData = new Array();
 
   constructor(private readonly loginService : LoginService,
     private readonly portfolioService : PortfolioService,
+    private readonly historyService : HistoryService,
     private portfolioComponent : PortfolioComponent,
-    private toastr : ToastrService) { }
+    private datepipe : DatePipe) { }
 
   ngOnInit(): void {    
     this.refreshData();
@@ -28,9 +35,59 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
     this.subs.add(
       this.portfolioService.getTradeAccounts(this.portfolioComponent.portfolio.id).subscribe(res => {
         this.tradeAccounts = res as ITradeAccount[];
-        console.log(res);
+        res.forEach(e => {
+          this.historyService.getHourData(e.id).subscribe(res => {
+            res.forEach(element => {
+              this.hourHeaders.push(this.datepipe.transform(new Date(element.date), 'HH:mm'));
+              this.hourData.push(element.tradeAccountAmount);          
+            });
+            this.hour();
+          })
+        })
       })
     );
+  }
+
+  hour() {
+    this.chart = new Chart({
+      chart: {
+        type: 'line'
+      },
+      title : null,
+      credits: {
+        enabled: false
+      },
+      legend : {
+        enabled : false
+      },
+      yAxis : {
+        title : null,
+        labels : {
+          enabled : false
+        }
+      },
+      xAxis : {
+        title : null,
+        labels : {
+          enabled : false
+        },
+        categories : this.hourHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Equity',
+          type: 'line',
+          data: this.hourData
+        },
+      ]
+    });
   }
 
   createTradeAccount() {

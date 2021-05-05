@@ -183,3 +183,29 @@ ALTER TABLE Trade Add Amount DECIMAL(13, 2) NOT NULL;
 ALTER TABLE Trade Add Price DECIMAL(13, 2) NOT NULL;
 ALTER TABLE Trade Add Quantity DECIMAL(13, 2) NOT NULL;
 ALTER TABLE Trade Add Date DATE NOT NULL;
+
+4/13/2021 CHANGES
+CREATE TABLE `OwnedAssets` (`Id` INT(64) NOT NULL AUTO_INCREMENT,`TradeAccount` INT(64) NOT NULL,`Symbol` CHAR(4) NOT NULL,`Quantity` DECIMAL(13,12),`Price` DECIMAL(13, 2) NOT NULL,PRIMARY KEY (`Id`));
+ALTER TABLE Trade CHANGE Quantity Quantity DECIMAL(13, 12) NOT NULL;
+ALTER TABLE Trade CHANGE Quantity Quantity INT(32) NOT NULL;
+ALTER TABLE OwnedAssets CHANGE Quantity Quantity INT(32) NOT NULL;
+
+4/26/2021 CHANGES
+ALTER TABLE Trade CHANGE Ticker Ticker CHAR(5) NOT NULL;
+ALTER TABLE OwnedAssets CHANGE Symbol Symbol CHAR(5) NOT NULL;
+
+4/28/2021 CHANGES
+ALTER TABLE User CHANGE JoinDate JoinDate DATETIME NOT NULL;
+ALTER TABLE User CHANGE DateAdded DateAdded DATETIME NOT NULL;
+ALTER TABLE User CHANGE DateConfirmed DateConfirmed DATETIME;
+ALTER TABLE Log CHANGE Date Date DATETIME NOT NULL;
+ALTER TABLE Trade CHANGE Date Date DATETIME NOT NULL;
+ALTER TABLE TradeAccount CHANGE DateCreated DateCreated DATETIME NOT NULL;
+ALTER TABLE TradeAccount CHANGE DateModified DateModified DATETIME;
+
+5/1/2021 CHANGES
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+// Restart mysql client
+ALTER TABLE Log ADD Portfolio INT(64) NOT NULL;
+// Advisable to run the following for any sets of tradeaccount Logs already existing to add portfolio id's Replace @'s with your ids
+UPDATE Log SET Portfolio=@portfolioId WHERE TradeAccount=@tradeAccountIdBelongingToPortfolio;
