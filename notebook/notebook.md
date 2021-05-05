@@ -49,6 +49,11 @@ In addition to the following statements of work, our team kept track of work and
 Overall hours spent: 49.25  
 I could've put some more time and effort into this project, but balancing a multitude of responsibilities rendered it difficult to overcome the learning curve that this web-app required. All-in-all I'm satisfied with the progress that the project has seen since the start of the school year.
 #### Spencer
+Overall hours spent (estimated): 17.4
+Ultimately, I think I could have put in a lot more time into the project. However, taking several different things into account, and that my scope was mostly related to testing as a whole, there admittedly wasn't a lot I could have done overall with the project than what I did. Work/study/life balance ultimately got in the way. There were, however, a number of things I was able to do in terms of testing.
+ - Most of, if not all my time, was dedicated towards either achieving the enviornment in which I could test the registration and basic running processes of the program.
+ - Through the testing document (of which all versions have been uploaded to GitHub in the testing section of smart_stock/smart_stock, I was able to prove that the program is resistant to SQL injection attacks, among other potential security threats.
+ - The decision to adopt Alpaca was partially my doing through research on my end towards determining the cost of paper trading (which was zero), vs actual trading.
 #### Stefan
 Overall hours spent: 95.2  
 Admittedly, I could've spent more time on this project. However, work/life/student balance gets in the way, and I intend to continue working on this project beyond Senior Design, so my guilt is limited. I accomplished and lended a helping hand in every single aspect of this project. This included the following:
