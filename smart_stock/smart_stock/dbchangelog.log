@@ -202,3 +202,10 @@ ALTER TABLE Log CHANGE Date Date DATETIME NOT NULL;
 ALTER TABLE Trade CHANGE Date Date DATETIME NOT NULL;
 ALTER TABLE TradeAccount CHANGE DateCreated DateCreated DATETIME NOT NULL;
 ALTER TABLE TradeAccount CHANGE DateModified DateModified DATETIME;
+
+5/1/2021 CHANGES
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+// Restart mysql client
+ALTER TABLE Log ADD Portfolio INT(64) NOT NULL;
+// Advisable to run the following for any sets of tradeaccount Logs already existing to add portfolio id's Replace @'s with your ids
+UPDATE Log SET Portfolio=@portfolioId WHERE TradeAccount=@tradeAccountIdBelongingToPortfolio;

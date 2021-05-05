@@ -38,16 +38,7 @@
                </mat-card-content>
             </div>
             <div class="col-lg" align="right">
-               <mat-card style="background: grey; height: 200px;">
-                  <google-chart #chart
-                     [title]= ta.title.concat(title)
-                     [type]="type"
-                     [data]="data"
-                     [options]="options"
-                     [width]="width"
-                     [height]="height">
-                  </google-chart>
-               </mat-card>
+               <div id="chart" [chart]="chart"></div>
             </div>
          </div>
       </div>

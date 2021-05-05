@@ -5,6 +5,9 @@ import { LoginService } from 'src/app/services/login.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 import { SubSink } from 'subsink';
 import { PortfolioComponent } from '../portfolio.component';
+import { Chart } from 'angular-highcharts';
+import { DatePipe } from '@angular/common';
+import { HistoryService } from 'src/app/services/history.service';
 
 @Component({
   selector: 'app-trade-account-list',
@@ -14,37 +17,15 @@ import { PortfolioComponent } from '../portfolio.component';
 export class TradeAccountListComponent implements OnInit, OnDestroy {
   private subs = new SubSink();
   public tradeAccounts : ITradeAccount[];
-  title = '\'s History';
-  type = 'LineChart';
-  data = [
-     ["Jan",  7.0, -0.2, -0.9, 3.9],
-     ["Feb",  6.9, 0.8, 0.6, 4.2],
-     ["Mar",  9.5,  5.7, 3.5, 5.7],
-     ["Apr",  14.5, 11.3, 8.4, 8.5],
-     ["May",  18.2, 17.0, 13.5, 11.9],
-     ["Jun",  21.5, 22.0, 17.0, 15.2],
-     ["Jul",  25.2, 24.8, 18.6, 17.0],
-     ["Aug",  26.5, 24.1, 17.9, 16.6],
-     ["Sep",  23.3, 20.1, 14.3, 14.2],
-     ["Oct",  18.3, 14.1, 9.0, 10.3],
-     ["Nov",  13.9,  8.6, 3.9, 6.6],
-     ["Dec",  9.6,  2.5,  1.0, 4.8]
-  ];
-  columnNames = ["Month", "Tokyo", "New York","Berlin", "Paris"];
-  options = {   
-     hAxis: {
-        title: 'Month'
-     },
-     vAxis:{
-        title: 'Temperature'
-     },
-  };
-  width = 400;
-  height = 200;
+  public chart : any;
+  public hourHeaders = new Array();
+  public hourData = new Array();
+
   constructor(private readonly loginService : LoginService,
     private readonly portfolioService : PortfolioService,
+    private readonly historyService : HistoryService,
     private portfolioComponent : PortfolioComponent,
-    private toastr : ToastrService) { }
+    private datepipe : DatePipe) { }
 
   ngOnInit(): void {    
     this.refreshData();
@@ -54,9 +35,59 @@ export class TradeAccountListComponent implements OnInit, OnDestroy {
     this.subs.add(
       this.portfolioService.getTradeAccounts(this.portfolioComponent.portfolio.id).subscribe(res => {
         this.tradeAccounts = res as ITradeAccount[];
-        console.log(res);
+        res.forEach(e => {
+          this.historyService.getHourData(e.id).subscribe(res => {
+            res.forEach(element => {
+              this.hourHeaders.push(this.datepipe.transform(new Date(element.date), 'HH:mm'));
+              this.hourData.push(element.tradeAccountAmount);          
+            });
+            this.hour();
+          })
+        })
       })
     );
+  }
+
+  hour() {
+    this.chart = new Chart({
+      chart: {
+        type: 'line'
+      },
+      title : null,
+      credits: {
+        enabled: false
+      },
+      legend : {
+        enabled : false
+      },
+      yAxis : {
+        title : null,
+        labels : {
+          enabled : false
+        }
+      },
+      xAxis : {
+        title : null,
+        labels : {
+          enabled : false
+        },
+        categories : this.hourHeaders
+      },
+      plotOptions : {
+        line : {
+          marker : {
+            enabled : false
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Equity',
+          type: 'line',
+          data: this.hourData
+        },
+      ]
+    });
   }
 
   createTradeAccount() {
