@@ -75,7 +75,15 @@ Spending approximately 145.9 hours just in development of Smart Stock I accompli
 
 - Background trading algorithm development/modification for: day trading.
 
-#### Zack
+#### Zach
+Overall hours spent: around 75
+I definitley could have spent some more time on this, but like everyone balancing everything going on gets a little complicated.
+
+-Most of what I did was working on the scalping and long term trading algorithms. I wouldn't call either of them perfect because the scalping doesn't do to well and I did not put a sell algorithm in the long term trading but it works better than the scalping. I do not think that the scalping algorithm has enough data to be sure it doesn't perform alright and that is because I had to change it a few times due to inconsistencies with parts of Alpaca and prices jumping over or under stop orders.
+
+-Originally I spent time working on charting when our plan was to use the Alpaca api with python, but then we decided to change to c# because it was easier to implement. After we changed to c# someone else took over charting responsibilities. 
+
+-I spent a Lot of time trying to learn everything about Alpaca. I am not sure I completley learned everythin I would have liked to, but I would say that is because Alpaca is poorly documented.
 
 ## Reflection of Team
 ### Ability to Design, Implement, and Evaluate a Solution
