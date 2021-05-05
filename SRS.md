@@ -1,7 +1,7 @@
 # 1. Introduction
 
 ## 1.1 Purpose
-This document lays out a project plan for the development of "Smart Stock" by Bryce Michaud, Stefan Emmons, Spencer Romberg, Jared Spaulding, and Zack Strong. Mentored by Ruben Gamboa.
+This document lays out a project plan for the development of "Smart Stock" by Bryce Michaud, Stefan Emmons, Spencer Romberg, Jared Spaulding, and Zach Strong. Mentored by Ruben Gamboa.
 
 ## 1.2 Intentions
 The indented readers of this document are current and future developers working on "Smart Stock" and the mentor(s) of the project.
@@ -72,17 +72,17 @@ This section will contain different aspects of the "Smart Stock" and who will be
 | Development Aspect      | Team Member(s)
 | :--                     | :--
 | Co-Project Manager      | Stefan Emmons <br/> Jared Spaulding
-| Documentation           | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
-| C# API Controllers      | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong
-| C# Middleware           | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong
-| Database Management     | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
-| Data Push Services      | Stefan Emmons <br/> Jared Spaulding <br/> Zack Strong
+| Documentation           | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zach Strong
+| C# API Controllers      | Bryce Michaud <br/> Jared Spaulding <br/> Zach Strong
+| C# Middleware           | Stefan Emmons <br/> Jared Spaulding <br/> Zach Strong
+| Database Management     | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zach Strong
+| Data Push Services      | Stefan Emmons <br/> Jared Spaulding <br/> Zach Strong
 | End-to-End Unit Testing | Spencer Romberg
 | Front End Components    | Stefan Emmons <br/> Spencer Romberg
 | Front End Services      | Stefan Emmons <br/> Spencer Romberg
-| Python Script Dev.      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong
-| Provider Classes        | Bryce Michaud <br/> Jared Spaulding <br/> Zack Strong
-| Shell Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zack Strong 
+| Python Script Dev.      | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zach Strong
+| Provider Classes        | Bryce Michaud <br/> Jared Spaulding <br/> Zach Strong
+| Shell Script Dev.       | Bryce Michaud <br/> Stefan Emmons <br/> Spencer Romberg <br/> Jared Spaulding <br/> Zach Strong 
 
 # 6. Risk Management
 ## 6.1 Risk Identification
