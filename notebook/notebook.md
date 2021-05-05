@@ -50,6 +50,7 @@ Overall hours spent: 49.25
 I could've put some more time and effort into this project, but balancing a multitude of responsibilities rendered it difficult to overcome the learning curve that this web-app required. All-in-all I'm satisfied with the progress that the project has seen since the start of the school year.
 #### Spencer
 Overall hours spent (estimated): 17.4
+
 Ultimately, I think I could have put in a lot more time into the project. However, taking several different things into account, and that my scope was mostly related to testing as a whole, there admittedly wasn't a lot I could have done overall with the project than what I did. Work/study/life balance ultimately got in the way. There were, however, a number of things I was able to do in terms of testing.
  - Most of, if not all my time, was dedicated towards either achieving the enviornment in which I could test the registration and basic running processes of the program.
  - Through the testing document (of which all versions have been uploaded to GitHub in the testing section of smart_stock/smart_stock, I was able to prove that the program is resistant to SQL injection attacks, among other potential security threats.
