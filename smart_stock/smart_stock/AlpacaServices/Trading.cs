@@ -612,7 +612,7 @@ namespace smart_stock.AlpacaServices
                     //If either EMA is null or Price to low continue to next symbol 
                     if (Ema3 == null || Ema30 == null)
                     {
-                        Console.WriteLine("EMA NULL ::::::::::::::::::::::::::::::::::::::::::::::::::: " );
+                       // Console.WriteLine("EMA NULL ::::::::::::::::::::::::::::::::::::::::::::::::::: " );
                         if (detailedLogging)
                             Console.WriteLine($"\t\t\t\t\t\t Rejecting {sym.Symbol}...EMA");
                         continue;
@@ -623,7 +623,7 @@ namespace smart_stock.AlpacaServices
                     //If the RSI is null continue to next symbol
                     if (rsi == null)
                     {
-                        Console.WriteLine("RSI NULL :::::::::::::::::::::::::::::::::::::::::::::::::::");
+                       // Console.WriteLine("RSI NULL :::::::::::::::::::::::::::::::::::::::::::::::::::");
                         if (detailedLogging)
                             Console.WriteLine($"\t\t\t\t\t\t Rejecting {sym.Symbol}...RSI");
                         continue;
