@@ -725,7 +725,6 @@ namespace smart_stock.AlpacaServices
                 bool detailedLogging = true;
                 await SwingBuy(p, tradeAccountId, detailedLogging);
                 await SwingSell(p, tradeAccountId, detailedLogging);
-                //Swing sell is called periodically in swing buy
             }
             catch (WebException ex) when (ex.Response is HttpWebResponse response)
             {
@@ -782,21 +781,69 @@ namespace smart_stock.AlpacaServices
             }
 
             //Create a new timer with an event handler that will automatically handle a timed event
-            //for selling current assets. Event is called every hour. 
+            //for selling current assets. Event is called every ten minutes. 
             //TODO Still need to check for market close conditions.
             
             foreach(var ticker in tradeableSymbols)
             {
                 try
                 {
+                    var ema20Day = await GetEma(ticker.Symbol, TimeFrame.Day, 70, 20);
+                    if (ema20Day == null)
+                    {
+                        Console.WriteLine("20 day ema is null, moving to next asset");
+                        continue;
+                    }
+                    var latestDayData = await GetMarketData(ticker.Symbol, TimeFrame.Day, 1);
+                    
+                    bool startIsBelowEma = false, startIsAboveEma = false, endIsAboveEma = false, endIsBelowEma = false;
+                    int i = 0;
+                    foreach (var bar in latestDayData[ticker.Symbol])
+                    {
+                        if (i >= ema20Day.Count-1)
+                        {
+                            break;
+                        }
+                        if (!startIsBelowEma && bar.Close < ema20Day[i].Item2)
+                        {
+                            startIsBelowEma = true;
+                        }
+                        if (!startIsAboveEma && bar.Open > ema20Day[i].Item2)
+                        {
+                            startIsAboveEma = true;
+                        }
+                        if(startIsBelowEma && !endIsAboveEma && bar.Close > ema20Day[i].Item2)
+                        {
+                            endIsAboveEma = true;
+                            break;
+                        }
+                        if(startIsAboveEma && !endIsBelowEma && bar.Open < ema20Day[i].Item2)
+                        {
+                            endIsBelowEma = true;
+                            break;
+                        }
+                        i++;
+                    }
+                    
+                    //TODO: See if I can leverage alpaca services to allow for a short buy order
+                    //if we observe a bearish crossover trend
+                    if (!startIsBelowEma && endIsBelowEma)
+                    {
+                        Console.WriteLine("Bearish trend, place short order for " + ticker.Symbol);
+                        //placeShortOrder(ticker, quantity etc.)
+                        continue;
+                    }
+                    if (!endIsAboveEma && startIsAboveEma)
+                    {
+                        Console.WriteLine("Bearish trend placing short order for " + ticker.Symbol);
+                        //placeShortOrder(ticker, quantity etc.)
+                        continue;
+                    }
+                    //Risk levels can be applied here later.
+                    Console.WriteLine("A positive EMA crossover has been selected for " + ticker.Symbol);
                     
                     var vol20Day = await GetVolume(ticker.Symbol, TimeFrame.Day, 20);
                     var vol3Hour = await GetVolume(ticker.Symbol, TimeFrame.Day, 1);
-                    if(vol3Hour == null || vol20Day == null)
-                    {
-                        Console.WriteLine("Volume is null");
-                        continue;
-                    }
                     //Get average volume for 20 day and 3 hour lookbacks. If three hour volume is greater than 
                     //twenty day volume plus a factor of 200,000, this will signal a bullish swing
                     double avg20Vol = 0;
@@ -893,11 +940,6 @@ namespace smart_stock.AlpacaServices
 
                     decimal profit = pos.UnrealizedProfitLossPercent*100;
                     Console.WriteLine("Profitability for " + asset.Key + " is " + profit.ToString());
-                    if (asset.Key == "NAKD")
-                    {
-                        //I'm calling the shots with this one.
-                        continue;
-                    }
 
                     switch(preference.RiskLevel.Risk)
                     {
